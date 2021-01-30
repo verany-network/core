@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    group 'net.verany'
+    version '0.6.9-DEV-SNAPSHOT'
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://papermc.io/repo/repository/maven-public/'
+        }
+        maven {
+            url 'https://repo.cloudnetservice.eu/repository/releases/'
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.10'
+        compile 'com.google.code.gson:gson:2.8.5'
+        compileOnly 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
+        compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/1.16.4/Paper-Server/target/paper-1.16.4.jar')
+        annotationProcessor 'org.projectlombok:lombok:1.18.10'
+        implementation 'com.github.marcoacierno:pastebin-java-api:0.2.1'
+        compile 'org.mongodb:mongo-java-driver:3.12.7'
+
+        compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.2.0-RELEASE'
+        compileOnly 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.3.0-RELEASE'
+        compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.3.0-RELEASE'
+        compile group: 'redis.clients', name: 'jedis', version: '3.5.1'
+    }
+
+}

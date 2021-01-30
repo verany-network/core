@@ -1,0 +1,11 @@
+# Project exclude paths
+/.gradle/
+/addon-api/build/classes/java/main/
+/addon-parent/build/classes/java/main/
+/addon-executor/build
+/addon-parent-mc/build
+/addon-api-mc/build
+.idea
+/.idea
+/src
+/gradle

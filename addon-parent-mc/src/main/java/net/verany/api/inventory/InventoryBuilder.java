@@ -1,0 +1,129 @@
+package net.verany.api.inventory;
+
+import lombok.Builder;
+import lombok.Getter;
+import net.verany.api.Verany;
+import net.verany.api.itembuilder.ItemBuilder;
+import net.verany.api.skull.SkullBuilder;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+@Builder
+@Getter
+public class InventoryBuilder implements IInventoryBuilder {
+    private final int size;
+    private final String title;
+    private final Consumer<InventoryClickEvent> event;
+    private final Consumer<InventoryClickEvent> nullEvent;
+    private final Map<Integer, ItemStack> itemStackMap = new HashMap<>();
+    private final Map<PageData<?>, PageSwitchHandler> pageSwitchHandlers = new HashMap<>();
+    private Inventory inventory;
+
+    private final ItemStack rightSkull = new SkullBuilder("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19").build();
+    private final ItemStack leftSkull = new SkullBuilder("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==").build();
+
+    @Override
+    public IInventoryBuilder fillCycle(ItemStack itemStack) {
+        for (int i = 0; i < 9; ++i)
+            if (!itemStackMap.containsKey(i))
+                itemStackMap.put(i, itemStack);
+        for (int i = getSize() - 9; i < getSize(); ++i)
+            if (!itemStackMap.containsKey(i))
+                setItem(i, itemStack);
+        int j = 0;
+        for (int i = 0; i < getSize() / 9; ++i) {
+            if (i != 0 && i != getSize() - 9)
+                setItem(j, itemStack);
+            j += 9;
+        }
+        int k = 8;
+        for (int i = 0; i < getSize() / 9; ++i) {
+            if (i != 0 && i != getSize() - 9)
+                setItem(k, itemStack);
+            k += 9;
+        }
+        return this;
+    }
+
+    private void setItem(int index, ItemStack itemStack) {
+        itemStackMap.put(index, itemStack);
+    }
+
+    @Override
+    public IInventoryBuilder fillInventory(ItemStack itemStack) {
+        for (int i = 0; i < getSize(); i++)
+            if (!itemStackMap.containsKey(i))
+                setItem(i, itemStack);
+        return this;
+    }
+
+    @Override
+    public IInventoryBuilder fillInventory(ItemStack itemStack, Integer... slots) {
+        for (int slot : slots)
+            setItem(slot, itemStack);
+        return this;
+    }
+
+    @Override
+    public <T extends ItemStack> IInventoryBuilder fillPageItems(PageData<T> pageData, PageSwitchHandler handler) {
+        List<T> list = Verany.getPageList(pageData.getCurrentPage(), pageData.getSlots().length, pageData.getItems());
+        for (int i = 0; i < list.size(); i++)
+            itemStackMap.put(pageData.getSlots()[i], list.get(i));
+
+        itemStackMap.put(pageData.getPreviousPageItem(), new ItemBuilder(leftSkull.clone()).setDisplayName("Previous Page").build());
+        itemStackMap.put(pageData.getNextPageItem(), new ItemBuilder(rightSkull.clone()).setDisplayName("Next Page").build());
+
+        if (pageData.getCurrentPageItem() != -1)
+            itemStackMap.put(pageData.getCurrentPageItem(), new ItemBuilder(Material.PAPER).setDisplayName("Current Page: " + pageData.getCurrentPage()).build());
+
+        pageSwitchHandlers.put(pageData, handler);
+
+        if (inventory != null)
+            itemStackMap.forEach(inventory::setItem);
+        return this;
+    }
+
+    @Override
+    public void onClick(InventoryClickEvent event) {
+        this.event.accept(event);
+
+        pageSwitchHandlers.forEach((pageData, handler) -> {
+            if (event.getSlot() == pageData.getNextPageItem()) {
+                event.setCancelled(true);
+                handler.onSwitch(PageSwitchHandler.Type.NEXT);
+            } else if (event.getSlot() == pageData.getPreviousPageItem()) {
+                event.setCancelled(true);
+                handler.onSwitch(pageData.getCurrentPage() == 1 ? PageSwitchHandler.Type.FIRST : PageSwitchHandler.Type.PREVIOUS);
+            }
+        });
+    }
+
+    @Override
+    public Consumer<InventoryClickEvent> getClickConsumer() {
+        return event;
+    }
+
+    @Override
+    public Consumer<InventoryClickEvent> getNullClickConsumer() {
+        return nullEvent;
+    }
+
+    @Override
+    public Inventory buildAndOpen(Player player) {
+        inventory = Bukkit.createInventory(null, size, title);
+        itemStackMap.forEach(inventory::setItem);
+        itemStackMap.clear();
+        Verany.INVENTORY_MAP.put(player, this);
+        player.openInventory(inventory);
+        return inventory;
+    }
+}

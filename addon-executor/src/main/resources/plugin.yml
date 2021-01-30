@@ -1,0 +1,22 @@
+name: MC-Core-Executor
+version: 0.1-SNAPSHOT
+main: net.verany.executor.CoreExecutor
+api-version: 1.16
+author: tylix
+
+commands:
+  reload:
+    aliases: [rl]
+  verify:
+  prefix:
+    aliases:
+      - pr
+  afk:
+  playtime:
+    aliases:
+      - pt
+  onlinetime:
+    aliases:
+      - ot
+  language:
+  credits:

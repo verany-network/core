@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation project(":addon-parent-mc")
+    implementation project(":addon-api-mc")
+}
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+}
