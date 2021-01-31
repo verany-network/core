@@ -54,6 +54,7 @@ public class AfkObject implements IAFKObject {
     @Override
     public void resetAfkTime() {
         afkTime = System.currentTimeMillis();
+
     }
 
     @Override

@@ -122,7 +122,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public void update() {
         save("user_info");
-        load(uniqueId);
 
         permissionObject.update();
         friendObject.update();
@@ -130,6 +129,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         afkObject.update();
 
         player = null;
+        load(uniqueId);
     }
 
     private void load() {

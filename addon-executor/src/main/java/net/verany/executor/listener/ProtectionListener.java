@@ -1,13 +1,22 @@
 package net.verany.executor.listener;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.verany.api.Verany;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.hotbar.HotbarItem;
+import net.verany.api.message.AbstractComponentBuilder;
+import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.npc.INPC;
 import net.verany.api.npc.reader.PacketReader;
+import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
+import net.verany.api.redis.events.VeranyMessageInEvent;
+import net.verany.executor.CoreExecutor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -16,6 +25,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 public class ProtectionListener extends AbstractListener {
 
@@ -98,6 +108,36 @@ public class ProtectionListener extends AbstractListener {
             IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
             if (playerInfo.getAfkObject().isCheckEnabled(IAFKObject.CheckType.MOVE))
                 playerInfo.getAfkObject().resetAfkTime();
+        });
+
+        Verany.registerListener(project, VeranyMessageInEvent.class, event -> {
+            String[] data = event.getMessage().split("~");
+
+            if (data[0].equals("teamspeak")) {
+                if (data[1].equals("support")) {
+                    if (data[2].equals("accept")) return;
+                    UUID supporter = UUID.fromString(data[2]);
+                    String target = data[3];
+                    Player player = Bukkit.getPlayer(supporter);
+                    if (player != null) {
+                        if (!player.hasPermission("verany.command.support"))
+                            return;
+                        if (player.hasMetadata("support.time")) {
+                            long time = player.getMetadata("support.time").get(0).asLong();
+                            if (time >= System.currentTimeMillis()) return;
+                        }
+                        CoreExecutor.INSTANCE.setMetadata(player, "support.time", System.currentTimeMillis() + 100);
+                        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(supporter).get();
+                        playerInfo.sendMessage(new AbstractComponentBuilder(playerInfo.getPrefix("TeamSpeak") + playerInfo.getKey("core.teamspeak.support", new Placeholder("%target%", target))) {
+                            @Override
+                            public void onCreate() {
+                                setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/support accept"));
+                                setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(playerInfo.getKey("core.teamspeak.support.hover")).create()));
+                            }
+                        });
+                    }
+                }
+            }
         });
     }
 }

@@ -20,7 +20,7 @@ import org.bukkit.Bukkit;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@VeranyModule(name = "CoreExecutor", prefix = "CoreExecutor", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "RxNqA18HB56SS7GW", databases = {"network", "bots", "friends", "rank", "verification"})
+@VeranyModule(name = "CoreExecutor", prefix = "CoreExecutor", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "", databases = {"network", "bots", "friends", "rank", "verification"})
 public class CoreExecutor extends VeranyProject {
 
     public static CoreExecutor INSTANCE;
@@ -58,6 +58,7 @@ public class CoreExecutor extends VeranyProject {
         this.getCommand("onlinetime").setExecutor(new OnlineTimeCommand());
         this.getCommand("playtime").setExecutor(new PlayTimeCommand());
         this.getCommand("credits").setExecutor(new CreditsCommand());
+        this.getCommand("support").setExecutor(new SupportCommand());
 
         FriendSetting.REQUESTS.getCategory();
         Verany.loadPermissionGroups(this);

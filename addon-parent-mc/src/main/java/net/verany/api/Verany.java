@@ -99,6 +99,9 @@ public class Verany extends AbstractVerany {
                 PermissionGroup.VALUES.add(permissionGroup);
             System.out.println(permissionGroup.getName() + " loaded");
         }
+        for (AbstractPermissionGroup value : PermissionGroup.VALUES)
+            for (AbstractPermissionGroup child : value.getChildren())
+                value.getPermissions().addAll(child.getPermissions());
     }
 
     public static String getPrefix(String s, AbstractPrefixPattern pattern) {

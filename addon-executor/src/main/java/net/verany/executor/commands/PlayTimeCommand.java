@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class PlayTimeCommand implements CommandExecutor {
     @Override
@@ -25,7 +26,7 @@ public class PlayTimeCommand implements CommandExecutor {
                 int count = 1;
                 for (Document document : Verany.getDocuments(CoreExecutor.INSTANCE, "players", "network", 10, "playTime")) {
                     IPlayerInfo target = Verany.PROFILE_OBJECT.getPlayer(UUID.fromString(document.getString("uuid"))).get();
-                    playerInfo.sendKey("playtime.top.time", new Placeholder("%count%", count), new Placeholder("%time%", Verany.formatSeconds((int) (target.getPlayTime() / 1000))), new Placeholder("%player%", target.getNameWithColor()));
+                    playerInfo.sendKey("playtime.top.time", new Placeholder("%count%", count), new Placeholder("%time%", Verany.formatSeconds((int) TimeUnit.MILLISECONDS.toSeconds(target.getPlayTime()))), new Placeholder("%player%", target.getNameWithColor()));
                     count++;
                 }
             }

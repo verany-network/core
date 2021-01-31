@@ -34,7 +34,7 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
 
         switch (strings.length) {
             case 1:
-                switch (strings[0]) {
+                switch (strings[0].toLowerCase()) {
                     case "web": {
                         IVerificationObject.VerificationType type = IVerificationObject.VerificationType.WEB;
                         if (verificationObject.isVerified(type)) {
@@ -88,7 +88,7 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                 }
                 break;
             case 2: {
-                switch (strings[0]) {
+                switch (strings[0].toLowerCase()) {
                     case "discord":
                     case "dc": {
                         String name = strings[1];
