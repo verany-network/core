@@ -34,11 +34,9 @@ public class InventoryBuilder implements IInventoryBuilder {
     @Override
     public IInventoryBuilder fillCycle(ItemStack itemStack) {
         for (int i = 0; i < 9; ++i)
-            if (!itemStackMap.containsKey(i))
-                itemStackMap.put(i, itemStack);
+            setItem(i, itemStack);
         for (int i = getSize() - 9; i < getSize(); ++i)
-            if (!itemStackMap.containsKey(i))
-                setItem(i, itemStack);
+            setItem(i, itemStack);
         int j = 0;
         for (int i = 0; i < getSize() / 9; ++i) {
             if (i != 0 && i != getSize() - 9)
@@ -56,6 +54,10 @@ public class InventoryBuilder implements IInventoryBuilder {
 
     private void setItem(int index, ItemStack itemStack) {
         itemStackMap.put(index, itemStack);
+        if (inventory != null) {
+            inventory.setItem(index, itemStack);
+            itemStackMap.remove(index);
+        }
     }
 
     @Override
@@ -77,18 +79,16 @@ public class InventoryBuilder implements IInventoryBuilder {
     public <T extends ItemStack> IInventoryBuilder fillPageItems(PageData<T> pageData, PageSwitchHandler handler) {
         List<T> list = Verany.getPageList(pageData.getCurrentPage(), pageData.getSlots().length, pageData.getItems());
         for (int i = 0; i < list.size(); i++)
-            itemStackMap.put(pageData.getSlots()[i], list.get(i));
+            setItem(pageData.getSlots()[i], list.get(i));
 
-        itemStackMap.put(pageData.getPreviousPageItem(), new ItemBuilder(leftSkull.clone()).setDisplayName("Previous Page").build());
-        itemStackMap.put(pageData.getNextPageItem(), new ItemBuilder(rightSkull.clone()).setDisplayName("Next Page").build());
+        setItem(pageData.getPreviousPageItem(), new ItemBuilder(leftSkull.clone()).setDisplayName("Previous Page").build());
+        setItem(pageData.getNextPageItem(), new ItemBuilder(rightSkull.clone()).setDisplayName("Next Page").build());
 
         if (pageData.getCurrentPageItem() != -1)
-            itemStackMap.put(pageData.getCurrentPageItem(), new ItemBuilder(Material.PAPER).setDisplayName("Current Page: " + pageData.getCurrentPage()).build());
+            setItem(pageData.getCurrentPageItem(), new ItemBuilder(Material.PAPER).setDisplayName("Current Page: " + pageData.getCurrentPage()).build());
 
         pageSwitchHandlers.put(pageData, handler);
 
-        if (inventory != null)
-            itemStackMap.forEach(inventory::setItem);
         return this;
     }
 
