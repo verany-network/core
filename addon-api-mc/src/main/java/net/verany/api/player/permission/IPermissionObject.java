@@ -45,6 +45,8 @@ public interface IPermissionObject extends IDefault<UUID> {
         }
 
         public long getTimeLeft() {
+            if (duration.getMillis() == -1)
+                return -1;
             return (timestamp + duration.getMillis()) - System.currentTimeMillis();
         }
 
