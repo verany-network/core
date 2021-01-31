@@ -136,6 +136,12 @@ public class ProtectionListener extends AbstractListener {
                             }
                         });
                     }
+                } else if (data[2].equals("meeting")) {
+                    if (data[1].equals("start")) {
+                        for (IPlayerInfo playerInfo : Verany.getOnlinePlayers())
+                            if (playerInfo.getPermissionObject().hasPermission("verany.meeting"))
+                                playerInfo.sendKey(playerInfo.getPrefix("TeamSpeak"), "core.teamspeak.meeting.start", new Placeholder("%url%", "ts3server://verany.net"));
+                    }
                 }
             }
         });
