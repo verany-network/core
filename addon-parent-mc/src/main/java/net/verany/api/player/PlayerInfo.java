@@ -531,7 +531,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private SkinData skinData;
         private Map<String, String> settingValues;
         private List<String> passedAchievements;
-        private int credits;
+        private Integer credits;
         private long onlineTime;
         private long playTime;
         private long firstJoined;

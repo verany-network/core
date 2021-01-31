@@ -24,7 +24,6 @@ public class CreditsObject implements ICreditsObject {
 
     @Override
     public void update() {
-
     }
 
     @Override
