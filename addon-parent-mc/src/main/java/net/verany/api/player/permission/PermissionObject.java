@@ -30,12 +30,17 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     public void load(UUID key) {
         this.uniqueId = key;
 
-        load(new LoadInfo<>("user_rank", PlayerRank.class, new PlayerRank(key.toString(), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME))));
+        load();
     }
 
     @Override
     public void update() {
         save("user_rank");
+        load();
+    }
+
+    private void load() {
+        load(new LoadInfo<>("user_rank", PlayerRank.class, new PlayerRank(uniqueId.toString(), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME))));
     }
 
     @Override
@@ -44,6 +49,7 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
         lastGroup.setDuration(new AbstractGroupTime.GroupDuration(lastGroup.getTimeLeft()));
         getData(PlayerRank.class).setLastGroup(lastGroup);
         getData(PlayerRank.class).setCurrentGroup(group);
+        update();
     }
 
     @Override
