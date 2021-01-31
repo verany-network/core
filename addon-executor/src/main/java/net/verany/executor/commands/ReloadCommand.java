@@ -1,6 +1,7 @@
 package net.verany.executor.commands;
 
 import net.verany.api.Verany;
+import net.verany.api.tablist.TabListObject;
 import net.verany.executor.CoreExecutor;
 import net.verany.executor.event.VeranyReloadEvent;
 import org.bukkit.Bukkit;
@@ -60,6 +61,7 @@ public class ReloadCommand implements CommandExecutor {
                     try {
                         sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§7Reloading permissions§8...");
                         Verany.loadPermissionGroups(CoreExecutor.INSTANCE);
+                        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));
                     } catch (Exception e) {
                         e.printStackTrace();
                         sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§4An error occurred while reloading permissions! [" + e + "]");
