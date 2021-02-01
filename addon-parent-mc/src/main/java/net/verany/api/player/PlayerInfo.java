@@ -21,6 +21,8 @@ import net.verany.api.actionbar.AbstractActionbar;
 import net.verany.api.actionbar.NumberActionbar;
 import net.verany.api.chat.request.ChatRequest;
 import net.verany.api.chat.request.ChatRequestCallback;
+import net.verany.api.event.events.PlayerLanguageUpdateEvent;
+import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.language.EnumLanguage;
@@ -46,6 +48,7 @@ import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
+import net.verany.api.redis.events.VeranyMessageInEvent;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.skin.SkinData;
@@ -324,7 +327,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public EnumLanguage setLanguage(EnumLanguage language) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer())));
         getData(PlayerData.class).setLanguage(language);
+        sendUpdate();
         return language;
     }
 
@@ -402,7 +407,13 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void setPrefixPattern(AbstractPrefixPattern pattern) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer())));
         getData(PlayerData.class).setPrefixPattern(pattern.getKey());
+        sendUpdate();
+    }
+
+    private void sendUpdate() {
+        Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
     }
 
     @Override
