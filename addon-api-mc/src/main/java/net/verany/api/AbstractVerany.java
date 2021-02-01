@@ -11,6 +11,7 @@ import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
+import net.verany.api.plugin.IProfileObject;
 import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
 import net.verany.api.task.AbstractTask;
@@ -37,7 +38,9 @@ public abstract class AbstractVerany {
     public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
     public static IEventManager eventManager;
+    public static IProfileObject PROFILE_OBJECT;
     private static final MainTask mainTask = new MainTask();
+    @Getter
     private static boolean loaded = false;
 
     public static RedisManager REDIS_MANAGER;
