@@ -59,6 +59,9 @@ public class CoreExecutor extends VeranyProject {
         this.getCommand("playtime").setExecutor(new PlayTimeCommand());
         this.getCommand("credits").setExecutor(new CreditsCommand());
         this.getCommand("support").setExecutor(new SupportCommand());
+        this.getCommand("support").setTabCompleter(new SupportCommand());
+        this.getCommand("rank").setExecutor(new RankCommand());
+        this.getCommand("rank").setTabCompleter(new RankCommand());
 
         FriendSetting.REQUESTS.getCategory();
         Verany.loadPermissionGroups(this);
