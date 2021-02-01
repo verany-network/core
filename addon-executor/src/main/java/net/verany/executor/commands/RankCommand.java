@@ -22,7 +22,9 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RankCommand implements CommandExecutor, TabCompleter {
@@ -32,11 +34,8 @@ public class RankCommand implements CommandExecutor, TabCompleter {
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
         if (!player.hasPermission("verany.command.rank")) {
-
             return false;
         }
-
-        // rank set <player> <rank> <time>
 
         if (strings.length == 4) {
             if (strings[0].equalsIgnoreCase("set")) {
@@ -75,9 +74,15 @@ public class RankCommand implements CommandExecutor, TabCompleter {
                 });
                 return false;
             }
-        } else if(strings.length == 2) {
+        } else if (strings.length == 2) {
             if (strings[0].equalsIgnoreCase("info")) {
-
+                Verany.PROFILE_OBJECT.getPlayer(strings[1]).ifPresentOrElse(iPlayerInfo -> {
+                    IPermissionObject permissionObject = iPlayerInfo.getPermissionObject();
+                    player.sendMessage(playerInfo.getKeyArray("core.rank.info", "~", new Placeholder("%player%", iPlayerInfo.getNameWithColor()), new Placeholder("%prefix%", playerInfo.getPrefix("RankSystem")), new Placeholder("%rank%", permissionObject.getCurrentGroup().getGroup().getColor() + permissionObject.getCurrentGroup().getGroup().getName()), new Placeholder("%time%", permissionObject.getCurrentGroup().getGroup().getColor()), new Placeholder("%group_since%", new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(permissionObject.getCurrentGroup().getTimestamp())))));
+                }, () -> {
+                    playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.player_not_found", new Placeholder("%player%", strings[1]));
+                });
+                return false;
             }
         }
 
