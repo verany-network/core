@@ -39,11 +39,6 @@ public interface IPermissionObject extends IDefault<UUID> {
             this.duration = duration;
         }
 
-        public GroupData(String group, AbstractGroupTime.GroupDuration duration) {
-            this.group = group;
-            this.duration = duration;
-        }
-
         public long getTimeLeft() {
             if (duration.getMillis() == -1)
                 return -1;
@@ -51,7 +46,7 @@ public interface IPermissionObject extends IDefault<UUID> {
         }
 
         public boolean isExpired() {
-            return getTimeLeft() <= 0;
+            return getTimeLeft() != -1 && getTimeLeft() <= 0;
         }
 
         public AbstractPermissionGroup getGroup() {
