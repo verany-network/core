@@ -1,4 +1,4 @@
-Verany Client
+Verany Core
 =============
 
 Welcome to the Core source code.
