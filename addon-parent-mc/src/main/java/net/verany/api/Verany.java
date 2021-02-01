@@ -62,12 +62,13 @@ public class Verany extends AbstractVerany {
     public static final List<MessageData> MESSAGES = new ArrayList<>();
 
     public static final IWorldObject WORLD_OBJECT = new WorldObject();
-    public static final IProfileObject PROFILE_OBJECT = new ProfileObject();
     public static final IGameModeObject GAME_MODE_OBJECT = new GameModeObject();
 
     public static void loadModule(VeranyProject project) {
         VeranyModule module = project.getClass().getAnnotation(VeranyModule.class);
 
+        if (!isLoaded())
+            PROFILE_OBJECT = new ProfileObject();
         load();
         REDIS_MANAGER = new RedisManager(new JedisPool("127.0.0.1"), new RedisPubSub());
         REDIS_MANAGER.load(project);
