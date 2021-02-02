@@ -11,11 +11,15 @@ public class PrefixPattern extends AbstractPrefixPattern {
 
     public static final List<AbstractPrefixPattern> VALUES = new ArrayList<>();
 
-    public static final AbstractPrefixPattern DEFAULT = new PrefixPattern("DEFAULT", " §8◗§7◗ §b§l{0}§3§l{1} §8▏ §r", new PrefixColor(ChatColor.AQUA, ChatColor.DARK_AQUA));
-    public static final AbstractPrefixPattern DEFAULT_GREEN = new PrefixPattern("DEFAULT_GREEN", " §8◗§7◗ §a§l{0}§2§l{1} §8▏ §r", new PrefixColor(ChatColor.GREEN, ChatColor.DARK_GREEN));
-    public static final AbstractPrefixPattern DEFAULT_ORANGE = new PrefixPattern("DEFAULT_ORANGE", " §8◗§7◗ §e§l{0}§6§l{1} §8▏ §r", new PrefixColor(ChatColor.YELLOW, ChatColor.GOLD));
-    public static final AbstractPrefixPattern BRACKETS = new PrefixPattern("BRACKETS", "§8(§b{0}§3{1}§8) §r", new PrefixColor(ChatColor.AQUA, ChatColor.DARK_AQUA));
-    public static final AbstractPrefixPattern CLEAN = new PrefixPattern("CLEAN", "§8[§f{0}{1}§8] §r", new PrefixColor(ChatColor.WHITE, ChatColor.WHITE));
+    public static final AbstractPrefixPattern WHITE = new PrefixPattern("WHITE", " §8◗§7◗ §f§l{0}{1} §8▏ §r", new PrefixColor(ChatColor.WHITE, ChatColor.WHITE));
+    public static final AbstractPrefixPattern BLUE = new PrefixPattern("BLUE", " §8◗§7◗ §b§l{0}§3§l{1} §8▏ §r", new PrefixColor(ChatColor.AQUA, ChatColor.DARK_AQUA));
+    public static final AbstractPrefixPattern GREEN = new PrefixPattern("GREEN", " §8◗§7◗ §a§l{0}§2§l{1} §8▏ §r", new PrefixColor(ChatColor.GREEN, ChatColor.DARK_GREEN));
+    public static final AbstractPrefixPattern YELLOW = new PrefixPattern("YELLOW", " §8◗§7◗ §e§l{0}§6§l{1} §8▏ §r", new PrefixColor(ChatColor.YELLOW, ChatColor.GOLD));
+    public static final AbstractPrefixPattern RED = new PrefixPattern("RED", " §8◗§7◗ §c§l{0}§4§l{1} §8▏ §r", new PrefixColor(ChatColor.RED, ChatColor.DARK_RED));
+    public static final AbstractPrefixPattern PINK = new PrefixPattern("PINK", " §8◗§7◗ §d§l{0}§5§l{1} §8▏ §r", new PrefixColor(ChatColor.LIGHT_PURPLE, ChatColor.DARK_PURPLE));
+    public static final AbstractPrefixPattern CLEAN_WHITE = new PrefixPattern("CLEAN_WHITE", "§8[§f§l{0}{1}§8] §r", new PrefixColor(ChatColor.WHITE, ChatColor.WHITE));
+    public static final AbstractPrefixPattern CLEAN_BLUE = new PrefixPattern("CLEAN_BLUE", "§8[§b§l{0}§3§l{1}§8] §r", new PrefixColor(ChatColor.AQUA, ChatColor.DARK_AQUA));
+    public static final AbstractPrefixPattern CLEAN_GREEN = new PrefixPattern("CLEAN_GREEN", "§8[§a§l{0}§2§l{1}§8] §r", new PrefixColor(ChatColor.GREEN, ChatColor.DARK_GREEN));
 
     public PrefixPattern(String key, String pattern, PrefixColor color) {
         super(key, pattern, color);
@@ -42,6 +46,7 @@ public class PrefixPattern extends AbstractPrefixPattern {
         return null;
     }
 
-    public static void load() {}
+    public static void load() {
+    }
 
 }
