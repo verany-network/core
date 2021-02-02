@@ -136,7 +136,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.DEFAULT.getKey(), new ArrayList<>(), new HashMap<>())));
+        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), new ArrayList<>(), new HashMap<>())));
     }
 
     @Override
