@@ -128,9 +128,8 @@ public class Verany extends AbstractVerany {
     }
 
     public static String getPrefix(String s) {
-        return getPrefix(s, PrefixPattern.DEFAULT);
+        return getPrefix(s, PrefixPattern.BLUE);
     }
-
 
     public static <T> List<T> getListFrom(int from, int to, List<T> objects) {
         List<T> toReturn = new ArrayList<>();
