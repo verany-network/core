@@ -46,7 +46,7 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     @Override
     public void setGroup(GroupData group) {
         GroupData lastGroup = getCurrentGroup();
-        lastGroup.setDuration(new AbstractGroupTime.GroupDuration(lastGroup.getTimeLeft()));
+        lastGroup.setDuration(new AbstractGroupTime.GroupDuration(lastGroup.getDuration().getAmount(), lastGroup.getTimeLeft(), lastGroup.getDuration().getKey()));
         getData(PlayerRank.class).setLastGroup(lastGroup);
         getData(PlayerRank.class).setCurrentGroup(group);
         update();
@@ -65,11 +65,13 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     @Override
     public void addPermission(String permission) {
         getData(PlayerRank.class).getPermissions().add(permission);
+        update();
     }
 
     @Override
     public void removePermission(String permission) {
         getData(PlayerRank.class).getPermissions().remove(permission);
+        update();
     }
 
     @Override
