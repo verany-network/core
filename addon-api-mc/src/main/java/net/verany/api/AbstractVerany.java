@@ -22,6 +22,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import org.sqlite.core.DB;
 import redis.clients.jedis.JedisPool;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.*;
@@ -287,6 +288,10 @@ public abstract class AbstractVerany {
                 return DyeColor.LIME;
             case DARK_GREEN:
                 return DyeColor.GREEN;
+            case LIGHT_PURPLE:
+                return DyeColor.PURPLE;
+            case DARK_PURPLE:
+                return DyeColor.PINK;
             case WHITE:
                 return DyeColor.WHITE;
         }
