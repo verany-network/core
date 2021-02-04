@@ -10,9 +10,9 @@ public class GameModeObject implements IGameModeObject {
     public String getRatingStars(AbstractGameMode gameMode) {
         StringBuilder stringBuilder = new StringBuilder();
         double rating = getRating(gameMode);
-        for (double d = 0; d < rating; d++)
+        for (double d = 0; d < Math.round(rating); d++)
             stringBuilder.append("★");
-        for (double d = 0; d < 5 - rating; d++)
+        for (double d = 0; d < 5 - Math.round(rating); d++)
             stringBuilder.append("☆");
         return stringBuilder.toString();
     }
