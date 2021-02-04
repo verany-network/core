@@ -2,6 +2,7 @@ package net.verany.api;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -9,6 +10,7 @@ import com.mongodb.client.model.Sorts;
 import net.verany.api.event.EventConsumer;
 import net.verany.api.gamemode.GameModeObject;
 import net.verany.api.gamemode.IGameModeObject;
+import net.verany.api.gamemode.VeranyGameMode;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.item.VeranyItem;
@@ -70,6 +72,7 @@ public class Verany extends AbstractVerany {
         if (!isLoaded())
             PROFILE_OBJECT = new ProfileObject();
         load();
+
         REDIS_MANAGER = new RedisManager(new JedisPool("127.0.0.1"), new RedisPubSub());
         REDIS_MANAGER.load(project);
 
@@ -101,8 +104,14 @@ public class Verany extends AbstractVerany {
             System.out.println(permissionGroup.getName() + " loaded");
         }
         for (AbstractPermissionGroup value : PermissionGroup.VALUES)
-            for (AbstractPermissionGroup child : value.getChildren())
+            for (AbstractPermissionGroup child : value.getChildren()) {
                 value.getPermissions().addAll(child.getPermissions());
+                System.out.println(value.getName() + "~" + child.getName());
+            }
+    }
+
+    public static void updatePermissionGroup(VeranyProject project, AbstractPermissionGroup group) {
+        project.getConnection().getCollection("rank", "groups").updateOne(new BasicDBObject("name", group.getName()), new BasicDBObject("$set", new BasicDBObject("permissions", group.getPermissions())));
     }
 
     public static String getPrefix(String s, AbstractPrefixPattern pattern) {
