@@ -8,9 +8,6 @@ commands:
   reload:
     aliases: [rl]
   verify:
-  prefix:
-    aliases:
-      - pr
   afk:
   playtime:
     aliases:
