@@ -98,6 +98,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public void load(UUID key) {
         this.uniqueId = key;
 
+        load();
+
         permissionObject = new PermissionObject(getProject());
         permissionObject.load(key);
 
@@ -112,8 +114,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         afkObject = new AfkObject(getProject());
         afkObject.load(key);
-
-        load();
 
         creditsObject = new CreditsObject(this);
         creditsObject.load(key);
