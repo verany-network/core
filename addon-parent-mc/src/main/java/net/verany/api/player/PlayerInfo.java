@@ -49,13 +49,14 @@ import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.redis.events.VeranyMessageInEvent;
+import net.verany.api.setting.Settings;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.skin.SkinData;
+import net.verany.api.sound.AbstractVeranySound;
+import net.verany.api.sound.VeranySound;
 import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -522,6 +523,37 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public int getGlobalRank() {
         return 1;
+    }
+
+    @Override
+    public void playSound(Location location, Sound sound) {
+        playSound(location, sound, 1, 1);
+    }
+
+    @Override
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        if (getSettingValue(Settings.INVENTORY_SOUNDS))
+            player.playSound(location, sound, volume, pitch);
+    }
+
+    @Override
+    public void playSound(Sound sound) {
+        playSound(player.getLocation(), sound, 1, 1);
+    }
+
+    @Override
+    public void playSound(Sound sound, float volume, float pitch) {
+        playSound(player.getLocation(), sound, volume, pitch);
+    }
+
+    @Override
+    public void playSound(AbstractVeranySound sound) {
+        playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
+    }
+
+    @Override
+    public void playSound(Location location, AbstractVeranySound sound) {
+        playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
     }
 
     private int getDataByText(String text) {
