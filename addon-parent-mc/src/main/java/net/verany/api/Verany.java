@@ -112,6 +112,7 @@ public class Verany extends AbstractVerany {
 
     public static void updatePermissionGroup(VeranyProject project, AbstractPermissionGroup group) {
         project.getConnection().getCollection("rank", "groups").updateOne(new BasicDBObject("name", group.getName()), new BasicDBObject("$set", new BasicDBObject("permissions", group.getPermissions())));
+        project.getConnection().getCollection("rank", "groups").updateOne(new BasicDBObject("name", group.getName()), new BasicDBObject("$set", new BasicDBObject("children", group.getStringChildren())));
     }
 
     public static String getPrefix(String s, AbstractPrefixPattern pattern) {
