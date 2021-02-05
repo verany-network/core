@@ -28,8 +28,8 @@ public class CoreExecutor extends VeranyProject {
     @Override
     public void onEnable() {
         Verany.loadModule(this);
-        INSTANCE = this;
 
+        INSTANCE = this;
         init();
     }
 
@@ -52,7 +52,6 @@ public class CoreExecutor extends VeranyProject {
         this.getCommand("reload").setExecutor(new ReloadCommand());
         this.getCommand("verify").setExecutor(new VerifyCommand());
         this.getCommand("verify").setTabCompleter(new VerifyCommand());
-        this.getCommand("prefix").setExecutor(new PrefixCommand());
         this.getCommand("afk").setExecutor(new AFKCommand());
         this.getCommand("language").setExecutor(new LanguageCommand());
         this.getCommand("onlinetime").setExecutor(new OnlineTimeCommand());
