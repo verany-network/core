@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.verany.api.AbstractVerany;
+import net.verany.api.player.IPlayerInfo;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -29,4 +31,15 @@ public abstract class AbstractPermissionGroup {
         return toReturn;
     }
 
+    public List<String> getStringChildren() {
+        return children;
+    }
+
+    public int getPlayersInGroup() {
+        int toReturn = 0;
+        for(IPlayerInfo playerInfo : AbstractVerany.PROFILE_OBJECT.getRegisteredPlayers())
+            if(playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName().equals(name))
+                toReturn++;
+        return toReturn;
+    }
 }
