@@ -38,6 +38,16 @@ public class RankCommand implements CommandExecutor, TabCompleter {
 
         if (strings.length == 2) {
             if (strings[0].equalsIgnoreCase("info")) {
+                AbstractPermissionGroup permissionGroup = PermissionGroup.getGroupByName(strings[1].replace("-", " "));
+                if (permissionGroup != null) {
+                    String rank = permissionGroup.getColor() + permissionGroup.getName();
+                    String permissions = permissionGroup.getPermissions().toString();
+                    String children = permissionGroup.getStringChildren().toString();
+                    String prefix = playerInfo.getPrefix("RankSystem");
+                    int playersInGroup = permissionGroup.getPlayersInGroup();
+                    player.sendMessage(playerInfo.getKeyArray("core.rank.info.group", "~", new Placeholder("%prefix%", prefix), new Placeholder("%rank%", rank), new Placeholder("%permissions%", permissions), new Placeholder("%children%", children), new Placeholder("%players_in_group%", Verany.asDecimal(playersInGroup))));
+                    return false;
+                }
                 Verany.PROFILE_OBJECT.getPlayer(strings[1]).ifPresentOrElse(iPlayerInfo -> {
                     IPermissionObject permissionObject = iPlayerInfo.getPermissionObject();
                     String playerName = iPlayerInfo.getNameWithColor();
@@ -153,28 +163,30 @@ public class RankCommand implements CommandExecutor, TabCompleter {
                 AbstractPermissionGroup permissionGroup = PermissionGroup.getGroupByName(strings[1].replace("-", " "));
                 if (permissionGroup != null) {
                     AbstractPermissionGroup childrenGroup = PermissionGroup.getGroupByName(strings[3].replace("-", " "));
-                    if (!playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName().equals(PermissionGroup.ADMINISTRATOR.getName()) && (permissionGroup.getName().equals(PermissionGroup.ADMINISTRATOR.getName()) || permissionGroup.getPermissions().contains("*") || childrenGroup.getName().equals(PermissionGroup.ADMINISTRATOR.getName()))) {
-                        playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.not.allowed", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()));
+                    if (childrenGroup != null) {
+                        if (!playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName().equals(PermissionGroup.ADMINISTRATOR.getName()) && (permissionGroup.getName().equals(PermissionGroup.ADMINISTRATOR.getName()) || permissionGroup.getPermissions().contains("*") || childrenGroup.getName().equals(PermissionGroup.ADMINISTRATOR.getName()))) {
+                            playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.not.allowed", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()));
+                            return false;
+                        }
+                        if (strings[2].equalsIgnoreCase("add")) {
+                            if (permissionGroup.getStringChildren().contains(childrenGroup.getName())) {
+                                playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.already_has_children", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%children%", childrenGroup.getColor() + childrenGroup.getName()));
+                                return false;
+                            }
+                            permissionGroup.getStringChildren().add(childrenGroup.getName());
+                            Verany.updatePermissionGroup(CoreExecutor.INSTANCE, permissionGroup);
+                            playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.added.children", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%children%", childrenGroup.getColor() + childrenGroup.getName()));
+                        } else if (strings[2].equalsIgnoreCase("remove")) {
+                            if (!permissionGroup.getStringChildren().contains(childrenGroup.getName())) {
+                                playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.does_not_has_children", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%children%", childrenGroup.getColor() + childrenGroup.getName()));
+                                return false;
+                            }
+                            permissionGroup.getStringChildren().remove(childrenGroup.getName());
+                            Verany.updatePermissionGroup(CoreExecutor.INSTANCE, permissionGroup);
+                            playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.removed.children", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%children%", childrenGroup.getColor() + childrenGroup.getName()));
+                        }
                         return false;
                     }
-                    /*if (strings[2].equalsIgnoreCase("add")) {
-                        if (permissionGroup.getPermissions().contains(permission)) {
-                            playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.already_has_permission", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%permission%", permission));
-                            return false;
-                        }
-                        permissionGroup.getPermissions().add(permission);
-                        Verany.updatePermissionGroup(CoreExecutor.INSTANCE, permissionGroup);
-                        playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.added.children", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%permission%", permission));
-                    } else if (strings[2].equalsIgnoreCase("remove")) {
-                        if (!permissionGroup.getPermissions().contains(permission)) {
-                            playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.does_not_has_permission", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%permission%", permission));
-                            return false;
-                        }
-                        permissionGroup.getPermissions().remove(permission);
-                        Verany.updatePermissionGroup(CoreExecutor.INSTANCE, permissionGroup);
-                        playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.group.removed.permission", new Placeholder("%group%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%permission%", permission));
-                    }*/
-                    return false;
                 }
             }
         }
