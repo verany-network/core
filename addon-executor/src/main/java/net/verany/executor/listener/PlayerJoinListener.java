@@ -50,13 +50,13 @@ public class PlayerJoinListener extends AbstractListener {
                 playerInfo = new PlayerInfo(project, player.getName());
                 Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
             }
-            playerInfo.load(player.getUniqueId());
+            Bukkit.getScheduler().runTaskLater(project, () -> playerInfo.load(player.getUniqueId()), 5);
             playerInfo.setPlayer(player);
 
             try {
                 Field field = CraftHumanEntity.class.getDeclaredField("perm");
                 field.setAccessible(true);
-                Field modifiersField  = field.getClass().getDeclaredField("modifiers");
+                Field modifiersField = field.getClass().getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);
                 modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
                 field.set(player, new Permissible(player));
