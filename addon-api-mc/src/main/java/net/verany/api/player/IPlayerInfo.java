@@ -20,9 +20,8 @@ import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import net.verany.api.sound.AbstractVeranySound;
+import org.bukkit.*;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
@@ -123,5 +122,17 @@ public interface IPlayerInfo extends IVeranyPlayer {
     IAFKObject getAfkObject();
 
     int getGlobalRank();
+
+    void playSound(Location location, Sound sound);
+
+    void playSound(Location location, Sound sound, float volume, float pitch);
+
+    void playSound(Sound sound);
+
+    void playSound(Sound sound, float volume, float pitch);
+
+    void playSound(AbstractVeranySound sound);
+
+    void playSound(Location location, AbstractVeranySound sound);
 
 }
