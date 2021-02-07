@@ -17,8 +17,6 @@ public interface IVeranyPlayer extends IDefault<UUID> {
 
     IPermissionObject getPermissionObject();
 
-    IPartyObject getPartyObject();
-
     IVerificationObject getVerificationObject();
 
     String getName();

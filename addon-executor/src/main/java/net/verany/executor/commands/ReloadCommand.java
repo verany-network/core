@@ -118,21 +118,6 @@ public class ReloadCommand implements CommandExecutor {
                         else
                             sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§cReloading Bukkit failed!");
                     }
-                } else if (args[0].equalsIgnoreCase("manager")) {
-                    reloadType = VeranyReloadEvent.ReloadType.MANAGER;
-                    try {
-                        sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§7Reloading Manager§8...");
-                        //Verany.sendPacket(new CommandToManagerPacket(Verany.SERVER_NAME, CommandToManagerPacket.ActionType.RELOAD));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§4An error occurred while reloading Manager! [" + e + "]");
-                        success = false;
-                    }/* finally {
-                        if (success)
-                            sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§aReloading Manager success!");
-                        else
-                            sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§cReloading Manager failed!");
-                    }*/
                 } else if (args[0].equalsIgnoreCase("locations")) {
                     reloadType = VeranyReloadEvent.ReloadType.LOCATIONS;
                     try {
@@ -163,7 +148,7 @@ public class ReloadCommand implements CommandExecutor {
                         case "messages":
                             reloadType = VeranyReloadEvent.ReloadType.PROXY_MESSAGES;
                             sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§7Reloading proxy messages§8...");
-
+                            Verany.REDIS_MANAGER.sendMessage("update~messages~" + sender.getName());
                             break;
                         case "users":
                             reloadType = VeranyReloadEvent.ReloadType.PROXY_USERS;

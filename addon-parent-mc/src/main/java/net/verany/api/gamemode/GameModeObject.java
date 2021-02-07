@@ -3,6 +3,13 @@ package net.verany.api.gamemode;
 import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
+import net.verany.api.gamemode.server.SimplifiedServerInfo;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class GameModeObject implements IGameModeObject {
 
@@ -34,6 +41,30 @@ public class GameModeObject implements IGameModeObject {
             for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(s))
                 i += serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).get();
         return i;
+    }
+
+    @Override
+    public void getOnlineServers(Consumer<List<SimplifiedServerInfo>> consumer) {
+        CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesAsync()
+                .onComplete((collectionITask, serviceInfoSnapshots) -> consumer.accept(
+                        serviceInfoSnapshots.stream()
+                                .map(this::createServerInfo)
+                                .filter(Objects::isNull)
+                                .collect(Collectors.toList())
+                ))
+                .onFailure(throwable -> consumer.accept(Collections.emptyList()))
+                .onCancelled(task -> consumer.accept(Collections.emptyList()));
+    }
+
+    private SimplifiedServerInfo createServerInfo(ServiceInfoSnapshot serviceInfoSnapshot) {
+        return serviceInfoSnapshot.getProperty(BridgeServiceProperty.IS_ONLINE).orElse(false) ? new SimplifiedServerInfo(
+                serviceInfoSnapshot.getServiceId().getTaskName(),
+                serviceInfoSnapshot.getServiceId().getName(),
+                serviceInfoSnapshot.getServiceId().getTaskServiceId(),
+                serviceInfoSnapshot.getServiceId().getNodeUniqueId(),
+                serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).orElse(0)
+        ) : null;
+
     }
 
 }

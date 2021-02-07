@@ -44,7 +44,7 @@ public class RankCommand implements CommandExecutor, TabCompleter {
                     String permissions = permissionGroup.getPermissions().toString();
                     String children = permissionGroup.getStringChildren().toString();
                     String prefix = playerInfo.getPrefix("RankSystem");
-                    int playersInGroup = permissionGroup.getPlayersInGroup();
+                    int playersInGroup = permissionGroup.getPlayersInGroup().size();
                     player.sendMessage(playerInfo.getKeyArray("core.rank.info.group", "~", new Placeholder("%prefix%", prefix), new Placeholder("%rank%", rank), new Placeholder("%permissions%", permissions), new Placeholder("%children%", children), new Placeholder("%players_in_group%", Verany.asDecimal(playersInGroup))));
                     return false;
                 }

@@ -2,10 +2,12 @@ package net.verany.api.player.permission;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.verany.api.Verany;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.leveling.ICreditsObject;
 import net.verany.api.player.permission.duration.AbstractGroupTime;
 import net.verany.api.player.permission.duration.GroupTime;
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public class PermissionObject extends DatabaseLoader implements IPermissionObject {
 
+    private PlayerInfo playerInfo;
     private UUID uniqueId;
 
     public PermissionObject(VeranyProject project) {
@@ -29,6 +32,7 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     @Override
     public void load(UUID key) {
         this.uniqueId = key;
+        playerInfo = (PlayerInfo) Verany.PROFILE_OBJECT.getPlayer(key).get();
 
         load();
     }
@@ -37,6 +41,7 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     public void update() {
         save("user_rank");
         load();
+        playerInfo.sendUpdate();
     }
 
     private void load() {
@@ -50,6 +55,7 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
         getData(PlayerRank.class).setLastGroup(lastGroup);
         getData(PlayerRank.class).setCurrentGroup(group);
         update();
+
     }
 
     @Override

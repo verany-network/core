@@ -1,7 +1,10 @@
 package net.verany.api.setting;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.verany.api.settings.AbstractSetting;
+import net.verany.api.sound.AbstractVeranySound;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -17,16 +20,22 @@ public abstract class Settings {
     public static final AbstractSetting<Boolean> MUSIC_SPECIAL_SOUNDS = new SettingWrapper<>("music_special", "SOUND", Boolean.class, true, Material.NOTE_BLOCK, true);
     public static final AbstractSetting<Boolean> INVENTORY_SOUNDS = new SettingWrapper<>("inventory_sounds", "SOUND", Boolean.class, true, Material.CHEST, true);
     //public static final AbstractSetting<Boolean> TELEPORT_SOUND = new SettingWrapper<>("teleportSound", "sounds", Boolean.class, true, Material.CHEST, true);
-
-
+    public static final AbstractSetting<SoundSettingList> HOTBAR_SOUNDS = new SettingWrapper<>("hotbar_sounds", "SOUND", SoundSettingList.class, new SoundSettingList(false, new ArrayList<>()), Material.HOPPER, true);
 
     public static List<AbstractSetting<?>> getSettingByCategory(String category) {
         List<AbstractSetting<?>> toReturn = new ArrayList<>();
-        VALUES.forEach(abstractChunkSetting -> {
-            if (abstractChunkSetting.getCategory().equalsIgnoreCase(category))
-                toReturn.add(abstractChunkSetting);
+        VALUES.forEach(abstractSetting -> {
+            if (abstractSetting.getCategory().equalsIgnoreCase(category))
+                toReturn.add(abstractSetting);
         });
         return toReturn;
+    }
+
+    public static AbstractSetting<?> getSettingByMaterial(Material material) {
+        for (AbstractSetting<?> value : VALUES)
+            if (value.getMaterial().equals(material))
+                return value;
+        return null;
     }
 
     public static <T> AbstractSetting<T> getSettingByKey(String key) {
@@ -49,6 +58,14 @@ public abstract class Settings {
         for (String key : keys)
             toReturn.add(getSettingByKey(key));
         return toReturn;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class SoundSettingList {
+        private final boolean enabled;
+        private final List<AbstractVeranySound> sounds;
     }
 
 }

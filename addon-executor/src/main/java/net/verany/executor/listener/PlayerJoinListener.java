@@ -50,7 +50,7 @@ public class PlayerJoinListener extends AbstractListener {
                 playerInfo = new PlayerInfo(project, player.getName());
                 Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
             }
-            Bukkit.getScheduler().runTaskLater(project, () -> playerInfo.load(player.getUniqueId()), 5);
+            playerInfo.load(player.getUniqueId());
             playerInfo.setPlayer(player);
 
             try {

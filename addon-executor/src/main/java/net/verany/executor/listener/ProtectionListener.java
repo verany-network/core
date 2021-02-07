@@ -1,5 +1,6 @@
 package net.verany.executor.listener;
 
+import com.google.gson.Gson;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -13,6 +14,7 @@ import net.verany.api.npc.INPC;
 import net.verany.api.npc.reader.PacketReader;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.redis.events.VeranyMessageInEvent;
 import net.verany.executor.CoreExecutor;
@@ -142,6 +144,12 @@ public class ProtectionListener extends AbstractListener {
                             if (playerInfo.getPermissionObject().hasPermission("verany.meeting"))
                                 playerInfo.sendKey(playerInfo.getPrefix("TeamSpeak"), "core.teamspeak.meeting.start", new Placeholder("%url%", "ts3server://verany.net"));
                     }
+                }
+            } else if (data[0].equals("update")) {
+                if (data[1].equals("player")) {
+                    UUID uuid = UUID.fromString(data[2]);
+                    if (Bukkit.getPlayer(uuid) == null)
+                        ((PlayerInfo) Verany.PROFILE_OBJECT.getPlayer(uuid).get()).update(PlayerInfo.PlayerData.class, new Gson().fromJson(data[3], PlayerInfo.PlayerData.class));
                 }
             }
         });

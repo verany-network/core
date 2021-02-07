@@ -34,6 +34,7 @@ import net.verany.api.module.VeranyProject;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.afk.AfkObject;
 import net.verany.api.player.afk.IAFKObject;
+import net.verany.api.player.clan.IClanObject;
 import net.verany.api.player.friend.FriendObject;
 import net.verany.api.player.friend.IFriendObject;
 import net.verany.api.player.leveling.CreditsObject;
@@ -82,6 +83,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private ILevelObject levelObject;
     private IFriendObject friendObject;
     private IPartyObject partyObject;
+    private IClanObject clanObject;
     private IVerificationObject verificationObject;
     private IAFKObject afkObject;
 
@@ -99,8 +101,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public void load(UUID key) {
         this.uniqueId = key;
 
-        load();
-
         permissionObject = new PermissionObject(getProject());
         permissionObject.load(key);
 
@@ -115,6 +115,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         afkObject = new AfkObject(getProject());
         afkObject.load(key);
+
+        load();
 
         creditsObject = new CreditsObject(this);
         creditsObject.load(key);
@@ -137,7 +139,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), new ArrayList<>(), new HashMap<>())));
+        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
     }
 
     @Override
@@ -413,7 +415,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         sendUpdate();
     }
 
-    private void sendUpdate() {
+    public void sendUpdate() {
         Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
     }
 
@@ -556,6 +558,12 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
     }
 
+    @Override
+    public void createLog(PlayerLog log) {
+        getData(PlayerData.class).addLog(log);
+        update();
+    }
+
     private int getDataByText(String text) {
         int amount = 0;
         for (AbstractActionbar data : actionbarQueue)
@@ -579,15 +587,18 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private long playTime;
         private long firstJoined;
         private long lastOnline;
+        private List<String> logs;
 
-        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, List<String> passedAchievements, Map<String, String> settingValues) {
+        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, int credits, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
             super(key.toString());
             this.name = name;
             this.language = language;
             this.prefixPattern = prefixPattern;
             this.settingValues = settingValues;
             this.passedAchievements = passedAchievements;
+            this.credits = credits;
             this.firstJoined = System.currentTimeMillis();
+            this.logs = logs;
         }
 
         public AbstractPrefixPattern getPrefixPattern() {
@@ -596,6 +607,10 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         public <T> void setSettingValue(AbstractSetting<T> setting, T value) {
             settingValues.put(setting.getKey(), new Gson().toJson(value));
+        }
+
+        public void addLog(PlayerLog log) {
+            logs.add(new Gson().toJson(log));
         }
 
         public <T> T getSettingValue(AbstractSetting<T> setting) {

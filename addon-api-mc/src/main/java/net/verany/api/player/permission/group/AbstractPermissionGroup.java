@@ -35,11 +35,11 @@ public abstract class AbstractPermissionGroup {
         return children;
     }
 
-    public int getPlayersInGroup() {
-        int toReturn = 0;
-        for(IPlayerInfo playerInfo : AbstractVerany.PROFILE_OBJECT.getRegisteredPlayers())
-            if(playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName().equals(name))
-                toReturn++;
+    public List<IPlayerInfo> getPlayersInGroup() {
+        List<IPlayerInfo> toReturn = new ArrayList<>();
+        for (IPlayerInfo playerInfo : AbstractVerany.PROFILE_OBJECT.getRegisteredPlayers())
+            if (playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName().equals(name))
+                toReturn.add(playerInfo);
         return toReturn;
     }
 }
