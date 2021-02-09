@@ -83,7 +83,7 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                         break;
                     }
                     default:
-                        player.sendMessage(playerInfo.getKeyArray("verify.help", "~", new Placeholder("%prefix%", Verany.getPrefix("Verification", playerInfo.getPrefixPattern()))));
+                        player.sendMessage(playerInfo.getKeyArray("verify.help", '~', new Placeholder("%prefix%", Verany.getPrefix("Verification", playerInfo.getPrefixPattern()))));
                         break;
                 }
                 break;
@@ -128,13 +128,13 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                     }
 
                     default:
-                        player.sendMessage(playerInfo.getKeyArray("verify.help", "~", new Placeholder("%prefix%", Verany.getPrefix("Verification", playerInfo.getPrefixPattern()))));
+                        player.sendMessage(playerInfo.getKeyArray("verify.help", '~', new Placeholder("%prefix%", Verany.getPrefix("Verification", playerInfo.getPrefixPattern()))));
                         break;
                 }
                 break;
             }
             default:
-                player.sendMessage(playerInfo.getKeyArray("verify.help", "~", new Placeholder("%prefix%", Verany.getPrefix("Verification", playerInfo.getPrefixPattern()))));
+                player.sendMessage(playerInfo.getKeyArray("verify.help", '~', new Placeholder("%prefix%", Verany.getPrefix("Verification", playerInfo.getPrefixPattern()))));
                 break;
         }
         return false;
