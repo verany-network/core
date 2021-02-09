@@ -4,6 +4,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 import net.verany.api.Verany;
 import net.verany.api.event.AbstractListener;
+import net.verany.api.event.events.PlayerLoadCompleteEvent;
 import net.verany.api.message.AbstractComponentBuilder;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
@@ -44,12 +45,16 @@ public class PlayerJoinListener extends AbstractListener {
 
             IPlayerInfo playerInfo;
             Optional<IPlayerInfo> playerInfoOptional = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId());
-            if (playerInfoOptional.isPresent()) {
-                playerInfo = playerInfoOptional.get();
-            } else {
+            if (playerInfoOptional.isEmpty()) {
                 playerInfo = new PlayerInfo(project, player.getName());
                 Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
             }
+        });
+
+        Verany.registerListener(project, PlayerJoinEvent.class, event -> {
+            Player player = event.getPlayer();
+
+            IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
             playerInfo.load(player.getUniqueId());
             playerInfo.setPlayer(player);
 
@@ -63,14 +68,8 @@ public class PlayerJoinListener extends AbstractListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CoreExecutor.INSTANCE, () -> Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player)));
         });
-
-        Verany.registerListener(project, PlayerJoinEvent.class, event -> {
-            Player player = event.getPlayer();
-
-            IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
-            playerInfo.setSkinData();
-        }, EventPriority.HIGHEST);
 
         Verany.registerListener(project, PlayerJoinEvent.class, event -> {
             Player player = event.getPlayer();
