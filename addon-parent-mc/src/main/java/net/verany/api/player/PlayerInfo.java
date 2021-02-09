@@ -74,6 +74,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private final String name;
 
     private final Map<String, Integer> pageMap = new HashMap<>();
+    private final Map<AbstractSetting<?>, Object> tempSettingMap = new HashMap<>();
     private final List<AbstractActionbar> actionbarQueue = new ArrayList<>();
     private final List<BossBar> activeBossBars = new ArrayList<>();
 
@@ -101,7 +102,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public void load(UUID key) {
         this.uniqueId = key;
 
-        permissionObject = new PermissionObject(getProject());
+        permissionObject = new PermissionObject(this, getProject());
         permissionObject.load(key);
 
         friendObject = new FriendObject(getProject());
@@ -123,6 +124,12 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         if (!name.equals(getName()))
             getData(PlayerData.class).setName(name);
+
+        if (Bukkit.getPlayer(key) != null) {
+            player = Bukkit.getPlayer(uniqueId);
+            setSkinData();
+            sendUpdate();
+        }
     }
 
     @Override
@@ -144,7 +151,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public String getName() {
-        return getData(PlayerData.class).getName();
+        return name;
     }
 
     @Override
@@ -362,13 +369,13 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
-    public String[] getKeyArray(String key, String regex, Placeholder... placeholders) {
+    public String[] getKeyArray(String key, char regex, Placeholder... placeholders) {
         return getKeyArray(key, regex, getPrefixPattern(), placeholders);
     }
 
     @Override
-    public String[] getKeyArray(String key, String regex, AbstractPrefixPattern prefixPattern, Placeholder... placeholders) {
-        return getKey(key, prefixPattern, placeholders).split(regex);
+    public String[] getKeyArray(String key, char regex, AbstractPrefixPattern prefixPattern, Placeholder... placeholders) {
+        return getKey(key, prefixPattern, placeholders).split(Character.toString(regex));
     }
 
     @Override
@@ -556,6 +563,18 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public void playSound(Location location, AbstractVeranySound sound) {
         playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
+    }
+
+    @Override
+    public <T> void setTempSetting(AbstractSetting<T> setting, T value) {
+        tempSettingMap.put(setting, value);
+    }
+
+    @Override
+    public <T> T getTempSetting(AbstractSetting<T> setting) {
+        if (!tempSettingMap.containsKey(setting))
+            setTempSetting(setting, setting.getDefaultValue());
+        return (T) tempSettingMap.get(setting);
     }
 
     @Override
