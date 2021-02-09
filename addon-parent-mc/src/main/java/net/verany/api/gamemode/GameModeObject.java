@@ -5,6 +5,7 @@ import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
 import net.verany.api.gamemode.server.SimplifiedServerInfo;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -36,10 +37,18 @@ public class GameModeObject implements IGameModeObject {
 
     @Override
     public int getOnlinePlayers(AbstractGameMode gameMode, String... groups) {
+        return getOnlinePlayers(gameMode, groups, new String[]{});
+    }
+
+    @Override
+    public int getOnlinePlayers(AbstractGameMode gameMode, String[] groups, String[] servers) {
         int i = 0;
         for (String s : groups)
-            for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(s))
+            for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(s)) {
+                List<String> serversList = Arrays.asList(servers);
+                if (!serversList.isEmpty() && !serversList.contains(serviceInfoSnapshot.getName())) continue;
                 i += serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).get();
+            }
         return i;
     }
 
