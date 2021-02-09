@@ -15,6 +15,8 @@ public interface IGameModeObject {
 
     int getOnlinePlayers(AbstractGameMode gameMode, String... groups);
 
+    int getOnlinePlayers(AbstractGameMode gameMode, String[] groups, String[] servers);
+
     void getOnlineServers(Consumer<List<SimplifiedServerInfo>> consumer);
 
 }
