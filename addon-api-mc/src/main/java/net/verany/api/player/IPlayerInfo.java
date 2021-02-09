@@ -143,6 +143,10 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     void playSound(Location location, AbstractVeranySound sound);
 
+    <T> void setTempSetting(AbstractSetting<T> setting, T value);
+
+    <T> T getTempSetting(AbstractSetting<T> setting);
+
     IFriendObject getFriendObject();
 
     IPartyObject getPartyObject();
