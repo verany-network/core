@@ -101,13 +101,10 @@ public class Verany extends AbstractVerany {
             AbstractPermissionGroup permissionGroup = GSON.fromJson(document.toJson(), PermissionGroup.class);
             if (PermissionGroup.getGroupByName(permissionGroup.getName()) == null)
                 PermissionGroup.VALUES.add(permissionGroup);
-            System.out.println(permissionGroup.getName() + " loaded");
         }
         for (AbstractPermissionGroup value : PermissionGroup.VALUES)
-            for (AbstractPermissionGroup child : value.getChildren()) {
+            for (AbstractPermissionGroup child : value.getChildren())
                 value.getPermissions().addAll(child.getPermissions());
-                System.out.println(value.getName() + "~" + child.getName());
-            }
     }
 
     public static void updatePermissionGroup(VeranyProject project, AbstractPermissionGroup group) {
@@ -248,6 +245,10 @@ public class Verany extends AbstractVerany {
 
     public SocketClient getNewClient(String address, int port) {
         return new SocketClient(address, port);
+    }
+
+    public static void sync(VeranyProject project, Runnable runnable) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(project, runnable);
     }
 
     public static List<VeranyItem> toVeranyItem(List<ItemStack> itemStacks) {
