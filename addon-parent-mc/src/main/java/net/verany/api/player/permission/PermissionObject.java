@@ -22,17 +22,17 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public class PermissionObject extends DatabaseLoader implements IPermissionObject {
 
-    private PlayerInfo playerInfo;
+    private final PlayerInfo playerInfo;
     private UUID uniqueId;
 
-    public PermissionObject(VeranyProject project) {
+    public PermissionObject(PlayerInfo playerInfo, VeranyProject project) {
         super(project, "players", "rank");
+        this.playerInfo = playerInfo;
     }
 
     @Override
     public void load(UUID key) {
         this.uniqueId = key;
-        playerInfo = (PlayerInfo) Verany.PROFILE_OBJECT.getPlayer(key).get();
 
         load();
     }
