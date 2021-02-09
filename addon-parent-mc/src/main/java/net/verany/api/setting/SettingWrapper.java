@@ -13,4 +13,11 @@ public class SettingWrapper<T> extends AbstractSetting<T> {
         super(key, category, tClass, defaultValue, material, inInventory);
         Settings.VALUES.add(this);
     }
+
+    public static class TempSettingWrapper<T> extends AbstractSetting<T> {
+
+        public TempSettingWrapper(String key, Class<T> tClass, T defaultValue) {
+            super(key, "temp_" + key, tClass, defaultValue, Material.AIR);
+        }
+    }
 }
