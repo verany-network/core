@@ -45,9 +45,9 @@ public interface IVeranyPlayer extends IDefault<UUID> {
 
     String getKey(String key, AbstractPrefixPattern prefixPattern, Placeholder... placeholders);
 
-    String[] getKeyArray(String key, String regex, Placeholder... placeholders);
+    String[] getKeyArray(String key, char regex, Placeholder... placeholders);
 
-    String[] getKeyArray(String key, String regex, AbstractPrefixPattern prefixPattern, Placeholder... placeholders);
+    String[] getKeyArray(String key, char regex, AbstractPrefixPattern prefixPattern, Placeholder... placeholders);
 
     String sendKey(String key, Placeholder... placeholders);
 
