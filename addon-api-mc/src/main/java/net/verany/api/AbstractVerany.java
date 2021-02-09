@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.verany.api.adapter.InterfaceAdapter;
 import net.verany.api.event.IEventManager;
+import net.verany.api.gamemode.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
 import net.verany.api.player.IPlayerInfo;
@@ -16,6 +17,7 @@ import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -38,6 +40,7 @@ public abstract class AbstractVerany {
     public static final List<Loader> LOADERS = new ArrayList<>();
     public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
+    public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
     public static IEventManager eventManager;
     public static IProfileObject PROFILE_OBJECT;
     private static final MainTask mainTask = new MainTask();
@@ -55,6 +58,7 @@ public abstract class AbstractVerany {
     }
 
     public static void shutdown() {
+        Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("Shutdown"));
         mainTask.setRunning(false);
         LOADERS.forEach(Loader::save);
     }
@@ -260,6 +264,17 @@ public abstract class AbstractVerany {
             nameBuilder.append(color).append(s.split("")[0].toUpperCase()).append(s.substring(1).toLowerCase()).append(" ");
         name = nameBuilder.toString();
         return name;
+    }
+
+    public static void addCountdown(AbstractCountdown countdown) {
+        COUNTDOWNS.add(countdown);
+    }
+
+    public static AbstractCountdown getCountdown(String key) {
+        for (AbstractCountdown countdown : COUNTDOWNS)
+            if (countdown.getKey().equalsIgnoreCase(key))
+                return countdown;
+        return null;
     }
 
     public static String round(double i) {
