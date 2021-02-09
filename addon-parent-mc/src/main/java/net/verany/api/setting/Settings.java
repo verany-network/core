@@ -22,6 +22,8 @@ public abstract class Settings {
     //public static final AbstractSetting<Boolean> TELEPORT_SOUND = new SettingWrapper<>("teleportSound", "sounds", Boolean.class, true, Material.CHEST, true);
     public static final AbstractSetting<SoundSettingList> HOTBAR_SOUNDS = new SettingWrapper<>("hotbar_sounds", "SOUND", SoundSettingList.class, new SoundSettingList(false, new ArrayList<>()), Material.HOPPER, true);
 
+    public static final AbstractSetting<Boolean> SCOREBOARD_ANIMATION = new SettingWrapper<>("scoreboard_animation", "ANIMATIONS", Boolean.class, true, Material.PAPER, true);
+
     public static List<AbstractSetting<?>> getSettingByCategory(String category) {
         List<AbstractSetting<?>> toReturn = new ArrayList<>();
         VALUES.forEach(abstractSetting -> {
