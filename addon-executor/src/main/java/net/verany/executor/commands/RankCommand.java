@@ -45,7 +45,7 @@ public class RankCommand implements CommandExecutor, TabCompleter {
                     String children = permissionGroup.getStringChildren().toString();
                     String prefix = playerInfo.getPrefix("RankSystem");
                     int playersInGroup = permissionGroup.getPlayersInGroup().size();
-                    player.sendMessage(playerInfo.getKeyArray("core.rank.info.group", "~", new Placeholder("%prefix%", prefix), new Placeholder("%rank%", rank), new Placeholder("%permissions%", permissions), new Placeholder("%children%", children), new Placeholder("%players_in_group%", Verany.asDecimal(playersInGroup))));
+                    player.sendMessage(playerInfo.getKeyArray("core.rank.info.group", '~', new Placeholder("%prefix%", prefix), new Placeholder("%rank%", rank), new Placeholder("%permissions%", permissions), new Placeholder("%children%", children), new Placeholder("%players_in_group%", Verany.asDecimal(playersInGroup))));
                     return false;
                 }
                 Verany.PROFILE_OBJECT.getPlayer(strings[1]).ifPresentOrElse(iPlayerInfo -> {
@@ -60,7 +60,7 @@ public class RankCommand implements CommandExecutor, TabCompleter {
                         time = permissionObject.getCurrentGroup().getDuration().getAmount() + " " + permissionObject.getCurrentGroup().getDuration().getKey() + " - Expires: " + Verany.getPrettyTime(Locale.ENGLISH, System.currentTimeMillis() + permissionObject.getCurrentGroup().getTimeLeft());
                     String groupSince = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(permissionObject.getCurrentGroup().getTimestamp()));
                     String permissions = permissionObject.getPermissions().toString();
-                    player.sendMessage(playerInfo.getKeyArray("core.rank.info", "~", new Placeholder("%player%", playerName), new Placeholder("%prefix%", prefix), new Placeholder("%rank%", rank), new Placeholder("%time%", time), new Placeholder("%group_since%", groupSince), new Placeholder("%permissions%", permissions)));
+                    player.sendMessage(playerInfo.getKeyArray("core.rank.info", '~', new Placeholder("%player%", playerName), new Placeholder("%prefix%", prefix), new Placeholder("%rank%", rank), new Placeholder("%time%", time), new Placeholder("%group_since%", groupSince), new Placeholder("%permissions%", permissions)));
                 }, () -> {
                     playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.player_not_found", new Placeholder("%player%", strings[1]));
                 });
@@ -191,7 +191,7 @@ public class RankCommand implements CommandExecutor, TabCompleter {
             }
         }
 
-        player.sendMessage(playerInfo.getKeyArray("core.rank.help", "~", new Placeholder("%prefix%", playerInfo.getPrefix("RankSystem"))));
+        player.sendMessage(playerInfo.getKeyArray("core.rank.help", '~', new Placeholder("%prefix%", playerInfo.getPrefix("RankSystem"))));
 
         return false;
     }
