@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.verany.api.config.IngameConfig;
+import net.verany.api.event.events.PlayerAfkEvent;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.redis.events.VeranyMessageInEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -66,7 +69,7 @@ public class AfkObject implements IAFKObject {
         armorStand.setCustomName("§9" + names[0]);
 
         player().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 2, true, false, false));
-     }
+    }
 
     @Override
     public void removeHologram() {
@@ -97,5 +100,10 @@ public class AfkObject implements IAFKObject {
     @Override
     public void disableAfkCheck(CheckType... checkTypes) {
         enabledChecks.removeIf(checkType -> Arrays.asList(checkTypes).contains(checkType));
+    }
+
+    public void setAfk(boolean afk) {
+        this.afk = afk;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new PlayerAfkEvent(player())));
     }
 }

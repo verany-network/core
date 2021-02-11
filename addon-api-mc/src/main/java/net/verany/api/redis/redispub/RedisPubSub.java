@@ -1,6 +1,7 @@
 package net.verany.api.redis.redispub;
 
 import lombok.Setter;
+import net.verany.api.AbstractVerany;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.redis.events.VeranyMessageInEvent;
 import org.bukkit.Bukkit;
@@ -14,7 +15,8 @@ public class RedisPubSub extends JedisPubSub {
     public void onMessage(String channel, String message) {
         String[] data = message.split("~");
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new VeranyMessageInEvent(message)));
+        if (!AbstractVerany.shutdown)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new VeranyMessageInEvent(message)));
 
     }
 

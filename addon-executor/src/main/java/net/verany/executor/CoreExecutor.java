@@ -4,6 +4,7 @@ import net.verany.api.Verany;
 import net.verany.api.actionbar.ActionbarTask;
 import net.verany.api.chat.task.ChatTask;
 import net.verany.api.config.IngameConfig;
+import net.verany.api.gamemode.countdown.task.CountdownTask;
 import net.verany.api.logger.VeranyLog;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
@@ -35,6 +36,7 @@ public class CoreExecutor extends VeranyProject {
 
     @Override
     public void onDisable() {
+        Verany.shutdown = true;
         for (IPlayerInfo playerInfo : Verany.PROFILE_OBJECT.getRegisteredPlayers())
             playerInfo.update();
         getConnection().disconnect();
@@ -75,6 +77,6 @@ public class CoreExecutor extends VeranyProject {
 
         Verany.reloadMessages(this);
 
-        Verany.addTask(new ChatTask(1000, this), new ActionbarTask(100, this), new OnlineTimeTask(1000), new AfkTask(800, this));
+        Verany.addTask(new ChatTask(1000, this), new CountdownTask(1000), new ActionbarTask(100, this), new OnlineTimeTask(1000), new AfkTask(800, this));
     }
 }

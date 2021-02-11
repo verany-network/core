@@ -30,7 +30,7 @@ public class OnlineTimeCommand implements CommandExecutor {
                 }
             }
         } else {
-            playerInfo.sendKey(Verany.getPrefix("PlayTime", playerInfo.getPrefixPattern()), "onlinetime.top.self", new Placeholder("%ranking%", Verany.getRanking(CoreExecutor.INSTANCE, player.getUniqueId(), "players", "network", "onlineTime")), new Placeholder("%time%", Verany.formatSeconds((int) (playerInfo.getOnlineTime() / 1000))));
+            playerInfo.sendKey(Verany.getPrefix("OnlineTime", playerInfo.getPrefixPattern()), "onlinetime.top.self", new Placeholder("%ranking%", Verany.getRanking(CoreExecutor.INSTANCE, player.getUniqueId(), "players", "network", "onlineTime")), new Placeholder("%time%", Verany.formatSeconds((int) (playerInfo.getOnlineTime() / 1000))));
         }
 
         return false;

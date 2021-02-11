@@ -40,6 +40,7 @@ import net.verany.api.player.friend.IFriendObject;
 import net.verany.api.player.leveling.CreditsObject;
 import net.verany.api.player.leveling.ICreditsObject;
 import net.verany.api.player.leveling.ILevelObject;
+import net.verany.api.player.leveling.LevelObject;
 import net.verany.api.player.party.IPartyObject;
 import net.verany.api.player.party.PartyObject;
 import net.verany.api.player.permission.IPermissionObject;
@@ -119,17 +120,21 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         load();
 
+        levelObject = new LevelObject(this);
+        levelObject.load(key);
+
         creditsObject = new CreditsObject(this);
         creditsObject.load(key);
 
         if (!name.equals(getName()))
             getData(PlayerData.class).setName(name);
 
-        if (Bukkit.getPlayer(key) != null) {
-            player = Bukkit.getPlayer(uniqueId);
-            setSkinData();
-            sendUpdate();
-        }
+        if (!Verany.shutdown)
+            if (Bukkit.getPlayer(key) != null) {
+                player = Bukkit.getPlayer(uniqueId);
+                setSkinData();
+                sendUpdate();
+            }
     }
 
     @Override
@@ -423,7 +428,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     public void sendUpdate() {
-        Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
+        if (!Verany.shutdown)
+            Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
     }
 
     @Override
@@ -602,6 +608,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private Map<String, String> settingValues;
         private List<String> passedAchievements;
         private Integer credits;
+        private Integer exp;
         private long onlineTime;
         private long playTime;
         private long firstJoined;

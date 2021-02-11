@@ -18,6 +18,7 @@ import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.player.clan.IClanObject;
 import net.verany.api.player.friend.IFriendObject;
 import net.verany.api.player.leveling.ICreditsObject;
+import net.verany.api.player.leveling.ILevelObject;
 import net.verany.api.player.party.IPartyObject;
 import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.verifictation.IVerificationObject;
@@ -152,6 +153,8 @@ public interface IPlayerInfo extends IVeranyPlayer {
     IPartyObject getPartyObject();
 
     IClanObject getClanObject();
+
+    ILevelObject getLevelObject();
 
     void createLog(PlayerLog log);
 

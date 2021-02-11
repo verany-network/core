@@ -261,7 +261,7 @@ public class Verany extends AbstractVerany {
     public static List<IPlayerInfo> getOnlinePlayers() {
         List<IPlayerInfo> toReturn = new ArrayList<>();
         for (IPlayerInfo registeredPlayer : PROFILE_OBJECT.getRegisteredPlayers())
-            if (registeredPlayer.getPlayer() != null)
+            if (registeredPlayer.getPlayer() != null && registeredPlayer.getPlayer().isOnline())
                 toReturn.add(registeredPlayer);
         return toReturn;
     }

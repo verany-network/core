@@ -46,6 +46,7 @@ public abstract class AbstractVerany {
     private static final MainTask mainTask = new MainTask();
     @Getter
     private static boolean loaded = false;
+    public static boolean shutdown = false;
 
     public static RedisManager REDIS_MANAGER;
 

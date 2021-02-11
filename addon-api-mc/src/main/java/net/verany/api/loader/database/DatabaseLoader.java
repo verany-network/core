@@ -31,10 +31,8 @@ public abstract class DatabaseLoader extends Loader {
 
     @Override
     public <T extends LoadObject> void load(LoadInfo<T> loadInfo) {
-        if (getInfo(loadInfo.getType()) != null) {
-            onLoadComplete();
-            return;
-        }
+        if (getInfo(loadInfo.getType()) != null)
+            getInfoLists().remove(getInfo(loadInfo.getType()));
         T info;
         String key = databaseInfo(loadInfo).getUuid();
         Document first = project.getConnection().getCollection(database, collection).find(Filters.eq("uuid", key)).first();
@@ -53,7 +51,6 @@ public abstract class DatabaseLoader extends Loader {
         T t = loadInfo.getObject();
         String key = databaseInfo(loadInfo).getUuid();
         project.getConnection().getCollection(database, collection).replaceOne(new BasicDBObject("uuid", key), AbstractVerany.GSON.fromJson(AbstractVerany.GSON.toJson(t), Document.class));
-        remove(loadInfo);
         return t;
     }
 

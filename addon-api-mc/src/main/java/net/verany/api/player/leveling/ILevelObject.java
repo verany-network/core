@@ -11,11 +11,7 @@ public interface ILevelObject extends IDefault<UUID> {
 
     int addExp(int exp);
 
-    int removeExp(int exp);
-
     int getMaxExp();
-
-    int setMaxExp(int maxExp);
 
     int getLevel();
 
