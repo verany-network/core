@@ -151,7 +151,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
+        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
     }
 
     @Override
@@ -615,7 +615,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private long lastOnline;
         private List<String> logs;
 
-        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, int credits, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
+        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, int credits, Integer exp, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
             super(key.toString());
             this.name = name;
             this.language = language;
@@ -623,6 +623,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
             this.settingValues = settingValues;
             this.passedAchievements = passedAchievements;
             this.credits = credits;
+            this.exp = exp;
             this.firstJoined = System.currentTimeMillis();
             this.logs = logs;
         }

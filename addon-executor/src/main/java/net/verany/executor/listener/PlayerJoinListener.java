@@ -48,15 +48,22 @@ public class PlayerJoinListener extends AbstractListener {
             if (playerInfoOptional.isEmpty()) {
                 playerInfo = new PlayerInfo(project, player.getName());
                 Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
-            }
+            } else
+                playerInfo = playerInfoOptional.get();
+            playerInfo.load(player.getUniqueId());
         });
 
         Verany.registerListener(project, PlayerJoinEvent.class, event -> {
             Player player = event.getPlayer();
 
-            IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
-            playerInfo.load(player.getUniqueId());
+            IPlayerInfo playerInfo = Verany.getPlayer(player);
             playerInfo.setPlayer(player);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CoreExecutor.INSTANCE, () -> Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player)));
+        });
+
+        Verany.registerListener(project, PlayerLoadCompleteEvent.class, event -> {
+            Player player = event.getPlayer();
 
             try {
                 Field field = CraftHumanEntity.class.getDeclaredField("perm");
@@ -68,11 +75,7 @@ public class PlayerJoinListener extends AbstractListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CoreExecutor.INSTANCE, () -> Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player)));
-        });
 
-        Verany.registerListener(project, PlayerJoinEvent.class, event -> {
-            Player player = event.getPlayer();
             player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
             Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));
         }, EventPriority.LOWEST);

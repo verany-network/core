@@ -1,14 +1,11 @@
 package net.verany.api.gamemode;
 
 import de.dytanic.cloudnet.driver.CloudNetDriver;
-import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
+import de.dytanic.cloudnet.driver.service.*;
 import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
 import net.verany.api.gamemode.server.SimplifiedServerInfo;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -32,16 +29,16 @@ public class GameModeObject implements IGameModeObject {
 
     @Override
     public int getOnlinePlayers(AbstractGameMode gameMode) {
-        return getOnlinePlayers(gameMode, gameMode.getTargetGroup());
+        return getOnlinePlayers(gameMode.getTargetGroup());
     }
 
     @Override
-    public int getOnlinePlayers(AbstractGameMode gameMode, String... groups) {
-        return getOnlinePlayers(gameMode, groups, new String[]{});
+    public int getOnlinePlayers(String... groups) {
+        return getOnlinePlayers(groups, new String[]{});
     }
 
     @Override
-    public int getOnlinePlayers(AbstractGameMode gameMode, String[] groups, String[] servers) {
+    public int getOnlinePlayers(String[] groups, String[] servers) {
         int i = 0;
         for (String s : groups)
             for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(s)) {
@@ -63,6 +60,43 @@ public class GameModeObject implements IGameModeObject {
                 ))
                 .onFailure(throwable -> consumer.accept(Collections.emptyList()))
                 .onCancelled(task -> consumer.accept(Collections.emptyList()));
+    }
+
+    @Override
+    public void startService(AbstractGameMode gameMode, Consumer<SimplifiedServerInfo> consumer) {
+        startService(gameMode.getTargetGroup(), consumer);
+    }
+
+    @Override
+    public void startService(String[] groups, Consumer<SimplifiedServerInfo> consumer) {
+        for (String group : groups) {
+            ServiceTask serviceTask = CloudNetDriver.getInstance().getServiceTaskProvider().getServiceTask(group);
+            CloudNetDriver.getInstance().getCloudServiceFactory().createCloudServiceAsync(
+                    serviceTask.getName(),
+                    serviceTask.getRuntime(),
+                    serviceTask.isAutoDeleteOnStop(),
+                    serviceTask.isStaticServices(),
+                    serviceTask.getIncludes(),
+                    serviceTask.getTemplates(),
+                    serviceTask.getDeployments(),
+                    serviceTask.getGroups(),
+                    serviceTask.getProcessConfiguration(),
+                    serviceTask.getStartPort()
+            )
+                    .onComplete(serviceInfoSnapshot -> consumer.accept(createServerInfo(serviceInfoSnapshot)))
+                    .onFailure(throwable -> consumer.accept(null))
+                    .onCancelled(task -> consumer.accept(null));
+        }
+    }
+
+    @Override
+    public void startService(String group, Consumer<SimplifiedServerInfo> consumer) {
+        startService(new String[]{group}, consumer);
+    }
+
+    @Override
+    public void startService(String group) {
+        startService(group, simplifiedServerInfo -> {});
     }
 
     private SimplifiedServerInfo createServerInfo(ServiceInfoSnapshot serviceInfoSnapshot) {

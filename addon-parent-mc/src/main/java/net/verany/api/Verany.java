@@ -320,4 +320,16 @@ public class Verany extends AbstractVerany {
         return null;
     }
 
+    public static IPlayerInfo getPlayer(UUID uuid) {
+        return PROFILE_OBJECT.getPlayer(uuid).get();
+    }
+
+    public static IPlayerInfo getPlayer(String name) {
+        return PROFILE_OBJECT.getPlayer(name).get();
+    }
+
+    public static IPlayerInfo getPlayer(Player player) {
+        return PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+    }
+
 }

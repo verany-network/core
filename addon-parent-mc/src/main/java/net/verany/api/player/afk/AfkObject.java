@@ -104,6 +104,7 @@ public class AfkObject implements IAFKObject {
 
     public void setAfk(boolean afk) {
         this.afk = afk;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new PlayerAfkEvent(player())));
+        if (player() != null)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new PlayerAfkEvent(player())));
     }
 }

@@ -37,4 +37,13 @@ public class Permissible extends PermissibleBase {
         return hasPermission(perm.getName());
     }
 
+    @Override
+    public boolean isPermissionSet(@NotNull String name) {
+        return hasPermission(name);
+    }
+
+    @Override
+    public boolean isPermissionSet(@NotNull Permission perm) {
+        return hasPermission(perm.getName());
+    }
 }

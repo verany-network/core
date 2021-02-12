@@ -13,10 +13,18 @@ public interface IGameModeObject {
 
     int getOnlinePlayers(AbstractGameMode gameMode);
 
-    int getOnlinePlayers(AbstractGameMode gameMode, String... groups);
+    int getOnlinePlayers(String... groups);
 
-    int getOnlinePlayers(AbstractGameMode gameMode, String[] groups, String[] servers);
+    int getOnlinePlayers(String[] groups, String[] servers);
 
     void getOnlineServers(Consumer<List<SimplifiedServerInfo>> consumer);
+
+    void startService(AbstractGameMode gameMode,  Consumer<SimplifiedServerInfo> consumer);
+
+    void startService(String[] groups, Consumer<SimplifiedServerInfo> consumer);
+
+    void startService(String group, Consumer<SimplifiedServerInfo> consumer);
+
+    void startService(String group);
 
 }
