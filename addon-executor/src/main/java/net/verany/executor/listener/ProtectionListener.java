@@ -16,6 +16,8 @@ import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
+import net.verany.api.player.friend.FriendObject;
+import net.verany.api.player.friend.data.FriendData;
 import net.verany.api.redis.events.VeranyMessageInEvent;
 import net.verany.executor.CoreExecutor;
 import org.bukkit.Bukkit;
@@ -158,6 +160,10 @@ public class ProtectionListener extends AbstractListener {
                         }
                         ((PlayerInfo) Verany.PROFILE_OBJECT.getPlayer(uuid).get()).update(PlayerInfo.PlayerData.class, playerData);
                     }
+                } else if (data[1].equals("friends")) {
+                    UUID uuid = UUID.fromString(data[2]);
+                    FriendObject friendObject = (FriendObject) Verany.PROFILE_OBJECT.getPlayer(uuid).get().getFriendObject();
+                    friendObject.update(FriendObject.PlayerFriend.class, Verany.REDIS_MANAGER.getObject("friends_" + uuid.toString(), FriendObject.PlayerFriend.class));
                 }
             }
         });
