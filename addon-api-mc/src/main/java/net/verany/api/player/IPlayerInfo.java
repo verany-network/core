@@ -11,6 +11,7 @@ import net.verany.api.chat.request.ChatRequestCallback;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.language.EnumLanguage;
+import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.api.message.AbstractComponentBuilder;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.placeholder.Placeholder;
@@ -155,6 +156,8 @@ public interface IPlayerInfo extends IVeranyPlayer {
     IClanObject getClanObject();
 
     ILevelObject getLevelObject();
+
+    void teleport(VeranyLocation location);
 
     void createLog(PlayerLog log);
 
