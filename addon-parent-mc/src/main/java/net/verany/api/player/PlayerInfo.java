@@ -28,6 +28,7 @@ import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
+import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.api.message.AbstractComponentBuilder;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
@@ -581,6 +582,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         if (!tempSettingMap.containsKey(setting))
             setTempSetting(setting, setting.getDefaultValue());
         return (T) tempSettingMap.get(setting);
+    }
+
+    @Override
+    public void teleport(VeranyLocation location) {
+        player.teleport(location.toLocation());
     }
 
     @Override
