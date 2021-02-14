@@ -1,45 +1,80 @@
-Verany Core
+Verany Minecraft Core
 =============
 
-Welcome to the Core source code.
+Willkommen zur Core Einrichtung,
+hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wir ihr diese anschließend einbezieht.
 
-From this repository you can build the Core for editing, bug fixing and learning. Modify them in any way you can imagine, and share your changes with others! 
-
-We have a heap of documentation available for the code on the web. If you're looking for the answer to something, you may want to start here: 
-
-* [Core](https://docs.verany.net/core)
-* [Verany Webpages](https://docs.verany.net/web)
-* [Client Addon](https://docs.verany.net/client-addon)
-
-If you need more, just ask! A lot of Verany developers hang out on the [forums](https://forums.verany.net/) or on our [TeamSpeak](https://ts3server://ts.verany.net/), 
-and we're proud to be part of a well-meaning, friendly and welcoming team of developers and concept writers. 
-
-
-Getting up and running
+Die Core einbeziehen
 ----------------------
 
-The steps below will take you through cloning your own private fork, then compiling and running the editor yourself:
+Mit den folgenden Schritten wird es euch ermöglicht unsere Core in euer Projekt einzubeziehen. Gegeben sein muss natürlich das allgemeine Verständnis zur objektorientierten Entwicklung in Java mit der aktuellsten IntelliJ IDE.
 
 ### Installation
 
-1. Install **[GitHub for Windows](https://windows.github.com/)** then **[fork and clone our repository](https://guides.github.com/activities/forking/)**. 
-   To use Git from the command line, see the [Setting up Git](https://help.github.com/articles/set-up-git/) and [Fork a Repo](https://help.github.com/articles/fork-a-repo/) articles.
+1. Installiere dir die aktuellste Core in unserem **[Team Control Panel](https://tcp.verany.net/)** indem du im Navigationsbereich links den Navigationspunkt **[Dokumente](https://tcp.verany.net/team/documents)** aufrufst. Hier suchst du im Suchbereich nach der ID **[H5sIB0Lr](https://tcp.verany.net/team/documents?search=H5sIB0Lr)**. Wenn du nun also im hervorgehobenen Tabelleneintrag auf "Herunterladen" klickst wird die aktuellste Core Version heruntergeladen. Alternativ kannst du dir diesen Build auch über Maven oder Gradle herunterladen.
 
-   If you'd prefer not to use Git, you can get the source with the 'Download ZIP' button on the right. The built-in Windows zip utility will mark the contents of zip files 
-   downloaded from the Internet as unsafe to execute, so right-click the zip file and select 'Properties...' and 'Unblock' before decompressing it. Third-party zip utilities don't normally do this.
+Installation unter Maven:
+```java
+repositories {
+    maven { url = uri("https://maven.verany.net/repo/") } // Core
+}
 
-Have fun!
+dependencies {
+    compileOnlyApi("net.verany:Verany-Core_MC:6.7.3") // Core
+}
+```
+```xml
+<!-- Verany Core -->
+<repository>
+    <id>Verany</id>
+    <url>https://maven.verany.net/repo/</url>
+</repository>
+
+<!-- Veranya Core API -->
+<dependency>
+    <groupId>net.verany</groupId>
+    <artifactId>Verany-Core</artifactId>
+    <version>6.7.3</version>
+</dependency>
+```
+
+2. Richte deine Main Klasse unseren Vorgaben entsprechend ein:
+```java
+package net.verany.project;
+ 
+import net.verany.api.Verany;
+import net.verany.api.module.VeranyModule;
+import net.verany.api.module.VeranyProject;
+ 
+@VeranyModule(name = "Project", prefix = "TestPrefix", version = "2021.2.1", authors = {"Developer"}, user = "user", host = "verany.net", password = "password", databases = {"project"})
+public class YourProject extends VeranyProject {
+ 
+    @Override
+    public void onEnable() {
+        Verany.loadModule(this);
+        init();
+    }
+ 
+    @Override
+    public void onDisable() {
+        getConnection().disconnect();
+    }
+ 
+    @Override
+    public void init() {
+ 
+    }
+}
+```
 
 
-Licensing and Contributions
+Lizensierung
 ---------------------------
 
-Of course we are grateful for the work on our project, but it has to be mentioned that all files that can be found here serve the Verany project.
-All contributions are governed by the terms of the EULA.
+Natürlich sind wir für die Arbeit an unserem Projekt dankbar, aber es muss erwähnt werden, dass alle Dateien, die hier zu finden sind, dem Verany-Projekt dienen.
+Alle Beiträge unterliegen den Bestimmungen der EULA.
 
-
-Additional Notes
+Zusätzliche Hinweise
 ----------------
 
-Your private forks of the Verany code are associated with your GitHub account permissions.
-If you unsubscribe or switch GitHub user names, you'll need to re-fork and upload your changes from a local copy. 
+Private Forks sind nicht gestattet.
