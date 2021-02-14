@@ -1,11 +1,16 @@
 package net.verany.api.redis;
 
+import com.mongodb.util.JSON;
+import lombok.SneakyThrows;
+import net.verany.api.AbstractVerany;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.redis.events.VeranyMessageOutEvent;
 import net.verany.api.redis.redispub.RedisPubSub;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.io.Serializable;
 
 public class RedisManager {
 
@@ -48,6 +53,38 @@ public class RedisManager {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.publish(channel, message);
             Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new VeranyMessageOutEvent(message)));
+        }
+    }
+
+    @SneakyThrows
+    public <T extends Serializable> T putObject(String key, T value, int expireTimeSecs) {
+        if (expireTimeSecs < 0)
+            throw new IllegalArgumentException(String.format("Illegal expireTimeSecs = %s", expireTimeSecs));
+        try (Jedis jedis = jedisPool.getResource()) {
+            String code;
+            if (expireTimeSecs == 0)
+                code = jedis.set(key, AbstractVerany.GSON.toJson(value));
+            else
+                code = jedis.setex(key, expireTimeSecs, AbstractVerany.GSON.toJson(value));
+            if (!code.equalsIgnoreCase("OK"))
+                throw new CacheException("");
+        }
+        return value;
+    }
+
+    public <T extends Serializable> T putObject(String key, T value) {
+        return putObject(key, value, 0);
+    }
+
+    public <T extends Serializable> T getObject(String key, Class<T> tClass) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return AbstractVerany.GSON.fromJson(jedis.get(key), tClass);
+        }
+    }
+
+    public Object getObject(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return JSON.parse(jedis.get(key));
         }
     }
 
