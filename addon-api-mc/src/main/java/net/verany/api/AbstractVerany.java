@@ -15,6 +15,7 @@ import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.plugin.IProfileObject;
 import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
+import net.verany.api.setup.category.AbstractSetupCategory;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
 import org.bukkit.Bukkit;
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
 
 public abstract class AbstractVerany {
 
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractSetupCategory.class, new InterfaceAdapter<AbstractSetupCategory>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
     public static final JsonParser PARSER = new JsonParser();
 
     public static final List<Loader> LOADERS = new ArrayList<>();
