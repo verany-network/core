@@ -19,6 +19,8 @@ public interface IFriendObject extends IDefault<UUID> {
 
     void invite(UUID target);
 
+    void addRequest(UUID requester);
+
     void accept(UUID uuid);
 
     void deny(UUID uuid);
