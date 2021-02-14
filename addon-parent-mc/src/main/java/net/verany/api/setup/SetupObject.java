@@ -25,7 +25,7 @@ public class SetupObject extends AbstractSetupObject {
     @Override
     public void saveLocations() {
         save("setup");
-        load(new LoadInfo<>("locations", LocationDataObject.class, new LocationDataObject()));
+        load();
     }
 
     @Override
