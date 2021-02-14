@@ -55,7 +55,6 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
         getData(PlayerRank.class).setLastGroup(lastGroup);
         getData(PlayerRank.class).setCurrentGroup(group);
         update();
-
     }
 
     @Override
