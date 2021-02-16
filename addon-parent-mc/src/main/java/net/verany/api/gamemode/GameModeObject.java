@@ -3,6 +3,7 @@ package net.verany.api.gamemode;
 import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.service.*;
 import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
+import de.dytanic.cloudnet.wrapper.Wrapper;
 import net.verany.api.gamemode.server.SimplifiedServerInfo;
 
 import java.util.*;
@@ -96,7 +97,18 @@ public class GameModeObject implements IGameModeObject {
 
     @Override
     public void startService(String group) {
-        startService(group, simplifiedServerInfo -> {});
+        startService(group, simplifiedServerInfo -> {
+        });
+    }
+
+    @Override
+    public String getCurrentServiceName() {
+        return Wrapper.getInstance().getServiceId().getName();
+    }
+
+    @Override
+    public String getCurrentGroupName() {
+        return Wrapper.getInstance().getServiceId().getTaskName();
     }
 
     private SimplifiedServerInfo createServerInfo(ServiceInfoSnapshot serviceInfoSnapshot) {
