@@ -201,7 +201,7 @@ public abstract class AbstractVerany {
         return new DecimalFormat().format(o).replace(",", ".");
     }
 
-    public static <T> List<T> sortList(Class<T> tClass, List<T> list, boolean reverse) {
+    /*public static <T> List<T> sortList(Class<T> tClass, List<T> list, boolean reverse) {
         if (tClass.equals(Integer.class)) {
             List<Integer> integers = (List<Integer>) list;
             Collections.sort(integers);
@@ -224,7 +224,7 @@ public abstract class AbstractVerany {
             return (List<T>) integers;
         }
         return new ArrayList<>();
-    }
+    }*/
 
     public static List<String> getShortList(List<String> list, int amount) {
         List<String> toReturn = new ArrayList<>();
