@@ -10,11 +10,13 @@ import net.verany.api.event.IEventManager;
 import net.verany.api.gamemode.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
+import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.plugin.IProfileObject;
 import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
+import net.verany.api.setup.AbstractSetupObject;
 import net.verany.api.setup.category.AbstractSetupCategory;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
@@ -42,6 +44,7 @@ public abstract class AbstractVerany {
     public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
     public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
+    public static final List<AbstractSetupObject> SETUP_OBJECTS = new CopyOnWriteArrayList<>();
     public static IEventManager eventManager;
     public static IProfileObject PROFILE_OBJECT;
     private static final MainTask mainTask = new MainTask();
@@ -74,6 +77,10 @@ public abstract class AbstractVerany {
             Thread thread = new Thread(mainTask, "Main-Thread");
             thread.start();
         }
+    }
+
+    public static void reloadSetup() {
+        SETUP_OBJECTS.forEach(AbstractSetupObject::reload);
     }
 
     public static int getRandomNumberBetween(int min, int max) {
