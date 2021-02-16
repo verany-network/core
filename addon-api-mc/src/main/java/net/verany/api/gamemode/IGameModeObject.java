@@ -27,4 +27,8 @@ public interface IGameModeObject {
 
     void startService(String group);
 
+    String getCurrentServiceName();
+
+    String getCurrentGroupName();
+
 }
