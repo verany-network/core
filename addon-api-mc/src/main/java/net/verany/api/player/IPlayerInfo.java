@@ -9,6 +9,7 @@ import net.verany.api.actionbar.AbstractActionbar;
 import net.verany.api.chat.request.ChatRequest;
 import net.verany.api.chat.request.ChatRequestCallback;
 import net.verany.api.hotbar.HotbarItem;
+import net.verany.api.interfaces.IDefault;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.locationmanager.VeranyLocation;
@@ -160,6 +161,8 @@ public interface IPlayerInfo extends IVeranyPlayer {
     void teleport(VeranyLocation location);
 
     void createLog(PlayerLog log);
+
+    <T extends IDefault<?>> T getPlayer(Class<T> tClass);
 
     @AllArgsConstructor
     @Getter
