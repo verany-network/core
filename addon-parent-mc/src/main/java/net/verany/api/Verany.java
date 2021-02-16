@@ -7,6 +7,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.verany.api.event.EventConsumer;
 import net.verany.api.gamemode.GameModeObject;
 import net.verany.api.gamemode.IGameModeObject;
@@ -330,6 +332,33 @@ public class Verany extends AbstractVerany {
 
     public static IPlayerInfo getPlayer(Player player) {
         return PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+    }
+
+    public static <T> List<T> sortList(List<SortData<T>> list, boolean reverse) {
+        List<T> toReturn = new ArrayList<>();
+        List<String> stringList = new ArrayList<>();
+        for (SortData<T> t : list)
+            stringList.add(t.getKey());
+        Collections.sort(stringList);
+        if (reverse)
+            Collections.reverse(stringList);
+        for (String s : stringList)
+            toReturn.add(getSortData(s, list));
+        return toReturn;
+    }
+
+    private static <T> T getSortData(String key, List<SortData<T>> sortData) {
+        for (SortData<T> sortDatum : sortData)
+            if (sortDatum.getKey().equalsIgnoreCase(key))
+                return sortDatum.getT();
+        return null;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SortData<T> {
+        private final String key;
+        private final T t;
     }
 
 }
