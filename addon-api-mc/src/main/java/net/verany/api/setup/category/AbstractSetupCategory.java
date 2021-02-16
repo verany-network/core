@@ -19,6 +19,13 @@ public abstract class AbstractSetupCategory {
         locations.add(new LocationData(name, VeranyLocation.emptyLocation(), material));
     }
 
+    public LocationData getLocation(String name) {
+        for (LocationData location : locations)
+            if (location.getName().equalsIgnoreCase(name))
+                return location;
+        return null;
+    }
+
     @AllArgsConstructor
     @Getter
     public static class LocationData {
