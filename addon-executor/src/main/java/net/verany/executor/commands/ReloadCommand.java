@@ -41,6 +41,21 @@ public class ReloadCommand implements CommandExecutor {
                         else
                             sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§cReloading messages failed!");
                     }
+                } else if (args[0].equalsIgnoreCase("setup")) {
+                    reloadType = VeranyReloadEvent.ReloadType.USER;
+                    try {
+                        sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§7Reloading setup§8...");
+                        Verany.reloadSetup();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§4An error occurred while reloading setup! [" + e + "]");
+                        success = false;
+                    } finally {
+                        if (success)
+                            sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§aReloading setup success!");
+                        else
+                            sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§cReloading setup failed!");
+                    }
                 } else if (args[0].equalsIgnoreCase("users")) {
                     reloadType = VeranyReloadEvent.ReloadType.USER;
                     try {
