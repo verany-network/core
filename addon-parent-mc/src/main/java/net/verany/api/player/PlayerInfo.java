@@ -24,6 +24,7 @@ import net.verany.api.chat.request.ChatRequestCallback;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
 import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.hotbar.HotbarItem;
+import net.verany.api.interfaces.IDefault;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.loader.database.DatabaseLoadObject;
@@ -593,6 +594,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public void createLog(PlayerLog log) {
         getData(PlayerData.class).addLog(log);
         update();
+    }
+
+    @Override
+    public <T extends IDefault<?>> T getPlayer(Class<T> tClass) {
+        return Verany.getPlayer(uniqueId.toString(), tClass);
     }
 
     private int getDataByText(String text) {
