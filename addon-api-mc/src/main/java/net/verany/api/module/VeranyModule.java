@@ -15,6 +15,8 @@ public @interface VeranyModule {
 
     String name();
 
+    int maxRounds();
+
     String prefix();
 
     String version();
