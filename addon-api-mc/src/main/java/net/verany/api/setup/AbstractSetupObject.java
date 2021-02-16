@@ -2,18 +2,16 @@ package net.verany.api.setup;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.verany.api.AbstractVerany;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
-import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.setup.category.AbstractSetupCategory;
 import net.verany.api.setup.category.SetupCategoryWrapper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -21,11 +19,24 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
 
     public AbstractSetupObject(VeranyProject project) {
         super(project, project.getName(), "locations");
+        AbstractVerany.SETUP_OBJECTS.add(this);
     }
 
-    public abstract void registerNewLocation(AbstractSetupCategory category);
+    public abstract void registerNewLocation(String name, AbstractSetupCategory category);
 
-    public abstract void saveLocations();
+    public void saveLocations() {
+        save("locations");
+        load();
+    }
+
+    public void load() {
+        load(new LoadInfo<>("locations", LocationDataObject.class, new LocationDataObject()));
+    }
+
+    public void reload() {
+        remove(getInfo(LocationDataObject.class));
+        load();
+    }
 
     public abstract Location getLocation(String category, String name);
 
@@ -33,7 +44,7 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
 
     public abstract boolean isLocationSet(String category, String name);
 
-    public AbstractSetupCategory getNewCategory(String name, Material material) {
+    public AbstractSetupCategory getNewCategory(Material material) {
         return new SetupCategoryWrapper(material);
     }
 
@@ -48,7 +59,7 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
         }
 
         public Location getLocation(String category, String name) {
-
+            return setupCategoryMap.get(category).getLocation(name).getLocation().toLocation();
         }
     }
 
