@@ -5,11 +5,13 @@ import lombok.Getter;
 import net.verany.api.database.DatabaseManager;
 import org.bson.Document;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Documented
+@Target(ElementType.TYPE)
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VeranyModule {
 
