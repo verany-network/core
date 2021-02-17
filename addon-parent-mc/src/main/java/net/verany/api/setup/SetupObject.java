@@ -35,9 +35,4 @@ public class SetupObject extends AbstractSetupObject {
     public boolean isLocationSet(String category, String name) {
         return existLocation(category, name) && !getDataObject().getSetupCategoryMap().get(category).getLocation(name).getLocation().getWorld().equals("-");
     }
-
-    private LocationDataObject getDataObject() {
-        return getData(LocationDataObject.class);
-    }
-
 }
