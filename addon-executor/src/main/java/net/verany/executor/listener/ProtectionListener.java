@@ -152,13 +152,15 @@ public class ProtectionListener extends AbstractListener {
                     UUID uuid = UUID.fromString(data[2]);
                     if (Bukkit.getPlayer(uuid) == null) {
                         PlayerInfo.PlayerData playerData = new Gson().fromJson(data[3], PlayerInfo.PlayerData.class);
-                        if (Verany.PROFILE_OBJECT.getPlayer(uuid).isEmpty()) {
-                            IPlayerInfo playerInfo = new PlayerInfo(CoreExecutor.INSTANCE, playerData.getName());
-                            playerInfo.load(uuid);
-                            Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
-                            return;
-                        }
-                        ((PlayerInfo) Verany.PROFILE_OBJECT.getPlayer(uuid).get()).update(PlayerInfo.PlayerData.class, playerData);
+                        Verany.PROFILE_OBJECT.getPlayer(uuid).ifPresentOrElse(iPlayerInfo -> {
+                            ((PlayerInfo) iPlayerInfo).removeBeforeLoad();
+                        }, () -> {
+                            if (Verany.PROFILE_OBJECT.getPlayer(uuid).isEmpty()) {
+                                IPlayerInfo playerInfo = new PlayerInfo(CoreExecutor.INSTANCE, playerData.getName());
+                                playerInfo.load(uuid);
+                                Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
+                            }
+                        });
                     }
                 } else if (data[1].equals("friends")) {
                     UUID uuid = UUID.fromString(data[2]);
