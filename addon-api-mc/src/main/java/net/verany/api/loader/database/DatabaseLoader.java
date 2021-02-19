@@ -39,7 +39,7 @@ public abstract class DatabaseLoader extends Loader {
         if (first == null)
             info = insert(loadInfo);
         else {
-            info = AbstractVerany.GSON.fromJson(first.toJson(), loadInfo.getType());
+            info = gson.fromJson(first.toJson(), loadInfo.getType());
         }
         loadInfo.setObject(info);
         addInfo(loadInfo);
@@ -50,12 +50,12 @@ public abstract class DatabaseLoader extends Loader {
     public <T extends LoadObject> T save(LoadInfo<T> loadInfo) {
         T t = loadInfo.getObject();
         String key = databaseInfo(loadInfo).getUuid();
-        project.getConnection().getCollection(database, collection).replaceOne(new BasicDBObject("uuid", key), AbstractVerany.GSON.fromJson(AbstractVerany.GSON.toJson(t), Document.class));
+        project.getConnection().getCollection(database, collection).replaceOne(new BasicDBObject("uuid", key), gson.fromJson(gson.toJson(t), Document.class));
         return t;
     }
 
     private <T extends LoadObject> T insert(LoadInfo<T> loadInfo) {
-        project.getConnection().getCollection(database, collection).insertOne(AbstractVerany.GSON.fromJson(AbstractVerany.GSON.toJson(loadInfo.getObject()), Document.class));
+        project.getConnection().getCollection(database, collection).insertOne(gson.fromJson(gson.toJson(loadInfo.getObject()), Document.class));
         return loadInfo.getObject();
     }
 
