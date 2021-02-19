@@ -21,7 +21,7 @@ public class LanguageCommand implements CommandExecutor {
         if (strings.length == 1) {
             EnumLanguage language = EnumLanguage.valueOf(strings[0].toUpperCase(Locale.ROOT));
             playerInfo.setLanguage(language);
-            playerInfo.sendKey(Verany.getPrefix("CoreExecutor", playerInfo.getPrefixPattern()), "language.updated", new Placeholder("%language%", Verany.getNameOfEnum(language.name(), "")));
+            playerInfo.sendKey(Verany.getPrefix("CoreExecutor", playerInfo.getPrefixPattern()), "language.updated", new Placeholder("%language%", Verany.getNameOfEnum(language.name(), "").replaceFirst(" ", "")));
         }
 
         return false;
