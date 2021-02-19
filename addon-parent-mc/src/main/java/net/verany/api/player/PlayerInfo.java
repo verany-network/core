@@ -153,7 +153,12 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
+        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, 0,0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
+    }
+
+    public void removeBeforeLoad() {
+        remove(getInfo(PlayerData.class));
+        load();
     }
 
     @Override
@@ -344,9 +349,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public EnumLanguage setLanguage(EnumLanguage language) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer())));
         getData(PlayerData.class).setLanguage(language);
-        sendUpdate();
+        Verany.sync(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer())));
+        update();
         return language;
     }
 
@@ -424,14 +429,15 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void setPrefixPattern(AbstractPrefixPattern pattern) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer())));
         getData(PlayerData.class).setPrefixPattern(pattern.getKey());
-        sendUpdate();
+        Verany.sync(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer())));
+        update();
     }
 
     public void sendUpdate() {
-        if (!Verany.shutdown)
+        if (!Verany.shutdown) {
             Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
+        }
     }
 
     @Override
@@ -539,7 +545,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public int getGlobalRank() {
-        return 1;
+        return Verany.getRanking(getProject(), uniqueId, "players", "network", "points");
     }
 
     @Override
@@ -621,13 +627,15 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private List<String> passedAchievements;
         private Integer credits;
         private Integer exp;
+        private Integer points;
+        @IgnoreField
         private long onlineTime;
         private long playTime;
         private long firstJoined;
         private long lastOnline;
         private List<String> logs;
 
-        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, int credits, Integer exp, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
+        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, int credits, Integer exp, Integer points, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
             super(key.toString());
             this.name = name;
             this.language = language;
@@ -636,6 +644,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
             this.passedAchievements = passedAchievements;
             this.credits = credits;
             this.exp = exp;
+            this.points = points;
             this.firstJoined = System.currentTimeMillis();
             this.logs = logs;
         }
