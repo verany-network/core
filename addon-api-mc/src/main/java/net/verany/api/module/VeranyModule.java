@@ -3,6 +3,8 @@ package net.verany.api.module;
 import com.mongodb.client.MongoCollection;
 import lombok.Getter;
 import net.verany.api.database.DatabaseManager;
+import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.gamemode.VeranyGameMode;
 import org.bson.Document;
 
 import java.lang.annotation.*;
