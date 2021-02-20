@@ -546,7 +546,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         List<Verany.SortData<IPlayerInfo>> sortData = new ArrayList<>();
         for (IPlayerInfo playerInfo : registered)
             sortData.add(new Verany.SortData<>(String.valueOf(playerInfo.getPoints()), playerInfo));
-        registered = Verany.sortList(sortData, true);
+        registered = Verany.sortList(sortData, false);
         int rank = 1;
         for (IPlayerInfo playerInfo : registered) {
             if (playerInfo.getName().equals(getName())) break;
