@@ -2,18 +2,21 @@ package net.verany.api.gamemode.countdown;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.verany.volcano.round.AbstractVolcanoRound;
 
 @Getter
 @Setter
 public abstract class AbstractCountdown {
 
+    private final AbstractVolcanoRound round;
     private final String key;
     private final int seconds;
     private final Integer[] run;
     private int count;
     private boolean running = false;
 
-    protected AbstractCountdown(String key, int seconds, Integer... run) {
+    protected AbstractCountdown(AbstractVolcanoRound round, String key, int seconds, Integer... run) {
+        this.round = round;
         this.key = key;
         this.seconds = seconds;
         this.run = run;
