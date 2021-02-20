@@ -153,12 +153,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, 0,0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
-    }
-
-    public void removeBeforeLoad() {
-        remove(getInfo(PlayerData.class));
-        load();
+        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
     }
 
     @Override
@@ -543,9 +538,21 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         getData(PlayerData.class).setSettingValue(setting, value);
     }
 
+    //return Verany.getRanking(getProject(), uniqueId, "players", "network", "points");
+
     @Override
     public int getGlobalRank() {
-        return Verany.getRanking(getProject(), uniqueId, "players", "network", "points");
+        List<IPlayerInfo> registered = Verany.PROFILE_OBJECT.getRegisteredPlayers();
+        List<Verany.SortData<IPlayerInfo>> sortData = new ArrayList<>();
+        for (IPlayerInfo playerInfo : registered)
+            sortData.add(new Verany.SortData<>(String.valueOf(playerInfo.getPoints()), playerInfo));
+        registered = Verany.sortList(sortData, true);
+        int rank = 1;
+        for (IPlayerInfo playerInfo : registered) {
+            if (playerInfo.getName().equals(getName())) break;
+            rank++;
+        }
+        return rank;
     }
 
     @Override
@@ -605,6 +612,17 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public <T extends IDefault<?>> T getPlayer(Class<T> tClass) {
         return Verany.getPlayer(uniqueId.toString(), tClass);
+    }
+
+    @Override
+    public void addPoints(int amount) {
+        getData(PlayerData.class).setPoints(getPoints() + amount);
+        sendUpdate();
+    }
+
+    @Override
+    public int getPoints() {
+        return getData(PlayerData.class).getPoints();
     }
 
     private int getDataByText(String text) {
