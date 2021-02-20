@@ -9,6 +9,7 @@ import net.verany.api.config.IngameConfig;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.permission.IPermissionObject;
+import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -70,8 +71,9 @@ public class ChatListener extends AbstractListener {
             }
 
             if (IngameConfig.CHAT.getValue()) {
-                IPermissionObject permissionObject = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get().getPermissionObject();
-                String newMessage = Verany.format(IngameConfig.CHAT_FORMAT.getValue(), permissionObject.getCurrentGroup().getGroup().getColor(), permissionObject.getCurrentGroup().getGroup().getName(), player.getName(), message);
+                IPermissionObject permissionObject = Verany.getPlayer(player).getPermissionObject();
+                AbstractPermissionGroup currentGroup = permissionObject.getCurrentGroup().getGroup();
+                String newMessage = Verany.format(IngameConfig.CHAT_FORMAT.getValue(), currentGroup.getColor(), currentGroup.getName(), player.getName(), message);
                 newMessage = newMessage.replace("%", "%%");
                 event.setFormat(newMessage);
             }
