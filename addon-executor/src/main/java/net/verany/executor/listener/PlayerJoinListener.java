@@ -20,6 +20,9 @@ import net.verany.api.player.permission.group.PermissionGroup;
 import net.verany.api.tablist.TabListObject;
 import net.verany.executor.CoreExecutor;
 import net.verany.executor.PlayerList;
+import net.verany.volcano.VeranyServer;
+import net.verany.volcano.player.IVolcanoPlayer;
+import net.verany.volcano.player.VolcanoPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -56,10 +59,21 @@ public class PlayerJoinListener extends AbstractListener {
         Verany.registerListener(project, PlayerJoinEvent.class, event -> {
             Player player = event.getPlayer();
 
+            event.setJoinMessage(null);
+
             IPlayerInfo playerInfo = Verany.getPlayer(player);
             playerInfo.setPlayer(player);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CoreExecutor.INSTANCE, () -> Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player)));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CoreExecutor.INSTANCE, () -> {
+                Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player));
+
+                if (!VeranyServer.ROUNDS.isEmpty()) {
+                    IVolcanoPlayer volcanoPlayer = new VolcanoPlayer();
+                    volcanoPlayer.load(player.getUniqueId());
+                    Verany.setPlayer(IVolcanoPlayer.class, volcanoPlayer);
+                    volcanoPlayer.joinRound(VeranyServer.ROUNDS.get(0).getId());
+                }
+            });
         });
 
         Verany.registerListener(project, PlayerLoadCompleteEvent.class, event -> {
