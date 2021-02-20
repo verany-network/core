@@ -45,7 +45,8 @@ public class GameModeObject implements IGameModeObject {
             for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(s)) {
                 List<String> serversList = Arrays.asList(servers);
                 if (!serversList.isEmpty() && !serversList.contains(serviceInfoSnapshot.getName())) continue;
-                i += serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).get();
+                if (serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).isPresent())
+                    i += serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).get();
             }
         return i;
     }
