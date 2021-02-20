@@ -164,6 +164,10 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     <T extends IDefault<?>> T getPlayer(Class<T> tClass);
 
+    void addPoints(int amount);
+
+    int getPoints();
+
     @AllArgsConstructor
     @Getter
     class PlayerLog {
