@@ -150,18 +150,18 @@ public class ProtectionListener extends AbstractListener {
             } else if (data[0].equals("update")) {
                 if (data[1].equals("player")) {
                     UUID uuid = UUID.fromString(data[2]);
-                    if (Bukkit.getPlayer(uuid) == null) {
-                        PlayerInfo.PlayerData playerData = new Gson().fromJson(data[3], PlayerInfo.PlayerData.class);
-                        Verany.PROFILE_OBJECT.getPlayer(uuid).ifPresentOrElse(iPlayerInfo -> {
-                            ((PlayerInfo) iPlayerInfo).removeBeforeLoad();
-                        }, () -> {
-                            if (Verany.PROFILE_OBJECT.getPlayer(uuid).isEmpty()) {
-                                IPlayerInfo playerInfo = new PlayerInfo(CoreExecutor.INSTANCE, playerData.getName());
-                                playerInfo.load(uuid);
-                                Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
-                            }
-                        });
-                    }
+                    PlayerInfo.PlayerData playerData = new Gson().fromJson(data[3], PlayerInfo.PlayerData.class);
+                    Verany.PROFILE_OBJECT.getPlayer(uuid).ifPresentOrElse(iPlayerInfo -> {
+                        ((PlayerInfo) iPlayerInfo).update(PlayerInfo.PlayerData.class, playerData);
+                        if(Bukkit.getPlayer(uuid) != null)
+                            iPlayerInfo.setPlayer(Bukkit.getPlayer(uuid));
+                    }, () -> {
+                        if (Verany.PROFILE_OBJECT.getPlayer(uuid).isEmpty()) {
+                            IPlayerInfo playerInfo = new PlayerInfo(CoreExecutor.INSTANCE, playerData.getName());
+                            playerInfo.load(uuid);
+                            Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
+                        }
+                    });
                 } else if (data[1].equals("friends")) {
                     UUID uuid = UUID.fromString(data[2]);
                     FriendObject friendObject = (FriendObject) Verany.PROFILE_OBJECT.getPlayer(uuid).get().getFriendObject();
