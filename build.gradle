@@ -6,7 +6,7 @@ subprojects {
     apply plugin: 'java'
 
     group 'net.verany'
-    version '0.6.9-DEV-SNAPSHOT'
+    version '2021.2.1'
 
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -19,9 +19,6 @@ subprojects {
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven {
-            url 'https://papermc.io/repo/repository/maven-public/'
-        }
-        maven {
             url 'https://repo.cloudnetservice.eu/repository/releases/'
         }
     }
@@ -31,6 +28,7 @@ subprojects {
         compile 'com.google.code.gson:gson:2.8.5'
         compileOnly 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
         compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/1.16.4/Paper-Server/target/paper-1.16.4.jar')
+        compile files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.2.1.jar");
         annotationProcessor 'org.projectlombok:lombok:1.18.10'
         implementation 'com.github.marcoacierno:pastebin-java-api:0.2.1'
         compile 'org.mongodb:mongo-java-driver:3.12.7'
