@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi("net.verany:Verany-Core_MC:6.7.3") // Core
+    compileOnlyApi("net.verany:Verany-Core_MC:2021.2.1") // Core
 }
 ```
 ```xml
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>net.verany</groupId>
     <artifactId>Verany-Core</artifactId>
-    <version>6.7.3</version>
+    <version>2021.2.1</version>
 </dependency>
 ```
 
