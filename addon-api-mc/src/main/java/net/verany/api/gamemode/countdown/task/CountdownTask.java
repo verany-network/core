@@ -18,8 +18,8 @@ public class CountdownTask extends AbstractTask {
             if (!countdown.isRunning()) continue;
             if (Arrays.asList(countdown.getRun()).contains(countdown.getCount()))
                 countdown.run();
-            countdown.setCount(countdown.getCount() - 1);
             countdown.onCount();
+            countdown.setCount(countdown.getCount() - 1);
             if (countdown.getCount() == 0) {
                 countdown.finished();
                 AbstractVerany.COUNTDOWNS.remove(countdown);
