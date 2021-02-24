@@ -6,6 +6,7 @@ import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.PlayerInfo;
+import net.verany.volcano.VeranyServer;
 import net.verany.volcano.player.IVolcanoPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -21,7 +22,9 @@ public class PlayerQuitListener extends AbstractListener {
 
             IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 
-            playerInfo.getPlayer(IVolcanoPlayer.class).quitRound();
+            if (!VeranyServer.ROUNDS.isEmpty()) {
+                playerInfo.getPlayer(IVolcanoPlayer.class).quitRound();
+            }
 
             playerInfo.setPlayer(null);
             ((PlayerInfo) playerInfo).sendUpdate();
