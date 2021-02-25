@@ -24,6 +24,7 @@ public class PlayerQuitListener extends AbstractListener {
 
             if (!VeranyServer.ROUNDS.isEmpty()) {
                 playerInfo.getPlayer(IVolcanoPlayer.class).quitRound();
+                Verany.removePlayer(player.getUniqueId().toString(), IVolcanoPlayer.class);
             }
 
             playerInfo.setPlayer(null);
