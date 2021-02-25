@@ -71,7 +71,7 @@ public class PlayerJoinListener extends AbstractListener {
                     IVolcanoPlayer volcanoPlayer = new VolcanoPlayer();
                     volcanoPlayer.load(player.getUniqueId());
                     Verany.setPlayer(IVolcanoPlayer.class, volcanoPlayer);
-                    volcanoPlayer.joinRound(VeranyServer.ROUNDS.get(0).getId());
+                    volcanoPlayer.joinRound(playerInfo.getCloudPlayer().getProperties().getString("round-id"));
                 }
             });
         });
