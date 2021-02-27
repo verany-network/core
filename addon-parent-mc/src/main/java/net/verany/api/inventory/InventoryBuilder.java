@@ -93,15 +93,10 @@ public class InventoryBuilder implements IInventoryBuilder {
         return this;
     }
 
-    @Override
+    /*@Override
     public IInventoryBuilder fillPageItems(PageData pageData, Consumer<PageSwitchHandler.Type> clickConsumer) {
-        return fillPageItems(pageData, new PageSwitchHandler() {
-            @Override
-            public void onSwitch(Type type) {
-                clickConsumer.accept(type);
-            }
-        });
-    }
+        return fillPageItems(pageData, (PageSwitchHandler) clickConsumer::accept);
+    }*/
 
     @Override
     public void onClick(InventoryClickEvent event) {
