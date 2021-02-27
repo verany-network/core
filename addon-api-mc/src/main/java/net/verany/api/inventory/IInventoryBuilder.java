@@ -19,7 +19,7 @@ public interface IInventoryBuilder {
 
     IInventoryBuilder fillPageItems(PageData pageData, PageSwitchHandler handler);
 
-    IInventoryBuilder fillPageItems(PageData pageData, Consumer<PageSwitchHandler.Type> clickConsumer);
+    //IInventoryBuilder fillPageItems(PageData pageData, Consumer<PageSwitchHandler.Type> clickConsumer);
 
     Inventory getInventory();
 
@@ -58,10 +58,10 @@ public interface IInventoryBuilder {
         }
     }
 
-    abstract class PageSwitchHandler {
-        public abstract void onSwitch(Type type);
+    interface PageSwitchHandler {
+        void onSwitch(Type type);
 
-        public enum Type {
+        enum Type {
             NEXT,
             PREVIOUS,
             FIRST,
