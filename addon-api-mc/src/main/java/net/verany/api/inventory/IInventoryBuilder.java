@@ -17,7 +17,9 @@ public interface IInventoryBuilder {
 
     IInventoryBuilder fillInventory(ItemStack itemStack, Integer... slots);
 
-    <T extends ItemStack> IInventoryBuilder fillPageItems(PageData<T> pageData, PageSwitchHandler handler);
+    IInventoryBuilder fillPageItems(PageData pageData, PageSwitchHandler handler);
+
+    IInventoryBuilder fillPageItems(PageData pageData, Consumer<PageSwitchHandler.Type> clickConsumer);
 
     Inventory getInventory();
 
@@ -30,15 +32,15 @@ public interface IInventoryBuilder {
     Inventory buildAndOpen(Player player);
 
     @Getter
-    class PageData<T extends ItemStack> {
+    class PageData {
         private final int currentPage;
         private final Integer[] slots;
         private final int nextPageItem;
         private final int previousPageItem;
-        private final List<T> items;
+        private final List<ItemStack> items;
         private int currentPageItem = -1;
 
-        public PageData(int currentPage, Integer[] slots, int nextPageItem, int previousPageItem, List<T> items) {
+        public PageData(int currentPage, Integer[] slots, int nextPageItem, int previousPageItem, List<ItemStack> items) {
             this.currentPage = currentPage;
             this.slots = slots;
             this.nextPageItem = nextPageItem;
@@ -46,7 +48,7 @@ public interface IInventoryBuilder {
             this.items = items;
         }
 
-        public PageData(int currentPage, Integer[] slots, int nextPageItem, int previousPageItem, List<T> items, int currentPageItem) {
+        public PageData(int currentPage, Integer[] slots, int nextPageItem, int previousPageItem, List<ItemStack> items, int currentPageItem) {
             this.currentPage = currentPage;
             this.slots = slots;
             this.nextPageItem = nextPageItem;
