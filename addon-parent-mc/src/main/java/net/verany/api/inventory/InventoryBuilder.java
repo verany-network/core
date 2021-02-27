@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @Builder
@@ -25,7 +26,7 @@ public class InventoryBuilder implements IInventoryBuilder {
     private final Consumer<InventoryClickEvent> event;
     private final Consumer<InventoryClickEvent> nullEvent;
     private final Map<Integer, ItemStack> itemStackMap = new HashMap<>();
-    private final Map<PageData<?>, PageSwitchHandler> pageSwitchHandlers = new HashMap<>();
+    private final Map<PageData, PageSwitchHandler> pageSwitchHandlers = new ConcurrentHashMap<>();
     private Inventory inventory;
 
     private final ItemStack rightSkull = new SkullBuilder("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19").build();
@@ -76,8 +77,8 @@ public class InventoryBuilder implements IInventoryBuilder {
     }
 
     @Override
-    public <T extends ItemStack> IInventoryBuilder fillPageItems(PageData<T> pageData, PageSwitchHandler handler) {
-        List<T> list = Verany.getPageList(pageData.getCurrentPage(), pageData.getSlots().length, pageData.getItems());
+    public IInventoryBuilder fillPageItems(PageData pageData, PageSwitchHandler handler) {
+        List<ItemStack> list = Verany.getPageList(pageData.getCurrentPage(), pageData.getSlots().length, pageData.getItems());
         for (int i = 0; i < list.size(); i++)
             setItem(pageData.getSlots()[i], list.get(i));
 
@@ -90,6 +91,16 @@ public class InventoryBuilder implements IInventoryBuilder {
         pageSwitchHandlers.put(pageData, handler);
 
         return this;
+    }
+
+    @Override
+    public IInventoryBuilder fillPageItems(PageData pageData, Consumer<PageSwitchHandler.Type> clickConsumer) {
+        return fillPageItems(pageData, new PageSwitchHandler() {
+            @Override
+            public void onSwitch(Type type) {
+                clickConsumer.accept(type);
+            }
+        });
     }
 
     @Override
