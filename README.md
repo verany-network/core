@@ -77,4 +77,4 @@ Alle Beiträge unterliegen den Bestimmungen der EULA.
 Zusätzliche Hinweise
 ----------------
 
-Private Forks sind nicht gestattet.
+Forks für den privaten Bereich sind nicht gestattet.
