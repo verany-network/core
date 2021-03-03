@@ -8,13 +8,19 @@ import net.verany.api.chat.request.StringChatRequest;
 import net.verany.api.config.IngameConfig;
 import net.verany.api.event.AbstractListener;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
+import net.verany.volcano.GameSetting;
+import net.verany.volcano.player.IVolcanoPlayer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.util.Collection;
+import java.util.List;
 
 public class ChatListener extends AbstractListener {
 
@@ -25,8 +31,9 @@ public class ChatListener extends AbstractListener {
             Player player = event.getPlayer();
             String message = event.getMessage();
 
+            event.setCancelled(true);
+
             if (player.hasMetadata("chat.request")) {
-                event.setCancelled(true);
 
                 Document document = (Document) player.getMetadata("chat.request").get(0).value();
                 ChatRequest<?> request = document.get("request", ChatRequest.class);
@@ -70,13 +77,19 @@ public class ChatListener extends AbstractListener {
                 return;
             }
 
-            if (IngameConfig.CHAT.getValue()) {
-                IPermissionObject permissionObject = Verany.getPlayer(player).getPermissionObject();
-                AbstractPermissionGroup currentGroup = permissionObject.getCurrentGroup().getGroup();
-                String newMessage = Verany.format(IngameConfig.CHAT_FORMAT.getValue(), currentGroup.getColor(), currentGroup.getName(), player.getName(), message);
-                newMessage = newMessage.replace("%", "%%");
-                event.setFormat(newMessage);
-            }
+            IPlayerInfo playerInfo = Verany.getPlayer(player);
+
+            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+
+            if (playerInfo.getPlayer(IVolcanoPlayer.class) != null)
+                if (playerInfo.getPlayer(IVolcanoPlayer.class).getRound().getSettingValue(GameSetting.CHAT))
+                    players = playerInfo.getPlayer(IVolcanoPlayer.class).getRound().getBukkitPlayers();
+
+            IPermissionObject permissionObject = playerInfo.getPermissionObject();
+            AbstractPermissionGroup currentGroup = permissionObject.getCurrentGroup().getGroup();
+            String newMessage = Verany.format(IngameConfig.CHAT_FORMAT.getValue(), currentGroup.getColor(), currentGroup.getName(), player.getName(), message);
+            for (Player bukkitPlayer : players)
+                bukkitPlayer.sendMessage(newMessage);
         }, EventPriority.LOWEST);
     }
 }
