@@ -6,6 +6,8 @@ import net.verany.api.setup.category.AbstractSetupCategory;
 import org.bson.Document;
 import org.bukkit.Location;
 
+import java.util.List;
+
 public class SetupObject extends AbstractSetupObject {
 
     public SetupObject(VeranyProject project) {
@@ -34,5 +36,15 @@ public class SetupObject extends AbstractSetupObject {
     @Override
     public boolean isLocationSet(String category, String name) {
         return existLocation(category, name) && !getDataObject().getSetupCategoryMap().get(category).getLocation(name).getLocation().getWorld().equals("-");
+    }
+
+    @Override
+    public AbstractSetupCategory getCategory(String category) {
+        return getDataObject().getSetupCategoryMap().get(category);
+    }
+
+    @Override
+    public List<AbstractSetupCategory.LocationData> getLocations(String category) {
+        return getCategory(category).getLocations();
     }
 }
