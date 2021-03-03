@@ -39,6 +39,7 @@ import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
@@ -54,6 +55,7 @@ import redis.clients.jedis.JedisPool;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class Verany extends AbstractVerany {
 
@@ -336,22 +338,25 @@ public class Verany extends AbstractVerany {
 
     public static <T> List<T> sortList(List<SortData<T>> list, boolean reverse) {
         List<T> toReturn = new ArrayList<>();
-        List<String> stringList = new ArrayList<>();
-        for (SortData<T> t : list)
-            stringList.add(t.getKey());
-        Collections.sort(stringList);
+        for (SortData<T> tSortData : list.stream().sorted(Comparator.comparing(SortData::getKey)).collect(Collectors.toList()))
+            toReturn.add(tSortData.getT());
         if (reverse)
-            Collections.reverse(stringList);
-        for (String s : stringList)
-            toReturn.add(getSortData(s, list));
+            Collections.reverse(toReturn);
         return toReturn;
     }
 
-    private static <T> T getSortData(String key, List<SortData<T>> sortData) {
+    /*private static <T> T getSortData(String key, String identifier, List<SortData<T>> sortData) {
         for (SortData<T> sortDatum : sortData)
             if (sortDatum.getKey().equalsIgnoreCase(key))
                 return sortDatum.getT();
         return null;
+    }*/
+
+    public static Color hexToColor(int hex) {
+        int r = (hex & 0xFF0000) >> 16;
+        int g = (hex & 0xFF00) >> 8;
+        int b = (hex & 0xFF);
+        return Color.fromBGR(r, g, b);
     }
 
     @AllArgsConstructor
