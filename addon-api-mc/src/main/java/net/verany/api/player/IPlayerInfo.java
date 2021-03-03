@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.verany.api.achievements.VeranyAchievement;
 import net.verany.api.actionbar.AbstractActionbar;
+import net.verany.api.bossbar.AbstractBossBar;
 import net.verany.api.chat.request.ChatRequest;
 import net.verany.api.chat.request.ChatRequestCallback;
 import net.verany.api.hotbar.HotbarItem;
@@ -23,13 +24,13 @@ import net.verany.api.player.leveling.ICreditsObject;
 import net.verany.api.player.leveling.ILevelObject;
 import net.verany.api.player.party.IPartyObject;
 import net.verany.api.player.permission.IPermissionObject;
+import net.verany.api.player.stats.IStatsObject;
 import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.sound.AbstractVeranySound;
-import net.verany.api.stats.AbstractStatsData;
 import org.bukkit.*;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
@@ -104,6 +105,12 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     void sendInfoActionbar(AbstractActionbar data);
 
+    void setDefaultBossBar(AbstractBossBar bossBar);
+
+    void addBossBar(AbstractBossBar bossBar);
+
+    void setBossBar(AbstractBossBar bossBar);
+
     List<AbstractActionbar> getActionbarQueue();
 
     void sendOnServer(String server);
@@ -158,6 +165,8 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     ILevelObject getLevelObject();
 
+    IStatsObject getStatsObject();
+
     void teleport(VeranyLocation location);
 
     void createLog(PlayerLog log);
@@ -184,38 +193,5 @@ public interface IPlayerInfo extends IVeranyPlayer {
             CHAT
         }
     }
-
-    /*<T extends AbstractStatsData<?>> void loadStats(String collection, String category, Class<? extends T> tClass);
-
-    void registerStats(String collection);
-
-    void saveStats(String collection, String category);
-
-    <T> List<T> getStatsData(AbstractStatsData<T> statsData, StatsType statsType);
-
-    <T> void setStatsData(AbstractStatsData<T> statsData, T value);
-
-    <T> List<T> getStatsData(String key, String category, StatsType statsType, Class<T> tClass);
-
-    <T> Map<String, T> getStatsData(String category, StatsType statsType, Class<T> tClass);
-
-    <T> void setStatsData(String key, String category, T value);
-
-    int getStatsValue(AbstractStatsData<? extends Integer> statsData, StatsType statsType);
-
-    void addStatsValue(AbstractStatsData<? extends Integer> statsData);
-
-    void addStatsValue(AbstractStatsData<? extends Integer> statsData, int amount);
-
-    @AllArgsConstructor
-    @Getter
-    enum StatsType {
-        ALL_TIME(Long.MAX_VALUE),
-        MONTHLY(TimeUnit.DAYS.toMillis(30)),
-        WEEKLY(TimeUnit.DAYS.toMillis(7)),
-        DAILY(TimeUnit.DAYS.toMillis(1));
-
-        private final long time;
-    }*/
 
 }
