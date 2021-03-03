@@ -46,7 +46,7 @@ import net.verany.api.Verany;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
  
-@VeranyModule(name = "Project", prefix = "TestPrefix", version = "2021.2.1", authors = {"Developer"}, user = "user", host = "verany.net", password = "password", databases = {"project"})
+@VeranyModule(name = "Project", maxRounds = 2, prefix = "TestPrefix", version = "2021.2.1", authors = {"Developer"}, user = "user", host = "verany.net", password = "password", databases = {"project"})
 public class YourProject extends VeranyProject {
  
     @Override
