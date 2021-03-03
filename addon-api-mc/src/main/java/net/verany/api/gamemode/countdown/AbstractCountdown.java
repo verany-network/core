@@ -10,7 +10,7 @@ public abstract class AbstractCountdown {
 
     private final AbstractVolcanoRound round;
     private final String key;
-    private final int seconds;
+    private int seconds;
     private final Integer[] run;
     private int count;
     private boolean running = false;
