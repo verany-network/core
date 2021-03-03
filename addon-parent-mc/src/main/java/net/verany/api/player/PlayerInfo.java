@@ -6,19 +6,19 @@ import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
 import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
 import de.dytanic.cloudnet.ext.bridge.player.executor.PlayerExecutor;
-import de.dytanic.cloudnet.wrapper.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_16_R3.DataWatcher;
 import net.minecraft.server.v1_16_R3.DataWatcherRegistry;
-import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.verany.api.Verany;
+import net.verany.api.achievement.AchievementQueue;
 import net.verany.api.achievement.VeranyAchievementType;
 import net.verany.api.achievements.VeranyAchievement;
 import net.verany.api.actionbar.AbstractActionbar;
 import net.verany.api.actionbar.NumberActionbar;
+import net.verany.api.bossbar.AbstractBossBar;
 import net.verany.api.chat.request.ChatRequest;
 import net.verany.api.chat.request.ChatRequestCallback;
 import net.verany.api.event.events.PlayerLanguageUpdateEvent;
@@ -47,18 +47,17 @@ import net.verany.api.player.party.IPartyObject;
 import net.verany.api.player.party.PartyObject;
 import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.PermissionObject;
+import net.verany.api.player.stats.IStatsObject;
 import net.verany.api.player.verification.VerificationObject;
 import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
-import net.verany.api.redis.events.VeranyMessageInEvent;
 import net.verany.api.setting.Settings;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.skin.SkinData;
 import net.verany.api.sound.AbstractVeranySound;
-import net.verany.api.sound.VeranySound;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.boss.BossBar;
@@ -81,6 +80,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private final List<AbstractActionbar> actionbarQueue = new ArrayList<>();
     private final List<BossBar> activeBossBars = new ArrayList<>();
 
+    private AchievementQueue achievementQueue = new AchievementQueue(this, getProject());
+
     private Player player = null;
     private IPermissionObject permissionObject;
     private ICreditsObject creditsObject;
@@ -90,6 +91,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private IClanObject clanObject;
     private IVerificationObject verificationObject;
     private IAFKObject afkObject;
+    private IStatsObject statsObject;
 
     private String defaultActionbar = null;
 
@@ -137,6 +139,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
                 setSkinData();
                 sendUpdate();
             }
+
     }
 
     @Override
@@ -256,7 +259,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public AbstractSkinData getSkinData() {
-        if (getData(PlayerData.class).getSkinData() == null)
+        if (getData(PlayerData.class).getSkinData() == null && player != null)
             setSkinData();
         return getData(PlayerData.class).getSkinData();
     }
@@ -271,6 +274,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public void passAchievement(VeranyAchievement achievement) {
         getData(PlayerData.class).passAchievement(achievement);
+        achievementQueue.addToQueue(achievement);
     }
 
     @Override
@@ -344,9 +348,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public EnumLanguage setLanguage(EnumLanguage language) {
-        getData(PlayerData.class).setLanguage(language);
-        Verany.sync(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer())));
-        update();
+        Verany.sync(getProject(), () -> {
+            Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer()));
+            getData(PlayerData.class).setLanguage(language);
+            update();
+        });
         return language;
     }
 
@@ -483,6 +489,21 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
             return;
         }
         player.sendActionBar(data.getText() + data.getExtra());
+    }
+
+    @Override
+    public void setDefaultBossBar(AbstractBossBar bossBar) {
+
+    }
+
+    @Override
+    public void addBossBar(AbstractBossBar bossBar) {
+
+    }
+
+    @Override
+    public void setBossBar(AbstractBossBar bossBar) {
+
     }
 
     @Override
