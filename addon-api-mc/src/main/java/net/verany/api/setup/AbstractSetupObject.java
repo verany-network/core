@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.WorldCreator;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -52,6 +53,10 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
     public abstract boolean existLocation(String category, String name);
 
     public abstract boolean isLocationSet(String category, String name);
+
+    public abstract AbstractSetupCategory getCategory(String category);
+
+    public abstract List<AbstractSetupCategory.LocationData> getLocations(String category);
 
     public AbstractSetupCategory getNewCategory(Material material) {
         return new SetupCategoryWrapper(material);
