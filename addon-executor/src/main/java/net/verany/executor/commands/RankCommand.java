@@ -97,7 +97,7 @@ public class RankCommand implements CommandExecutor, TabCompleter {
                         return;
                     }
                     if (iPlayerInfo.getPermissionObject().getCurrentGroup().getGroup().getName().equals(permissionGroup.getName()) && iPlayerInfo.getPermissionObject().getCurrentGroup().getDuration().getMillis() == time.getMillis()) {
-                        playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.already_in_group", new Placeholder("%player%", iPlayerInfo.getNameWithColor()), new Placeholder("%rank%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%time%", time.getKey()));
+                        playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.already_in_group", new Placeholder("%player%", iPlayerInfo.getNameWithColor()), new Placeholder("%rank%", permissionGroup.getColor() + permissionGroup.getName()), new Placeholder("%time%", strings[3]));
                         return;
                     }
                     playerInfo.sendKey(playerInfo.getPrefix("RankSystem"), "core.rank.updated", new Placeholder("%player%", iPlayerInfo.getNameWithColor()), new Placeholder("%rank%", permissionGroup.getColor().toString() + permissionGroup.getName()), new Placeholder("%time%", strings[3]));
@@ -214,7 +214,7 @@ public class RankCommand implements CommandExecutor, TabCompleter {
         for (AbstractPermissionGroup value : PermissionGroup.VALUES)
             permissionGroups.add(value.getName().replace(" ", "-"));
 
-        List<String> times = Lists.newArrayList("h=", "d=", "lifetime");
+        List<String> times = Lists.newArrayList("h=", "d=", "lifetime", "-1");
 
         List<String> permissionArguments = Lists.newArrayList("add", "remove");
 
