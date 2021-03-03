@@ -16,10 +16,10 @@ public class CountdownTask extends AbstractTask {
     public void run() {
         for (AbstractCountdown countdown : AbstractVerany.COUNTDOWNS) {
             if (!countdown.isRunning()) continue;
+            countdown.setCount(countdown.getCount() - 1);
             if (Arrays.asList(countdown.getRun()).contains(countdown.getCount()))
                 countdown.run();
             countdown.onCount();
-            countdown.setCount(countdown.getCount() - 1);
             if (countdown.getCount() == 0) {
                 countdown.finished();
                 AbstractVerany.COUNTDOWNS.remove(countdown);
