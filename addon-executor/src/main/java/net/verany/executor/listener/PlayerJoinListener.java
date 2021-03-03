@@ -65,14 +65,14 @@ public class PlayerJoinListener extends AbstractListener {
             playerInfo.setPlayer(player);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(CoreExecutor.INSTANCE, () -> {
-                Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player));
-
                 if (!VeranyServer.ROUNDS.isEmpty() && playerInfo.getCloudPlayer().getProperties().contains("round-id")) {
                     IVolcanoPlayer volcanoPlayer = new VolcanoPlayer();
                     volcanoPlayer.load(player.getUniqueId());
                     Verany.setPlayer(IVolcanoPlayer.class, volcanoPlayer);
                     volcanoPlayer.joinRound(playerInfo.getCloudPlayer().getProperties().getString("round-id"));
                 }
+
+                Bukkit.getPluginManager().callEvent(new PlayerLoadCompleteEvent(player));
             });
         });
 
