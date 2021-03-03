@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +23,7 @@ import java.util.function.Consumer;
 @Getter
 public class InventoryBuilder implements IInventoryBuilder {
     private final int size;
+    private final InventoryType inventoryType;
     private final String title;
     private final Consumer<InventoryClickEvent> event;
     private final Consumer<InventoryClickEvent> nullEvent;
@@ -125,7 +127,10 @@ public class InventoryBuilder implements IInventoryBuilder {
 
     @Override
     public Inventory buildAndOpen(Player player) {
-        inventory = Bukkit.createInventory(null, size, title);
+        if (inventoryType == null)
+            inventory = Bukkit.createInventory(null, size, title);
+        else
+            inventory = Bukkit.createInventory(null, inventoryType, title);
         itemStackMap.forEach(inventory::setItem);
         itemStackMap.clear();
         Verany.INVENTORY_MAP.put(player, this);
