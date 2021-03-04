@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -84,6 +85,8 @@ public class ChatListener extends AbstractListener {
             if (playerInfo.getPlayer(IVolcanoPlayer.class) != null)
                 if (playerInfo.getPlayer(IVolcanoPlayer.class).getRound().getSettingValue(GameSetting.CHAT))
                     players = playerInfo.getPlayer(IVolcanoPlayer.class).getRound().getBukkitPlayers();
+                else
+                    players = new ArrayList<>();
 
             IPermissionObject permissionObject = playerInfo.getPermissionObject();
             AbstractPermissionGroup currentGroup = permissionObject.getCurrentGroup().getGroup();
