@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +26,7 @@ public class InventoryBuilder implements IInventoryBuilder {
     private final int size;
     private final InventoryType inventoryType;
     private final String title;
+    private final Consumer<InventoryCloseEvent> onClose;
     private final Consumer<InventoryClickEvent> event;
     private final Consumer<InventoryClickEvent> nullEvent;
     private final Map<Integer, ItemStack> itemStackMap = new HashMap<>();
@@ -102,7 +104,13 @@ public class InventoryBuilder implements IInventoryBuilder {
 
     @Override
     public void onClick(InventoryClickEvent event) {
-        this.event.accept(event);
+        if (event.getCurrentItem() == null) {
+            if (nullEvent != null)
+                nullEvent.accept(event);
+            return;
+        }
+        if (this.event != null)
+            this.event.accept(event);
 
         pageSwitchHandlers.forEach((pageData, handler) -> {
             if (event.getSlot() == pageData.getNextPageItem()) {
@@ -116,8 +124,19 @@ public class InventoryBuilder implements IInventoryBuilder {
     }
 
     @Override
+    public void onClose(InventoryCloseEvent event) {
+        if (this.onClose != null)
+            this.onClose.accept(event);
+    }
+
+    @Override
     public Consumer<InventoryClickEvent> getClickConsumer() {
         return event;
+    }
+
+    @Override
+    public Consumer<InventoryCloseEvent> getCloseConsumer() {
+        return onClose;
     }
 
     @Override
