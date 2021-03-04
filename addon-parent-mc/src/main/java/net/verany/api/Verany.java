@@ -345,6 +345,10 @@ public class Verany extends AbstractVerany {
         return toReturn;
     }
 
+    public static <T> List<T> sortList(List<T> list, Comparator<T> comparator) {
+        return list.stream().sorted(comparator).collect(Collectors.toList());
+    }
+
     /*private static <T> T getSortData(String key, String identifier, List<SortData<T>> sortData) {
         for (SortData<T> sortDatum : sortData)
             if (sortDatum.getKey().equalsIgnoreCase(key))
