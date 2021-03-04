@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -70,6 +71,9 @@ public class ProtectionListener extends AbstractListener {
             Player player = (Player) event.getWhoClicked();
 
             if (event.getCurrentItem() == null) {
+                if (Verany.INVENTORY_MAP.containsKey(player))
+                    if (Arrays.equals(Verany.INVENTORY_MAP.get(player).getInventory().getStorageContents(), event.getInventory().getStorageContents()))
+                        Verany.INVENTORY_MAP.get(player).onClick(event);
                 return;
             }
             if (event.getCurrentItem().getItemMeta() == null) {
@@ -86,6 +90,15 @@ public class ProtectionListener extends AbstractListener {
                         hotbarItem.onClick(event);
             } catch (Exception ignore) {
             }
+        });
+
+        Verany.registerListener(project, InventoryCloseEvent.class, event -> {
+            Player player = (Player) event.getPlayer();
+
+            if (Verany.INVENTORY_MAP.containsKey(player))
+                if (Arrays.equals(Verany.INVENTORY_MAP.get(player).getInventory().getStorageContents(), event.getInventory().getStorageContents()))
+                    Verany.INVENTORY_MAP.get(player).onClose(event);
+
         });
 
         Verany.registerListener(project, PlayerInteractEvent.class, event -> {
