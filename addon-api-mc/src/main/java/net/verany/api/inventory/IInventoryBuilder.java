@@ -3,6 +3,7 @@ package net.verany.api.inventory;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,7 +26,11 @@ public interface IInventoryBuilder {
 
     void onClick(InventoryClickEvent event);
 
+    void onClose(InventoryCloseEvent event);
+
     Consumer<InventoryClickEvent> getClickConsumer();
+
+    Consumer<InventoryCloseEvent> getCloseConsumer();
 
     Consumer<InventoryClickEvent> getNullClickConsumer();
 
