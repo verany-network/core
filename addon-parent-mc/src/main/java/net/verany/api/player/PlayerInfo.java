@@ -564,12 +564,17 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public int getGlobalRank() {
         List<IPlayerInfo> registered = Verany.PROFILE_OBJECT.getRegisteredPlayers();
-        List<Verany.SortData<IPlayerInfo>> sortData = new ArrayList<>();
+        /*List<Verany.SortData<IPlayerInfo>> sortData = new ArrayList<>();
         for (IPlayerInfo playerInfo : registered)
             sortData.add(new Verany.SortData<>(playerInfo.getPoints() + "_" + playerInfo.getUniqueId().toString().substring(5), playerInfo));
         registered = Verany.sortList(sortData, false);
         int rank = 1;
         for (IPlayerInfo playerInfo : registered) {
+            if (playerInfo.getName().equals(getName())) break;
+            rank++;
+        }*/
+        int rank = 1;
+        for (IPlayerInfo playerInfo : Verany.sortList(registered, Comparator.comparingInt(IPlayerInfo::getPoints).reversed())) {
             if (playerInfo.getName().equals(getName())) break;
             rank++;
         }
