@@ -21,7 +21,7 @@ import java.util.Map;
 public abstract class AbstractSetupObject extends DatabaseLoader {
 
     public AbstractSetupObject(VeranyProject project) {
-        super(project, project.getName(), "locations");
+        super(project, "locations", project.getModule().name().toLowerCase());
         AbstractVerany.SETUP_OBJECTS.add(this);
     }
 
