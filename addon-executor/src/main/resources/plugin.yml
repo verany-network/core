@@ -19,3 +19,6 @@ commands:
   credits:
   support:
   rank:
+  globalrank:
+    aliases:
+      - gr
