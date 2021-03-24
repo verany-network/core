@@ -51,12 +51,14 @@ public class YourProject extends VeranyProject {
  
     @Override
     public void onEnable() {
+        // Connect to Database etc.
         Verany.loadModule(this);
         init();
     }
  
     @Override
     public void onDisable() {
+        // Disconnect from Database
         getConnection().disconnect();
     }
  
