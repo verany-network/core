@@ -1,6 +1,6 @@
 package net.verany.api.player.friend.settings;
 
-import net.verany.api.setting.SettingWrapper;
+import net.verany.api.settings.SettingWrapper;
 import net.verany.api.settings.AbstractSetting;
 import org.bukkit.Material;
 
