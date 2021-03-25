@@ -22,7 +22,7 @@ public class CountdownTask extends AbstractTask {
             countdown.onCount();
             if (countdown.getCount() == 0) {
                 countdown.finished();
-                AbstractVerany.COUNTDOWNS.remove(countdown);
+                //AbstractVerany.COUNTDOWNS.remove(countdown);
             }
         }
     }
