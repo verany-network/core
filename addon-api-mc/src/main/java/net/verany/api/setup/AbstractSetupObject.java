@@ -3,6 +3,7 @@ package net.verany.api.setup;
 import lombok.Getter;
 import lombok.Setter;
 import net.verany.api.AbstractVerany;
+import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
@@ -20,9 +21,13 @@ import java.util.Map;
 @Getter
 public abstract class AbstractSetupObject extends DatabaseLoader {
 
-    public AbstractSetupObject(VeranyProject project) {
-        super(project, "locations", project.getModule().name().toLowerCase());
+    public AbstractSetupObject(VeranyProject project, String database) {
+        super(project, "locations", database);
         AbstractVerany.SETUP_OBJECTS.add(this);
+    }
+
+    public AbstractSetupObject(VeranyProject project) {
+        this(project, project.getModule().name().toLowerCase());
     }
 
     public void saveLocations() {
