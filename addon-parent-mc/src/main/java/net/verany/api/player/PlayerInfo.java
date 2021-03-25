@@ -91,10 +91,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private IClanObject clanObject;
     private IVerificationObject verificationObject;
     private IAFKObject afkObject;
-    private IStatsObject statsObject;
 
     private String defaultActionbar = null;
-    private JumpAndRun jumpAndRun;
 
     private long currentActionbarTime = -1;
     private long lastActionbarTime = -1;
@@ -139,7 +137,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
                 player = Bukkit.getPlayer(uniqueId);
                 setSkinData();
                 sendUpdate();
-                jumpAndRun = new JumpAndRun(player);
             }
 
     }
