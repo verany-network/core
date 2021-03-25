@@ -19,6 +19,12 @@ public interface IStatsObject extends IDefault<UUID> {
 
     int getStatsValue(AbstractStatsType<Integer> statsData, StatsTime time);
 
+    String getKd(int kills, int deaths);
+
+    int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime);
+
+    int getVictoryChance(int playedGames, int wins, StatsTime time);
+
     @AllArgsConstructor
     @Getter
     enum StatsTime {
