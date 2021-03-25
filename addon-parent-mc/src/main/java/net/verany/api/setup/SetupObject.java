@@ -9,6 +9,10 @@ import org.bukkit.Location;
 import java.util.List;
 
 public class SetupObject extends AbstractSetupObject {
+    public SetupObject(VeranyProject project, String database) {
+        super(project, database);
+        load();
+    }
 
     public SetupObject(VeranyProject project) {
         super(project);
