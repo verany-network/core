@@ -8,6 +8,7 @@ import lombok.Getter;
 import net.verany.api.adapter.InterfaceAdapter;
 import net.verany.api.event.EventRegistry;
 import net.verany.api.event.IEventManager;
+import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
@@ -39,7 +40,7 @@ import java.util.logging.Logger;
 
 public abstract class AbstractVerany {
 
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractSetupCategory.class, new InterfaceAdapter<AbstractSetupCategory>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractGameMode.class, new InterfaceAdapter<AbstractGameMode>()).registerTypeAdapter(AbstractSetupCategory.class, new InterfaceAdapter<AbstractSetupCategory>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
     public static final JsonParser PARSER = new JsonParser();
 
     public static final List<Loader> LOADERS = new ArrayList<>();
