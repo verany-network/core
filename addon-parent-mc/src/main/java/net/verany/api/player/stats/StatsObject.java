@@ -2,9 +2,11 @@ package net.verany.api.player.stats;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.verany.api.Verany;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.player.IPlayerInfo;
 
 import java.util.*;
 
@@ -57,6 +59,35 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
                 toReturn += statsDatum;
         }
         return toReturn;
+    }
+
+    @Override
+    public String getKd(AbstractStatsType<Integer> kills, AbstractStatsType<Integer> deaths, StatsTime time) {
+        String kd;
+        if (getStatsValue(deaths, time) == 0)
+            kd = getStatsData(kills, time) + ".0";
+        else {
+            double KD = (double) getStatsValue(kills, time) / (double) getStatsValue(deaths, time);
+            KD *= 100.0D;
+            KD = Math.round(KD);
+            KD /= 100.0D;
+            kd = String.valueOf(KD);
+        }
+        kd = kd.replace("NaN", "0.0").replace("Infinity", "0.0");
+        return kd;
+    }
+
+    @Override
+    public int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime) {
+        return 0;
+    }
+
+    @Override
+    public int getVictoryChance(AbstractStatsType<Integer> playedGames, AbstractStatsType<Integer> wins, StatsTime time) {
+        int percent = 0;
+        if (getStatsValue(playedGames, time) != 0)
+            percent = ((getStatsValue(wins, time) * 100) / getStatsValue(playedGames, time));
+        return percent;
     }
 
     private <T> void checkStats(AbstractStatsType<T> statsType) {
