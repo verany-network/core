@@ -8,7 +8,7 @@ import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.friend.data.FriendData;
 import net.verany.api.settings.AbstractSetting;
-import net.verany.api.setting.Settings;
+import net.verany.api.settings.Settings;
 
 import java.io.Serializable;
 import java.util.*;
