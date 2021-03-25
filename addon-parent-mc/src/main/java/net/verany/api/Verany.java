@@ -9,7 +9,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
+import net.verany.api.command.CommandEntry;
+import net.verany.api.command.executor.VeranyCommandExecutor;
 import net.verany.api.event.EventConsumer;
+import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.GameModeObject;
 import net.verany.api.gamemode.IGameModeObject;
 import net.verany.api.gamemode.VeranyGameMode;
@@ -37,11 +41,13 @@ import net.verany.api.socket.SocketClient;
 import net.verany.api.socket.SocketServer;
 import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
+import net.verany.volcano.VeranyServer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.*;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -49,7 +55,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.JedisPool;
 
 import java.util.*;
@@ -210,6 +219,24 @@ public class Verany extends AbstractVerany {
         Bukkit.getPluginManager().registerEvent(tClass, eventConsumer, priority, (listener, event) -> eventConsumer.call((T) event), plugin);
     }
 
+    public static void registerCommand(@NonNull VeranyProject project, @NonNull CommandEntry commandEntry, @NonNull VeranyCommandExecutor executor) {
+        PluginCommand pluginCommand = project.getCommand(commandEntry.getName());
+        if (pluginCommand == null) return;
+
+        pluginCommand.setExecutor((commandSender, command, s, strings) -> {
+            if (commandSender instanceof Player) {
+                Player player = (Player) commandSender;
+                executor.onExecute(getPlayer(player), strings);
+            }
+            return false;
+        });
+
+        pluginCommand.setPermission(commandEntry.getPermission());
+
+        if (commandEntry.getTabCompleter() != null)
+            pluginCommand.setTabCompleter(commandEntry.getTabCompleter());
+    }
+
     public static double distance(Location location1, Location location2) {
         if (!location1.getWorld().equals(location2.getWorld())) return -1;
         return location1.distance(location2);
@@ -284,6 +311,10 @@ public class Verany extends AbstractVerany {
             MESSAGES.add(new MessageData(key, languageData));
         }
         System.out.println("Loading messages complete. (" + MESSAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
+    }
+
+    public static void registerGameMode(VeranyProject project, AbstractGameMode gameMode) {
+        VeranyServer.registerGameMode(project, gameMode);
     }
 
     public static void createMessage(VeranyProject project, String key) {
