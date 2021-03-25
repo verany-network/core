@@ -1,5 +1,7 @@
 package net.verany.api.player.permission;
 
+import de.dytanic.cloudnet.common.document.gson.JsonDocument;
+import de.dytanic.cloudnet.driver.CloudNetDriver;
 import lombok.Getter;
 import lombok.Setter;
 import net.verany.api.Verany;
@@ -55,6 +57,10 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
         getData(PlayerRank.class).setLastGroup(lastGroup);
         getData(PlayerRank.class).setCurrentGroup(group);
         update();
+
+        if (group.getGroup().getName().contains("Developer")) {
+            CloudNetDriver.getInstance().getMessenger().sendChannelMessage("core", "createDev", JsonDocument.newDocument().append("uuid", uniqueId));
+        }
     }
 
     @Override
