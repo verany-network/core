@@ -62,12 +62,12 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     @Override
-    public String getKd(AbstractStatsType<Integer> kills, AbstractStatsType<Integer> deaths, StatsTime time) {
+    public String getKd(int kills, int deaths) {
         String kd;
-        if (getStatsValue(deaths, time) == 0)
-            kd = getStatsData(kills, time) + ".0";
+        if (deaths == 0)
+            kd = kills + ".0";
         else {
-            double KD = (double) getStatsValue(kills, time) / (double) getStatsValue(deaths, time);
+            double KD = (double) kills / (double) deaths;
             KD *= 100.0D;
             KD = Math.round(KD);
             KD /= 100.0D;
@@ -83,10 +83,10 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     @Override
-    public int getVictoryChance(AbstractStatsType<Integer> playedGames, AbstractStatsType<Integer> wins, StatsTime time) {
+    public int getVictoryChance(int playedGames, int wins, StatsTime time) {
         int percent = 0;
-        if (getStatsValue(playedGames, time) != 0)
-            percent = ((getStatsValue(wins, time) * 100) / getStatsValue(playedGames, time));
+        if (playedGames != 0)
+            percent = ((wins * 100) / playedGames);
         return percent;
     }
 
