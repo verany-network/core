@@ -9,5 +9,6 @@ public abstract class AbstractGameMode {
 
     private final String name;
     private final String[] targetGroup;
+    private final String[] databaseNames;
 
 }
