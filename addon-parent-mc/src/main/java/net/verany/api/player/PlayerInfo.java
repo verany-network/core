@@ -53,7 +53,7 @@ import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
-import net.verany.api.setting.Settings;
+import net.verany.api.settings.Settings;
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.skin.SkinData;
@@ -94,6 +94,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private IStatsObject statsObject;
 
     private String defaultActionbar = null;
+    private JumpAndRun jumpAndRun;
 
     private long currentActionbarTime = -1;
     private long lastActionbarTime = -1;
@@ -138,6 +139,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
                 player = Bukkit.getPlayer(uniqueId);
                 setSkinData();
                 sendUpdate();
+                jumpAndRun = new JumpAndRun(player);
             }
 
     }
@@ -559,20 +561,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         getData(PlayerData.class).setSettingValue(setting, value);
     }
 
-    //return Verany.getRanking(getProject(), uniqueId, "players", "network", "points");
-
     @Override
     public int getGlobalRank() {
         List<IPlayerInfo> registered = Verany.PROFILE_OBJECT.getRegisteredPlayers();
-        /*List<Verany.SortData<IPlayerInfo>> sortData = new ArrayList<>();
-        for (IPlayerInfo playerInfo : registered)
-            sortData.add(new Verany.SortData<>(playerInfo.getPoints() + "_" + playerInfo.getUniqueId().toString().substring(5), playerInfo));
-        registered = Verany.sortList(sortData, false);
-        int rank = 1;
-        for (IPlayerInfo playerInfo : registered) {
-            if (playerInfo.getName().equals(getName())) break;
-            rank++;
-        }*/
         int rank = 1;
         for (IPlayerInfo playerInfo : Verany.sortList(registered, Comparator.comparingInt(IPlayerInfo::getPoints).reversed())) {
             if (playerInfo.getName().equals(getName())) break;
@@ -648,7 +639,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public int getPoints() {
-        return getData(PlayerData.class).getPoints();
+        try {
+            return getData(PlayerData.class).getPoints();
+        } catch (Exception exception) {
+            return 0;
+        }
     }
 
     private int getDataByText(String text) {
