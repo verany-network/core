@@ -65,34 +65,22 @@ public class GameModeObject implements IGameModeObject {
     }
 
     @Override
-    public void startService(AbstractGameMode gameMode, Consumer<SimplifiedServerInfo> consumer) {
+    public void startService(AbstractGameMode gameMode, Consumer<ServiceInfoSnapshot> consumer) {
         startService(gameMode.getTargetGroup(), consumer);
     }
 
     @Override
-    public void startService(String[] groups, Consumer<SimplifiedServerInfo> consumer) {
+    public void startService(String[] groups, Consumer<ServiceInfoSnapshot> consumer) {
         for (String group : groups) {
             ServiceTask serviceTask = CloudNetDriver.getInstance().getServiceTaskProvider().getServiceTask(group);
-            CloudNetDriver.getInstance().getCloudServiceFactory().createCloudServiceAsync(
-                    serviceTask.getName(),
-                    serviceTask.getRuntime(),
-                    serviceTask.isAutoDeleteOnStop(),
-                    serviceTask.isStaticServices(),
-                    serviceTask.getIncludes(),
-                    serviceTask.getTemplates(),
-                    serviceTask.getDeployments(),
-                    serviceTask.getGroups(),
-                    serviceTask.getProcessConfiguration(),
-                    serviceTask.getStartPort()
-            )
-                    .onComplete(serviceInfoSnapshot -> consumer.accept(createServerInfo(serviceInfoSnapshot)))
-                    .onFailure(throwable -> consumer.accept(null))
-                    .onCancelled(task -> consumer.accept(null));
+            ServiceInfoSnapshot serviceInfoSnapshot = CloudNetDriver.getInstance().getCloudServiceFactory().createCloudService(serviceTask);
+            consumer.accept(serviceInfoSnapshot);
+            serviceInfoSnapshot.provider().start();
         }
     }
 
     @Override
-    public void startService(String group, Consumer<SimplifiedServerInfo> consumer) {
+    public void startService(String group, Consumer<ServiceInfoSnapshot> consumer) {
         startService(new String[]{group}, consumer);
     }
 
