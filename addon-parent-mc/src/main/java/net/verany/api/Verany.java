@@ -73,8 +73,10 @@ public class Verany extends AbstractVerany {
     public static void loadModule(VeranyProject project) {
         VeranyModule module = project.getClass().getAnnotation(VeranyModule.class);
 
-        if (!isLoaded())
+        if (!isLoaded()) {
             PROFILE_OBJECT = new ProfileObject();
+            EVENT_REGISTRY.setPlugin(project);
+        }
         load();
 
         REDIS_MANAGER = new RedisManager(new JedisPool("127.0.0.1"), new RedisPubSub());
@@ -251,10 +253,6 @@ public class Verany extends AbstractVerany {
         return new SocketClient(address, port);
     }
 
-    public static void sync(VeranyProject project, Runnable runnable) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(project, runnable);
-    }
-
     public static List<VeranyItem> toVeranyItem(List<ItemStack> itemStacks) {
         List<VeranyItem> toReturn = new ArrayList<>();
         for (ItemStack itemStack : itemStacks)
@@ -322,18 +320,6 @@ public class Verany extends AbstractVerany {
                     if (languageData.getLanguage().equals(language))
                         return languageData.getMessage();
         return null;
-    }
-
-    public static IPlayerInfo getPlayer(UUID uuid) {
-        return PROFILE_OBJECT.getPlayer(uuid).get();
-    }
-
-    public static IPlayerInfo getPlayer(String name) {
-        return PROFILE_OBJECT.getPlayer(name).get();
-    }
-
-    public static IPlayerInfo getPlayer(Player player) {
-        return PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
     }
 
     public static <T> List<T> sortList(List<SortData<T>> list, boolean reverse) {
