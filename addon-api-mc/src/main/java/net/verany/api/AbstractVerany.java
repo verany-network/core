@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.verany.api.adapter.InterfaceAdapter;
+import net.verany.api.event.EventRegistry;
 import net.verany.api.event.IEventManager;
 import net.verany.api.gamemode.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
@@ -23,6 +24,7 @@ import net.verany.api.task.MainTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
+import org.bukkit.entity.Player;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.sqlite.core.DB;
 import redis.clients.jedis.JedisPool;
@@ -45,6 +47,7 @@ public abstract class AbstractVerany {
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
     public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
     public static final List<AbstractSetupObject> SETUP_OBJECTS = new CopyOnWriteArrayList<>();
+    public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static IEventManager eventManager;
     public static IProfileObject PROFILE_OBJECT;
     private static final MainTask mainTask = new MainTask();
@@ -266,6 +269,10 @@ public abstract class AbstractVerany {
         return toReturn;
     }
 
+    public static void sync(VeranyProject project, Runnable runnable) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(project, runnable);
+    }
+
     public static String getNameOfEnum(String enumName, String color) {
         String name;
         StringBuilder nameBuilder = new StringBuilder();
@@ -284,6 +291,18 @@ public abstract class AbstractVerany {
             if (countdown.getKey().equalsIgnoreCase(key))
                 return countdown;
         return null;
+    }
+
+    public static IPlayerInfo getPlayer(UUID uuid) {
+        return PROFILE_OBJECT.getPlayer(uuid).get();
+    }
+
+    public static IPlayerInfo getPlayer(String name) {
+        return PROFILE_OBJECT.getPlayer(name).get();
+    }
+
+    public static IPlayerInfo getPlayer(Player player) {
+        return PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
     }
 
     public static String round(double i) {
