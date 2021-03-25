@@ -165,8 +165,6 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     ILevelObject getLevelObject();
 
-    IStatsObject getStatsObject();
-
     void teleport(VeranyLocation location);
 
     void createLog(PlayerLog log);
