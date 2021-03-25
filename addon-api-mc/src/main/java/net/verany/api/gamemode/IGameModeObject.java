@@ -1,5 +1,6 @@
 package net.verany.api.gamemode;
 
+import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import net.verany.api.gamemode.server.SimplifiedServerInfo;
 
 import java.util.List;
@@ -19,11 +20,11 @@ public interface IGameModeObject {
 
     void getOnlineServers(Consumer<List<SimplifiedServerInfo>> consumer);
 
-    void startService(AbstractGameMode gameMode,  Consumer<SimplifiedServerInfo> consumer);
+    void startService(AbstractGameMode gameMode,  Consumer<ServiceInfoSnapshot> consumer);
 
-    void startService(String[] groups, Consumer<SimplifiedServerInfo> consumer);
+    void startService(String[] groups, Consumer<ServiceInfoSnapshot> consumer);
 
-    void startService(String group, Consumer<SimplifiedServerInfo> consumer);
+    void startService(String group, Consumer<ServiceInfoSnapshot> consumer);
 
     void startService(String group);
 
