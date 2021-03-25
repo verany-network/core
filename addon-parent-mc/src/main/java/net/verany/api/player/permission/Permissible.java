@@ -1,5 +1,6 @@
 package net.verany.api.player.permission;
 
+import de.dytanic.cloudnet.wrapper.Wrapper;
 import net.verany.api.Verany;
 import net.verany.api.player.permission.group.PermissionGroup;
 import org.bukkit.entity.Player;
@@ -7,6 +8,8 @@ import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class Permissible extends PermissibleBase {
 
@@ -16,7 +19,7 @@ public class Permissible extends PermissibleBase {
         super(new ServerOperator() {
             @Override
             public boolean isOp() {
-                return player.isOp();
+                return player.isOp() || Wrapper.getInstance().getCurrentServiceInfoSnapshot().getProperties().contains("uuid") && Wrapper.getInstance().getCurrentServiceInfoSnapshot().getProperties().get("uuid", UUID.class).equals(player.getUniqueId());
             }
 
             public void setOp(boolean paramBoolean) {
