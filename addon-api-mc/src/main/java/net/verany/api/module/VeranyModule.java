@@ -19,7 +19,7 @@ public @interface VeranyModule {
 
     String name();
 
-    int maxRounds();
+    int maxRounds() default -1;
 
     String prefix();
 
