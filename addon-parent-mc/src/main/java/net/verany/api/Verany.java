@@ -10,6 +10,9 @@ import com.mongodb.client.model.Sorts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.verany.api.command.CommandEntry;
 import net.verany.api.command.executor.VeranyCommandExecutor;
 import net.verany.api.event.EventConsumer;
@@ -78,6 +81,8 @@ public class Verany extends AbstractVerany {
 
     public static final IWorldObject WORLD_OBJECT = new WorldObject();
     public static final IGameModeObject GAME_MODE_OBJECT = new GameModeObject();
+
+    public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
     public static void loadModule(VeranyProject project) {
         VeranyModule module = project.getClass().getAnnotation(VeranyModule.class);
@@ -278,6 +283,10 @@ public class Verany extends AbstractVerany {
 
     public SocketClient getNewClient(String address, int port) {
         return new SocketClient(address, port);
+    }
+
+    public static String serializeHex(String text) {
+        return serializer.serialize(TextComponent.ofChildren(MiniMessage.get().parse(text)));
     }
 
     public static List<VeranyItem> toVeranyItem(List<ItemStack> itemStacks) {
