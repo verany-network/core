@@ -377,7 +377,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         for (Placeholder placeholder : placeholders)
             message = message.replace(placeholder.getTarget(), placeholder.getReplacement().toString());
 
-        return message;
+        return Verany.serializeHex(message);
     }
 
     @Override
