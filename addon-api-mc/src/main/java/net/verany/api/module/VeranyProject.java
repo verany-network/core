@@ -2,6 +2,7 @@ package net.verany.api.module;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.verany.api.AbstractVerany;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.LoadObject;
@@ -28,8 +29,10 @@ public abstract class VeranyProject extends JavaPlugin implements Serializable, 
 
     private VeranyModule module;
     private DatabaseConnection connection;
+    private BukkitAudiences adventure;
 
     public void init() {
+        adventure = BukkitAudiences.create(this);
         VeranyLog.info(getModule(), AbstractVerany.format("{0} initialized (v{1})", module.name(), module.version()));
     }
 
