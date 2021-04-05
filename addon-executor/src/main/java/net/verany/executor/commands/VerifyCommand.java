@@ -103,14 +103,18 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                             return false;
                         }
 
-                        // TODO: check if user is on dc server
+                        Verany.REDIS_MANAGER.sendRequest("discord-is_online<" + name, message -> {
+                            if (message.equals("online")) {
+                                IVerificationObject.VerificationData data = new IVerificationObject.VerificationData();
+                                data.setExtra(name);
 
-                        IVerificationObject.VerificationData data = new IVerificationObject.VerificationData();
-                        data.setExtra(name);
+                                verificationObject.createVerification(type, data);
 
-                        verificationObject.createVerification(type, data);
-
-                        playerInfo.sendKey(Verany.getPrefix("Verification", playerInfo.getPrefixPattern()), "verification.discord.key");
+                                playerInfo.sendKey(Verany.getPrefix("Verification", playerInfo.getPrefixPattern()), "verification.discord.key");
+                            } else {
+                                playerInfo.sendKey(playerInfo.getPrefix("Verification"), "verification.discord.not_on_server", new Placeholder("%name%", name));
+                            }
+                        });
                         break;
                     }
                     case "teamspeak":
