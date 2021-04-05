@@ -1,9 +1,12 @@
 package net.verany.executor;
 
+import com.google.gson.Gson;
 import net.verany.api.Verany;
 import net.verany.api.actionbar.ActionbarTask;
 import net.verany.api.chat.task.ChatTask;
 import net.verany.api.config.IngameConfig;
+import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.gamemode.GameModeWrapper;
 import net.verany.api.gamemode.countdown.task.CountdownTask;
 import net.verany.api.logger.VeranyLog;
 import net.verany.api.module.VeranyModule;
@@ -21,7 +24,7 @@ import org.bukkit.Bukkit;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@VeranyModule(name = "CoreExecutor", prefix = "CoreExecutor", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "", databases = {"network", "bots", "friends", "rank", "verification"})
+@VeranyModule(name = "CoreExecutor", prefix = "CoreExecutor", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "RxNqA18HB56SS7GW", databases = {"network", "bots", "friends", "rank", "verification"})
 public class CoreExecutor extends VeranyProject {
 
     public static CoreExecutor INSTANCE;
@@ -63,6 +66,9 @@ public class CoreExecutor extends VeranyProject {
         this.getCommand("support").setTabCompleter(new SupportCommand());
         this.getCommand("rank").setExecutor(new RankCommand());
         this.getCommand("rank").setTabCompleter(new RankCommand());
+        this.getCommand("globalrank").setExecutor(new GlobalRankCommand());
+        this.getCommand("globalrank").setTabCompleter(new GlobalRankCommand());
+        this.getCommand("chatclear").setExecutor(new ChatClearCommand());
 
         FriendSetting.REQUESTS.getCategory();
         Verany.loadPermissionGroups(this);
@@ -73,6 +79,14 @@ public class CoreExecutor extends VeranyProject {
             Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
 
             VeranyLog.debug(getModule(), playerInfo.getUniqueId().toString() + " loaded");
+        }
+
+        for (Document document : getConnection().getCollection("games").find()) {
+            AbstractGameMode gameMode = Verany.GSON.fromJson(document.toJson(), GameModeWrapper.class);
+            GameModeWrapper.VALUES.add(gameMode);
+        }
+        if(GameModeWrapper.VALUES.isEmpty()) {
+            getConnection().getCollection("games").insertOne(Verany.GSON.fromJson(Verany.GSON.toJson(new GameModeWrapper("FlagWars", new String[]{"FW-2x1"})), Document.class));
         }
 
         Verany.reloadMessages(this);
