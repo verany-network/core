@@ -93,6 +93,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private IAFKObject afkObject;
 
     private String defaultActionbar = null;
+    private AbstractBossBar defaultBossBar = null;
+    private BossBar bossBar = null;
 
     private long currentActionbarTime = -1;
     private long lastActionbarTime = -1;
@@ -491,11 +493,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
-    public void setDefaultBossBar(AbstractBossBar bossBar) {
-
-    }
-
-    @Override
     public void addBossBar(AbstractBossBar bossBar) {
 
     }
@@ -556,6 +553,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public <T> void setSettingValue(AbstractSetting<T> setting, T value) {
         getData(PlayerData.class).setSettingValue(setting, value);
+    }
+
+    @Override
+    public void setBossBar(BossBar bossBar) {
+        this.bossBar = bossBar;
     }
 
     @Override
