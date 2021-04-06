@@ -6,7 +6,7 @@ subprojects {
     apply plugin: 'java'
 
     group 'net.verany'
-    version '2021.2.1'
+    version '2021.4.1'
 
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -21,6 +21,10 @@ subprojects {
         maven {
             url 'https://repo.cloudnetservice.eu/repository/releases/'
         }
+        maven {
+            name = "sonatype-oss-snapshots"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
 
     dependencies {
@@ -28,14 +32,16 @@ subprojects {
         compile 'com.google.code.gson:gson:2.8.5'
         compileOnly 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
         compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/1.16.4/Paper-Server/target/paper-1.16.4.jar')
-        compile files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.2.1.jar");
+        compile files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.3.1.jar");
         annotationProcessor 'org.projectlombok:lombok:1.18.10'
         implementation 'com.github.marcoacierno:pastebin-java-api:0.2.1'
         compile 'org.mongodb:mongo-java-driver:3.12.7'
 
-        compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.2.0-RELEASE'
-        compileOnly 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.3.0-RELEASE'
-        compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.3.0-RELEASE'
+        implementation "net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"
+        implementation "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
+
+        compile 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.3.0-RELEASE'
+        compile 'de.dytanic.cloudnet:cloudnet-bridge:3.3.0-RELEASE'
         compile group: 'redis.clients', name: 'jedis', version: '3.5.1'
     }
 
