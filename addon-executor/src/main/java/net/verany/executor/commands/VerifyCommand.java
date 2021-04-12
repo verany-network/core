@@ -11,6 +11,7 @@ import net.verany.api.message.AbstractComponentBuilder;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.verifictation.IVerificationObject;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +105,28 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                             return false;
                         }
 
-                        Verany.REDIS_MANAGER.sendRequest("discord-is_online<" + name, message -> {
+                        Verany.MESSENGER.sendMessage("DiscordBot", new JSONObject().put("info", "verification").put("username", player.getName()).put("name", name), object -> {
+                            if (object.has("exist")) {
+                                boolean exist = object.getBoolean("exist");
+                                if (exist) {
+                                    IVerificationObject.VerificationData data = new IVerificationObject.VerificationData();
+                                    data.setExtra(name);
+
+                                    verificationObject.createVerification(type, data);
+
+                                    playerInfo.sendKey(Verany.getPrefix("Verification", playerInfo.getPrefixPattern()), "verification.discord.key");
+                                } else {
+                                    playerInfo.sendKey(playerInfo.getPrefix("Verification"), "verification.discord.not_on_server", new Placeholder("%name%", name));
+                                }
+                            } else if (object.has("verified")) {
+                                if (object.getString("verified").equals("discord")) {
+                                    playerInfo.sendKey(playerInfo.getPrefix("Verification"), "verification.discord.verified", new Placeholder("%name%", object.getString("name")));
+                                    playerInfo.getVerificationObject().confirmVerification(type);
+                                }
+                            }
+                        });
+
+                        /*Verany.REDIS_MANAGER.sendRequest("discord-is_online<" + name, message -> {
                             if (message.equals("online")) {
                                 IVerificationObject.VerificationData data = new IVerificationObject.VerificationData();
                                 data.setExtra(name);
@@ -114,7 +137,7 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                             } else {
                                 playerInfo.sendKey(playerInfo.getPrefix("Verification"), "verification.discord.not_on_server", new Placeholder("%name%", name));
                             }
-                        });
+                        });*/
                         break;
                     }
                     case "teamspeak":
