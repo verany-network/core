@@ -37,6 +37,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scoreboard.Team;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
