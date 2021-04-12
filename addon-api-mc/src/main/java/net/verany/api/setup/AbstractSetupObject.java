@@ -37,7 +37,9 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
 
     public void load() {
         load(new LoadInfo<>("locations", LocationDataObject.class, new LocationDataObject()));
+    }
 
+    public void loadWorlds() {
         for (AbstractSetupCategory value : getDataObject().getSetupCategoryMap().values()) {
             for (AbstractSetupCategory.LocationData location : value.getLocations()) {
                 if (location.getLocation().getWorld().equals("-")) continue;
