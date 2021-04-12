@@ -1,11 +1,14 @@
 package net.verany.api.event;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public class EventManager implements IEventManager {
 
     private final List<VeranyListener> listeners = new ArrayList<>();
@@ -15,18 +18,4 @@ public class EventManager implements IEventManager {
         listeners.add(listener);
     }
 
-    @SneakyThrows
-    @Override
-    public <T extends VeranyEvent> void execute(T event) {
-        for (VeranyListener listener : listeners) {
-            for (Method method : listener.getClass().getMethods()) {
-                if (method.isAnnotationPresent(VeranyEventHandler.class)) {
-                    if(method.getParameterTypes()[0].equals(event.getClass())) {
-                        VeranyEvent e = event.getClass().newInstance();
-                        method.invoke(e);
-                    }
-                }
-            }
-        }
-    }
 }
