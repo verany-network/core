@@ -4,6 +4,7 @@ import net.verany.api.Verany;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.executor.CoreExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,7 @@ public class LanguageCommand implements CommandExecutor {
         if (strings.length == 1) {
             EnumLanguage language = EnumLanguage.valueOf(strings[0].toUpperCase(Locale.ROOT));
             playerInfo.setLanguage(language);
-            playerInfo.sendKey(Verany.getPrefix("CoreExecutor", playerInfo.getPrefixPattern()), "language.updated", new Placeholder("%language%", Verany.getNameOfEnum(language.name(), "").replaceFirst(" ", "")));
+            playerInfo.sendKey(playerInfo.getPrefix(CoreExecutor.INSTANCE.getModule()), "language.updated", new Placeholder("%language%", Verany.getNameOfEnum(language.name(), "").replaceFirst(" ", "")));
         }
 
         return false;
