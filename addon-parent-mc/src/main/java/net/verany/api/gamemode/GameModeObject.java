@@ -4,6 +4,7 @@ import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.service.*;
 import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import lombok.SneakyThrows;
 import net.verany.api.gamemode.server.SimplifiedServerInfo;
 
 import java.util.*;
@@ -38,11 +39,12 @@ public class GameModeObject implements IGameModeObject {
         return getOnlinePlayers(groups, new String[]{});
     }
 
+    @SneakyThrows
     @Override
     public int getOnlinePlayers(String[] groups, String[] servers) {
         int i = 0;
         for (String s : groups)
-            for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(s)) {
+            for (ServiceInfoSnapshot serviceInfoSnapshot : CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroupAsync(s).get()) {
                 List<String> serversList = Arrays.asList(servers);
                 if (!serversList.isEmpty() && !serversList.contains(serviceInfoSnapshot.getName())) continue;
                 if (serviceInfoSnapshot.getProperty(BridgeServiceProperty.ONLINE_COUNT).isPresent())
