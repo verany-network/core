@@ -10,6 +10,7 @@ import com.mongodb.client.model.Sorts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -26,6 +27,7 @@ import net.verany.api.item.VeranyItem;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.language.LanguageData;
 import net.verany.api.message.MessageData;
+import net.verany.api.messaging.VeranyMessenger;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyModule.DatabaseConnection;
 import net.verany.api.module.VeranyProject;
@@ -40,8 +42,6 @@ import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
-import net.verany.api.socket.SocketClient;
-import net.verany.api.socket.SocketServer;
 import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
 import net.verany.volcano.VeranyServer;
@@ -64,6 +64,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.JedisPool;
 
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -78,18 +79,24 @@ public class Verany extends AbstractVerany {
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<INPC> NPCS = new CopyOnWriteArrayList<>();
     public static final List<MessageData> MESSAGES = new ArrayList<>();
+    public static final String KEY = generate(10);
+    public static VeranyMessenger MESSENGER;
 
     public static final IWorldObject WORLD_OBJECT = new WorldObject();
     public static final IGameModeObject GAME_MODE_OBJECT = new GameModeObject();
 
     public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
+    @SneakyThrows
     public static void loadModule(VeranyProject project) {
         VeranyModule module = project.getClass().getAnnotation(VeranyModule.class);
 
         if (!isLoaded()) {
             PROFILE_OBJECT = new ProfileObject();
             EVENT_REGISTRY.setPlugin(project);
+            MESSENGER = new VeranyMessenger(new URI("ws://159.69.63.105:888"));
+            MESSENGER.connect();
+
         }
         load();
 
@@ -275,14 +282,6 @@ public class Verany extends AbstractVerany {
             return RADIAL[Math.round(yaw / 45f) & 0x7].getOppositeFace();
 
         return AXIS[Math.round(yaw / 90f) & 0x3].getOppositeFace();
-    }
-
-    public SocketServer getNewServer(int port) {
-        return new SocketServer(port);
-    }
-
-    public SocketClient getNewClient(String address, int port) {
-        return new SocketClient(address, port);
     }
 
     public static String serializeHex(String text) {
