@@ -22,3 +22,4 @@ commands:
   globalrank:
     aliases:
       - gr
+  chatclear:
