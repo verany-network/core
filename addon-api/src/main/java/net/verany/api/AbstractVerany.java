@@ -8,7 +8,7 @@ import lombok.Getter;
 import net.verany.api.event.IEventManager;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
-import net.verany.api.redis.RedisManager;
+import net.verany.api.messaging.VeranyMessenger;
 import net.verany.api.redis.redispub.RedisPubSub;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Getter
 public abstract class AbstractVerany {
 
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -31,10 +32,10 @@ public abstract class AbstractVerany {
     public static final List<Loader> LOADERS = new ArrayList<>();
     public static final List<AbstractTask> TASKS = new ArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
+    public static VeranyMessenger messenger;
     public static IEventManager eventManager;
-    public static RedisManager REDIS_MANAGER;
     private static MainTask mainTask;
-    private static boolean loaded = false;
+    public static boolean loaded = false;
 
     public static void addTask(AbstractTask... tasks) {
         TASKS.addAll(Arrays.asList(tasks));
@@ -52,8 +53,6 @@ public abstract class AbstractVerany {
     public static void load() {
         if (!loaded) {
             loaded = true;
-
-            REDIS_MANAGER = new RedisManager(new JedisPool("127.0.0.1"), new RedisPubSub());
 
             Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
             mongoLogger.setLevel(Level.OFF);
