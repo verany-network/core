@@ -53,7 +53,6 @@ public class VerificationObject extends DatabaseLoader implements IVerificationO
 
         getData(VerificationMap.class).getVerificationDataMap().put(type, data);
         update();
-        Verany.REDIS_MANAGER.sendMessage("verification~accept~" + key.toString());
     }
 
     @Override
