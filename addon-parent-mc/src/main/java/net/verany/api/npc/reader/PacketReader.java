@@ -6,6 +6,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import net.verany.api.Verany;
+import net.verany.api.module.VeranyProject;
 import net.verany.api.npc.INPC;
 import net.verany.api.npc.event.NPCInteractEvent;
 import org.bukkit.Bukkit;
@@ -17,11 +18,13 @@ import java.util.List;
 
 public class PacketReader {
 
-    Player player;
-    Channel channel;
+    private final Player player;
+    private final VeranyProject project;
+    private Channel channel;
 
-    public PacketReader(Player player) {
+    public PacketReader(Player player, VeranyProject project) {
         this.player = player;
+        this.project = project;
     }
 
     public void inject() {
@@ -50,7 +53,7 @@ public class PacketReader {
             if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK") || getValue(packet, "action").toString().equalsIgnoreCase("INTERACT") || getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT"))
                 for (INPC npc : Verany.NPCS)
                     if (npc.getId() == id)
-                        Bukkit.getPluginManager().callEvent(new NPCInteractEvent(player, npc, PacketPlayInUseEntity.EnumEntityUseAction.valueOf(getValue(packet, "action").toString().toUpperCase())));
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new NPCInteractEvent(player, npc, PacketPlayInUseEntity.EnumEntityUseAction.valueOf(getValue(packet, "action").toString().toUpperCase()))));
         }
     }
 
