@@ -6,9 +6,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.verany.api.Verany;
 import net.verany.api.event.AbstractListener;
+import net.verany.api.event.events.MessageInEvent;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.message.AbstractComponentBuilder;
-import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.npc.INPC;
 import net.verany.api.npc.reader.PacketReader;
@@ -17,7 +17,7 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.player.friend.FriendObject;
-import net.verany.api.player.friend.data.FriendData;
+import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.redis.events.VeranyMessageInEvent;
 import net.verany.executor.CoreExecutor;
 import org.bukkit.Bukkit;
@@ -49,7 +49,7 @@ public class ProtectionListener extends AbstractListener {
         Verany.registerListener(project, PlayerJoinEvent.class, event -> {
             Player player = event.getPlayer();
 
-            PacketReader packetReader = new PacketReader(player);
+            PacketReader packetReader = new PacketReader(player, project);
             packetReader.inject();
             player.setMetadata("reader", new FixedMetadataValue(project, packetReader));
         }, EventPriority.HIGHEST);
@@ -127,6 +127,20 @@ public class ProtectionListener extends AbstractListener {
                 playerInfo.getAfkObject().resetAfkTime();
         });
 
+        /*Verany.registerListener(project, MessageInEvent.class, event -> {
+            if (event.getMessage().has("username")) {
+                if (Bukkit.getPlayer(event.getMessage().getString("username")) != null) {
+                    IPlayerInfo playerInfo = Verany.getPlayer(event.getMessage().getString("username"));
+                    if (event.getMessage().has("verified")) {
+                        if (event.getMessage().getString("verified").equals("discord")) {
+                            playerInfo.sendKey(playerInfo.getPrefix("Verification"), "verification.discord.verified", new Placeholder("%name%", event.getMessage().getString("name")));
+                            playerInfo.getVerificationObject().confirmVerification(IVerificationObject.VerificationType.DISCORD);
+                        }
+                    }
+                }
+            }
+        });*/
+
         Verany.registerListener(project, VeranyMessageInEvent.class, event -> {
             String[] data = event.getMessage().split("~");
 
@@ -165,7 +179,7 @@ public class ProtectionListener extends AbstractListener {
                     UUID uuid = UUID.fromString(data[2]);
                     PlayerInfo.PlayerData playerData = new Gson().fromJson(data[3], PlayerInfo.PlayerData.class);
                     Verany.PROFILE_OBJECT.getPlayer(uuid).ifPresentOrElse(iPlayerInfo -> {
-                        if(Bukkit.getPlayer(uuid) != null) {
+                        if (Bukkit.getPlayer(uuid) != null) {
                             iPlayerInfo.setPlayer(Bukkit.getPlayer(uuid));
                         } else {
                             ((PlayerInfo) iPlayerInfo).remove(((PlayerInfo) iPlayerInfo).getInfo(PlayerInfo.PlayerData.class));
@@ -183,6 +197,11 @@ public class ProtectionListener extends AbstractListener {
                     FriendObject friendObject = (FriendObject) Verany.PROFILE_OBJECT.getPlayer(uuid).get().getFriendObject();
                     friendObject.update(FriendObject.PlayerFriend.class, Verany.REDIS_MANAGER.getObject("friends_" + uuid.toString(), FriendObject.PlayerFriend.class));
                 }
+            } else if (data[0].equalsIgnoreCase("answer_request")) {
+                String message = data[1];
+                String id = data[2];
+                Verany.REDIS_MANAGER.getRequestMap().get(id).callback(message);
+                Verany.REDIS_MANAGER.getRequestMap().remove(id);
             }
         });
     }
