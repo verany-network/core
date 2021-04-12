@@ -8,6 +8,7 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.PlayerInfo;
 import net.verany.volcano.VeranyServer;
 import net.verany.volcano.player.IVolcanoPlayer;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -21,6 +22,9 @@ public class PlayerQuitListener extends AbstractListener {
             event.setQuitMessage(null);
 
             IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
+
+            playerInfo.setBossBar((BossBar) null);
+            playerInfo.setDefaultBossBar(null);
 
             if (!VeranyServer.ROUNDS.isEmpty()) {
                 playerInfo.getPlayer(IVolcanoPlayer.class).quitRound();
