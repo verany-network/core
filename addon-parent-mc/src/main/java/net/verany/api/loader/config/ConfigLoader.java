@@ -1,11 +1,13 @@
 package net.verany.api.loader.config;
 
 
+import lombok.Getter;
 import net.verany.api.Verany;
 import net.verany.api.json.AbstractJsonConfig;
 import net.verany.api.loader.LoadObject;
 import net.verany.api.loader.Loader;
 
+@Getter
 public abstract class ConfigLoader extends Loader {
 
     private AbstractJsonConfig config;
