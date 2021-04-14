@@ -42,6 +42,7 @@ import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
+import net.verany.api.report.ReportObject;
 import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
 import net.verany.volcano.VeranyServer;
@@ -96,6 +97,7 @@ public class Verany extends AbstractVerany {
             EVENT_REGISTRY.setPlugin(project);
             MESSENGER = new VeranyMessenger(new URI("ws://159.69.63.105:888"));
             MESSENGER.connect();
+            reportObject = new ReportObject(project);
 
         }
         load();
