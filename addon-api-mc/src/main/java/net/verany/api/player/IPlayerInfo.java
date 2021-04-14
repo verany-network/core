@@ -135,6 +135,12 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     String getDefaultActionbar();
 
+    AbstractBossBar getDefaultBossBar();
+
+    BossBar getBossBar();
+
+    void setBossBar(BossBar bossBar);
+
     void setDefaultActionbar(String actionbar);
 
     IAFKObject getAfkObject();
@@ -174,6 +180,10 @@ public interface IPlayerInfo extends IVeranyPlayer {
     void addPoints(int amount);
 
     int getPoints();
+
+    boolean isShouldLoad();
+
+    void setShouldLoad(boolean value);
 
     @AllArgsConstructor
     @Getter
