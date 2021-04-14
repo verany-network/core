@@ -13,7 +13,7 @@ public class GameModeWrapper extends AbstractGameMode {
     }
 
     public static AbstractGameMode getGameModeByName(String name) {
-        return VALUES.stream().filter(gameMode -> gameMode.getName().equals(name)).findFirst().orElse(null);
+        return VALUES.stream().filter(gameMode -> gameMode.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
 }
