@@ -34,7 +34,7 @@ public interface IInventoryBuilder {
 
     Consumer<InventoryClickEvent> getNullClickConsumer();
 
-    Inventory buildAndOpen(Player player);
+    Inventory createAndOpen(Player player);
 
     @Getter
     class PageData {
