@@ -1,8 +1,11 @@
 package net.verany.executor;
 
 import com.google.gson.Gson;
+import com.mongodb.client.model.Filters;
+import lombok.Getter;
 import net.verany.api.Verany;
 import net.verany.api.actionbar.ActionbarTask;
+import net.verany.api.bossbar.BossBarTask;
 import net.verany.api.chat.task.ChatTask;
 import net.verany.api.config.IngameConfig;
 import net.verany.api.gamemode.AbstractGameMode;
@@ -24,7 +27,8 @@ import org.bukkit.Bukkit;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@VeranyModule(name = "CoreExecutor", prefix = "CoreExecutor", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "RxNqA18HB56SS7GW", databases = {"network", "bots", "friends", "rank", "verification"})
+@Getter
+@VeranyModule(name = "CoreExecutor", prefix = "Core", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "RxNqA18HB56SS7GW", databases = {"network", "bots", "friends", "rank", "verification", "socket"})
 public class CoreExecutor extends VeranyProject {
 
     public static CoreExecutor INSTANCE;
@@ -40,10 +44,11 @@ public class CoreExecutor extends VeranyProject {
     @Override
     public void onDisable() {
         Verany.shutdown = true;
+        Verany.MESSENGER.close();
         for (IPlayerInfo playerInfo : Verany.PROFILE_OBJECT.getRegisteredPlayers())
             playerInfo.update();
-        getConnection().disconnect();
-        Verany.shutdown();
+        getConnection().getCollection("socket", "sockets").deleteOne(Filters.eq("key", Verany.KEY));
+        Verany.shutdown(this);
     }
 
     @Override
@@ -85,12 +90,17 @@ public class CoreExecutor extends VeranyProject {
             AbstractGameMode gameMode = Verany.GSON.fromJson(document.toJson(), GameModeWrapper.class);
             GameModeWrapper.VALUES.add(gameMode);
         }
-        if(GameModeWrapper.VALUES.isEmpty()) {
+        if (GameModeWrapper.VALUES.isEmpty()) {
             getConnection().getCollection("games").insertOne(Verany.GSON.fromJson(Verany.GSON.toJson(new GameModeWrapper("FlagWars", new String[]{"FW-2x1"})), Document.class));
         }
 
         Verany.reloadMessages(this);
+        Verany.reportObject.load();
 
-        Verany.addTask(new ChatTask(1000, this), new CountdownTask(1000), new ActionbarTask(100, this), new OnlineTimeTask(1000), new AfkTask(800, this));
+        String key = Verany.KEY;
+        getConnection().getCollection("socket", "sockets").insertOne(new Document().append("key", key).append("type", "core"));
+        Verany.MESSENGER.auth(this, key);
+
+        Verany.addTask(new ChatTask(1000, this), new BossBarTask(1, this), new CountdownTask(1000), new ActionbarTask(100, this), new OnlineTimeTask(1000), new AfkTask(800, this));
     }
 }
