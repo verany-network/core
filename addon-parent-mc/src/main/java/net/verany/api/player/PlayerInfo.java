@@ -63,6 +63,7 @@ import org.bukkit.*;
 import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -93,6 +94,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private IAFKObject afkObject;
 
     private String defaultActionbar = null;
+    private boolean shouldLoad = false;
     private AbstractBossBar defaultBossBar = null;
     private BossBar bossBar = null;
 
@@ -350,9 +352,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public EnumLanguage setLanguage(EnumLanguage language) {
         Verany.sync(getProject(), () -> {
-            Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer()));
             getData(PlayerData.class).setLanguage(language);
-            update();
+            Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer()));
+            sendUpdate();
         });
         return language;
     }
@@ -431,14 +433,17 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void setPrefixPattern(AbstractPrefixPattern pattern) {
-        getData(PlayerData.class).setPrefixPattern(pattern.getKey());
-        Verany.sync(getProject(), () -> Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer())));
-        update();
+        Verany.sync(getProject(), () -> {
+            getData(PlayerData.class).setPrefixPattern(pattern.getKey());
+            Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer()));
+            sendUpdate();
+        });
     }
 
     public void sendUpdate() {
         if (!Verany.shutdown) {
-            Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
+            //Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
+            Verany.MESSENGER.sendMessage("core", new JSONObject().put("shouldUpdate", true).put("playerData", Verany.GSON.toJson(getData(PlayerData.class))).put("uuid", uniqueId.toString()), object -> {});
         }
     }
 
