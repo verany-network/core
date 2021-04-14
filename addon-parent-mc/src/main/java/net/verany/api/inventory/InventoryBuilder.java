@@ -27,8 +27,8 @@ public class InventoryBuilder implements IInventoryBuilder {
     private final InventoryType inventoryType;
     private final String title;
     private final Consumer<InventoryCloseEvent> onClose;
-    private final Consumer<InventoryClickEvent> event;
-    private final Consumer<InventoryClickEvent> nullEvent;
+    private final Consumer<InventoryClickEvent> onClick;
+    private final Consumer<InventoryClickEvent> onNullClick;
     private final Map<Integer, ItemStack> itemStackMap = new HashMap<>();
     private final Map<PageData, PageSwitchHandler> pageSwitchHandlers = new ConcurrentHashMap<>();
     private Inventory inventory;
@@ -105,12 +105,12 @@ public class InventoryBuilder implements IInventoryBuilder {
     @Override
     public void onClick(InventoryClickEvent event) {
         if (event.getCurrentItem() == null) {
-            if (nullEvent != null)
-                nullEvent.accept(event);
+            if (onNullClick != null)
+                onNullClick.accept(event);
             return;
         }
-        if (this.event != null)
-            this.event.accept(event);
+        if (this.onClick != null)
+            this.onClick.accept(event);
 
         pageSwitchHandlers.forEach((pageData, handler) -> {
             if (event.getSlot() == pageData.getNextPageItem()) {
@@ -131,7 +131,7 @@ public class InventoryBuilder implements IInventoryBuilder {
 
     @Override
     public Consumer<InventoryClickEvent> getClickConsumer() {
-        return event;
+        return onClick;
     }
 
     @Override
@@ -141,11 +141,11 @@ public class InventoryBuilder implements IInventoryBuilder {
 
     @Override
     public Consumer<InventoryClickEvent> getNullClickConsumer() {
-        return nullEvent;
+        return onNullClick;
     }
 
     @Override
-    public Inventory buildAndOpen(Player player) {
+    public Inventory createAndOpen(Player player) {
         if (inventoryType == null)
             inventory = Bukkit.createInventory(null, size, title);
         else
