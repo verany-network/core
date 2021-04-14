@@ -55,10 +55,15 @@ public class PlayerJoinListener extends AbstractListener {
             Optional<IPlayerInfo> playerInfoOptional = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId());
             if (playerInfoOptional.isEmpty()) {
                 playerInfo = new PlayerInfo(project, player.getName());
+                playerInfo.load(player.getUniqueId());
                 Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
-            } else
+            } else {
                 playerInfo = playerInfoOptional.get();
-            playerInfo.load(player.getUniqueId());
+                if (playerInfo.isShouldLoad()) {
+                    playerInfo.load(player.getUniqueId());
+                    playerInfo.setShouldLoad(false);
+                }
+            }
         });
 
         Verany.registerListener(project, PlayerJoinEvent.class, event -> {
@@ -111,7 +116,7 @@ public class PlayerJoinListener extends AbstractListener {
     }
 
     private void loadRoundInventory(IPlayerInfo player) {
-        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("Choose your round").event(clickEvent -> {
+        Inventory inventory = InventoryBuilder.builder().size(9 * 6).title("Choose your round").onClick(clickEvent -> {
             clickEvent.setCancelled(true);
 
             String id = clickEvent.getCurrentItem().getItemMeta().getDisplayName();
@@ -127,7 +132,7 @@ public class PlayerJoinListener extends AbstractListener {
                 if (!player.getCloudPlayer().getProperties().contains("round-id"))
                     loadRoundInventory(player);
             }, 2);
-        }).build().buildAndOpen(player.getPlayer());
+        }).build().createAndOpen(player.getPlayer());
 
         for (AbstractVolcanoRound round : VeranyServer.ROUNDS) {
             inventory.addItem(new ItemBuilder(Material.ARMOR_STAND).setDisplayName(round.getId()).build());
