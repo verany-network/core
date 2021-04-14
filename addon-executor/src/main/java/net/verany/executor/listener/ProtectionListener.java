@@ -127,7 +127,7 @@ public class ProtectionListener extends AbstractListener {
                 playerInfo.getAfkObject().resetAfkTime();
         });
 
-        /*Verany.registerListener(project, MessageInEvent.class, event -> {
+        Verany.registerListener(project, MessageInEvent.class, event -> {
             if (event.getMessage().has("username")) {
                 if (Bukkit.getPlayer(event.getMessage().getString("username")) != null) {
                     IPlayerInfo playerInfo = Verany.getPlayer(event.getMessage().getString("username"));
@@ -138,10 +138,15 @@ public class ProtectionListener extends AbstractListener {
                         }
                     }
                 }
+            } else if (event.getMessage().has("shouldUpdate")) {
+                boolean val = event.getMessage().getBoolean("shouldUpdate");
+                if (!val) return;
+                IPlayerInfo playerInfo = Verany.getPlayer(UUID.fromString(event.getMessage().getString("uuid")));
+                playerInfo.setShouldLoad(true);
             }
-        });*/
+        });
 
-        Verany.registerListener(project, VeranyMessageInEvent.class, event -> {
+        /*Verany.registerListener(project, VeranyMessageInEvent.class, event -> {
             String[] data = event.getMessage().split("~");
 
             if (data[0].equals("teamspeak")) {
@@ -203,6 +208,6 @@ public class ProtectionListener extends AbstractListener {
                 Verany.REDIS_MANAGER.getRequestMap().get(id).callback(message);
                 Verany.REDIS_MANAGER.getRequestMap().remove(id);
             }
-        });
+        });*/
     }
 }
