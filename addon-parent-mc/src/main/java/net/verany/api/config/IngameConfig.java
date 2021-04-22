@@ -12,6 +12,7 @@ public class IngameConfig<T> extends AbstractIngameConfig<T> {
     public static final AbstractIngameConfig<Boolean> PLAYER_COLLISION = new IngameConfig<>(Boolean.class, true);
     public static final AbstractIngameConfig<Long> AFK_TIME = new IngameConfig<>(Long.class, TimeUnit.MINUTES.toMillis(5));
     public static final AbstractIngameConfig<Boolean> AFK = new IngameConfig<>(Boolean.class, false);
+    public static final AbstractIngameConfig<Boolean> COLORED_CHAT = new IngameConfig<>(Boolean.class, false);
 
     public IngameConfig(Class<T> tClass, T defaultValue) {
         super(tClass, defaultValue);
