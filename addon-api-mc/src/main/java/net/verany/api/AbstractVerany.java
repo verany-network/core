@@ -18,6 +18,7 @@ import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.plugin.IProfileObject;
 import net.verany.api.redis.RedisManager;
 import net.verany.api.redis.redispub.RedisPubSub;
+import net.verany.api.report.IReportObject;
 import net.verany.api.setup.AbstractSetupObject;
 import net.verany.api.setup.category.AbstractSetupCategory;
 import net.verany.api.task.AbstractTask;
@@ -51,6 +52,7 @@ public abstract class AbstractVerany {
     public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static IEventManager eventManager;
     public static IProfileObject PROFILE_OBJECT;
+    public static IReportObject reportObject;
     private static final MainTask mainTask = new MainTask();
     @Getter
     private static boolean loaded = false;
@@ -66,10 +68,12 @@ public abstract class AbstractVerany {
         TASKS.remove(task);
     }
 
-    public static void shutdown() {
+    public static void shutdown(VeranyProject project) {
+        reportObject.update();
         Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("Shutdown"));
         mainTask.setRunning(false);
         LOADERS.forEach(Loader::save);
+        project.getConnection().disconnect();
     }
 
     public static void load() {
