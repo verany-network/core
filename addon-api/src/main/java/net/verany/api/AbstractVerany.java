@@ -35,6 +35,7 @@ public abstract class AbstractVerany {
     public static VeranyMessenger messenger;
     public static IEventManager eventManager;
     private static MainTask mainTask;
+    public static final String KEY = generate(10);
     public static boolean loaded = false;
 
     public static void addTask(AbstractTask... tasks) {
