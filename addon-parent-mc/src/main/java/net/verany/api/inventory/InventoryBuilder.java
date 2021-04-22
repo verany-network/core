@@ -26,6 +26,8 @@ public class InventoryBuilder implements IInventoryBuilder {
     private final int size;
     private final InventoryType inventoryType;
     private final String title;
+    @Deprecated
+    private final Consumer<InventoryClickEvent> event;
     private final Consumer<InventoryCloseEvent> onClose;
     private final Consumer<InventoryClickEvent> onClick;
     private final Consumer<InventoryClickEvent> onNullClick;
@@ -111,6 +113,8 @@ public class InventoryBuilder implements IInventoryBuilder {
         }
         if (this.onClick != null)
             this.onClick.accept(event);
+        if (this.event != null)
+            this.event.accept(event);
 
         pageSwitchHandlers.forEach((pageData, handler) -> {
             if (event.getSlot() == pageData.getNextPageItem()) {
@@ -155,5 +159,11 @@ public class InventoryBuilder implements IInventoryBuilder {
         Verany.INVENTORY_MAP.put(player, this);
         player.openInventory(inventory);
         return inventory;
+    }
+
+    @Override
+    @Deprecated
+    public Inventory buildAndOpen(Player player) {
+        return createAndOpen(player);
     }
 }
