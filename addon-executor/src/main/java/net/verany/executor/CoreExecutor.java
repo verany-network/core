@@ -69,8 +69,8 @@ public class CoreExecutor extends VeranyProject {
         this.getCommand("credits").setExecutor(new CreditsCommand());
         this.getCommand("support").setExecutor(new SupportCommand());
         this.getCommand("support").setTabCompleter(new SupportCommand());
-        this.getCommand("rank").setExecutor(new RankCommand());
-        this.getCommand("rank").setTabCompleter(new RankCommand());
+        /*this.getCommand("rank").setExecutor(new RankCommand());
+        this.getCommand("rank").setTabCompleter(new RankCommand());*/
         this.getCommand("globalrank").setExecutor(new GlobalRankCommand());
         this.getCommand("globalrank").setTabCompleter(new GlobalRankCommand());
         this.getCommand("chatclear").setExecutor(new ChatClearCommand());
