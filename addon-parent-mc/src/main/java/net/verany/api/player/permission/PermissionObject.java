@@ -41,9 +41,8 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
 
     @Override
     public void update() {
-        save("user_rank");
+        remove(getInfo(PlayerRank.class));
         load();
-        playerInfo.sendUpdate();
     }
 
     private void load() {
