@@ -15,6 +15,7 @@ import net.verany.volcano.GameSetting;
 import net.verany.volcano.player.IVolcanoPlayer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -91,8 +92,11 @@ public class ChatListener extends AbstractListener {
             IPermissionObject permissionObject = playerInfo.getPermissionObject();
             AbstractPermissionGroup currentGroup = permissionObject.getCurrentGroup().getGroup();
             String newMessage = Verany.format(IngameConfig.CHAT_FORMAT.getValue(), currentGroup.getColor(), currentGroup.getName(), player.getName(), message);
-            for (Player bukkitPlayer : players)
+            for (Player bukkitPlayer : players) {
+                if (player.hasPermission("verany.chat") && IngameConfig.COLORED_CHAT.getValue())
+                    newMessage = ChatColor.translateAlternateColorCodes('&', newMessage);
                 bukkitPlayer.sendMessage(newMessage);
+            }
         }, EventPriority.LOWEST);
     }
 }
