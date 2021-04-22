@@ -36,6 +36,9 @@ public interface IInventoryBuilder {
 
     Inventory createAndOpen(Player player);
 
+    @Deprecated
+    Inventory buildAndOpen(Player player);
+
     @Getter
     class PageData {
         private final int currentPage;
