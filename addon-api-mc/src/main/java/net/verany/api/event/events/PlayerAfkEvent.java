@@ -11,13 +11,10 @@ import org.bukkit.event.player.PlayerEvent;
 @Getter
 public class PlayerAfkEvent  extends PlayerEvent {
 
-    private final IPlayerInfo playerInfo;
-
     private static final HandlerList handlers = new HandlerList();
 
     public PlayerAfkEvent(Player who) {
         super(who);
-        playerInfo = AbstractVerany.PROFILE_OBJECT.getPlayer(who.getUniqueId()).get();
     }
 
     @Override
