@@ -7,7 +7,6 @@ import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
 import org.bson.Document;
 
-
 public class DatabaseManager {
 
     private final String user;
