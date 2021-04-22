@@ -34,6 +34,8 @@ public class FriendObject extends DatabaseLoader implements IFriendObject {
 
     @Override
     public void update() {
+        if (getData(PlayerFriend.class) != null)
+            remove(getInfo(PlayerFriend.class));
         save("user_friend");
     }
 
