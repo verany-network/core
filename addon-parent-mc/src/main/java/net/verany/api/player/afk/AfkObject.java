@@ -57,7 +57,10 @@ public class AfkObject implements IAFKObject {
     @Override
     public void resetAfkTime() {
         afkTime = System.currentTimeMillis();
-
+        if (afk) {
+            setAfk(false);
+            removeHologram();
+        }
     }
 
     @Override
@@ -73,7 +76,8 @@ public class AfkObject implements IAFKObject {
 
     @Override
     public void removeHologram() {
-        player().removePotionEffect(PotionEffectType.BLINDNESS);
+        if (player() != null)
+            player().removePotionEffect(PotionEffectType.BLINDNESS);
 
         armorStand.remove();
     }
