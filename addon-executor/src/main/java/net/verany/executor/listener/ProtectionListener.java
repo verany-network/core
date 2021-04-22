@@ -14,6 +14,7 @@ import net.verany.api.npc.INPC;
 import net.verany.api.npc.reader.PacketReader;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.player.IVeranyPlayer;
 import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.player.friend.FriendObject;
@@ -112,6 +113,15 @@ public class ProtectionListener extends AbstractListener {
 
         });
 
+        Verany.registerListener(project, PlayerInteractAtEntityEvent.class, event -> {
+            Player player = event.getPlayer();
+
+            for (HotbarItem hotbarItem : Verany.getHotbarItem(player))
+                if (hotbarItem.getItemStack().getType().equals(player.getInventory().getItemInMainHand().getType()) && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()))
+                    hotbarItem.onInteract(event);
+
+        });
+
         Verany.registerListener(project, PlayerDropItemEvent.class, event -> {
             Player player = event.getPlayer();
 
@@ -143,6 +153,29 @@ public class ProtectionListener extends AbstractListener {
                 if (!val) return;
                 IPlayerInfo playerInfo = Verany.getPlayer(UUID.fromString(event.getMessage().getString("uuid")));
                 playerInfo.setShouldLoad(true);
+            } else if (event.getMessage().has("permission")) {
+                UUID uuid = UUID.fromString(event.getMessage().getString("uuid"));
+                IPlayerInfo playerInfo = Verany.getPlayer(uuid);
+                playerInfo.getPermissionObject().update();
+            } else if (event.getMessage().has("friends")) {
+                UUID uuid = UUID.fromString(event.getMessage().getString("uuid"));
+                IPlayerInfo playerInfo = Verany.getPlayer(uuid);
+                playerInfo.getFriendObject().update();
+            } else if (event.getMessage().has("teamspeak")) {
+                if (event.getMessage().getString("teamspeak").equals("verification")) {
+                    String userName = event.getMessage().getString("userName");
+                    Player player = Bukkit.getPlayer(event.getMessage().getString("playerName"));
+                    if (player != null) {
+                        IPlayerInfo playerInfo = Verany.getPlayer(player);
+                        playerInfo.sendMessage(new AbstractComponentBuilder(playerInfo.getPrefix("Verification") + playerInfo.getKey("verification.teamspeak.accept", new Placeholder("%name%", userName))) {
+                            @Override
+                            public void onCreate() {
+                                setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/verify ts"));
+                                setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(playerInfo.getKey("verification.teamspeak.accept.hover")).create()));
+                            }
+                        });
+                    }
+                }
             }
         });
 
