@@ -8,6 +8,7 @@ import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @Getter
@@ -43,6 +44,16 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     @Override
+    public <T> List<T> getStatsData(AbstractStatsType<T> statsType, long date) {
+        List<T> toReturn = new ArrayList<>();
+        checkStats(statsType);
+        for (StatsLoadData.StatsData statsData : getData(StatsLoadData.class).getStringStatsDataMap().get(statsType.getKey()))
+            if (statsData.getTimestamp() >= date)
+                toReturn.add((T) statsData.getValue());
+        return toReturn;
+    }
+
+    @Override
     public <T> void setStatsData(AbstractStatsType<T> statsType, T value) {
         checkStats(statsType);
         getData(StatsLoadData.class).getStringStatsDataMap().get(statsType.getKey()).add(new StatsLoadData.StatsData(value));
@@ -56,6 +67,19 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
                 toReturn += statsDatum;
         } catch (ClassCastException exception) {
             for (Integer statsDatum : getStatsData(new StatsType<>(statsData.getKey(), Integer.class), time))
+                toReturn += statsDatum;
+        }
+        return toReturn;
+    }
+
+    @Override
+    public int getStatsValue(AbstractStatsType<Integer> statsData, long date) {
+        int toReturn = 0;
+        try {
+            for (Double statsDatum : getStatsData(new StatsType<>(statsData.getKey(), Double.class), date))
+                toReturn += statsDatum;
+        } catch (ClassCastException exception) {
+            for (Integer statsDatum : getStatsData(new StatsType<>(statsData.getKey(), Integer.class), date))
                 toReturn += statsDatum;
         }
         return toReturn;
