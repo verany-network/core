@@ -5,6 +5,7 @@ import net.verany.api.event.events.MessageInEvent;
 import net.verany.api.module.VeranyProject;
 import org.bson.Document;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 public class VeranyMessenger extends WebSocketClient {
 
     private final Map<String, Consumer<JSONObject>> callbackMap = new HashMap<>();
+    public boolean closed = false;
 
     public VeranyMessenger(URI serverUri) {
         super(serverUri);
@@ -25,7 +27,7 @@ public class VeranyMessenger extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        System.out.println("opened connection");
+        closed = false;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class VeranyMessenger extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
+        closed = true;
         System.out.println(
                 "Connection closed by " + (remote ? "remote peer" : "us") + " Code: " + code + " Reason: "
                         + reason);
@@ -64,16 +67,16 @@ public class VeranyMessenger extends WebSocketClient {
     }
 
     public void sendMessage(@Nullable String type, @NotNull JSONObject object, @NotNull Consumer<JSONObject> callback) {
-        String key = AbstractVerany.generate(10);
         object.put("cmd", "redirect");
         object.put("type", type);
-        object.put("id", key);
-        callbackMap.put(key, callback);
+        object.put("id", AbstractVerany.KEY);
+        callbackMap.put(AbstractVerany.KEY, callback);
         sendMessage(object);
     }
 
     public String auth(VeranyProject project) {
-        String key = AbstractVerany.generate(10);
+        String key = AbstractVerany.KEY;
+        if (closed) return key;
         project.getConnection().getCollection("socket", "sockets").insertOne(new Document().append("key", key).append("type", project.getModule().name()));
         sendMessage(new JSONObject().put("cmd", "auth").put("key", key));
         return key;
