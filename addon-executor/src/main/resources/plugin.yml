@@ -18,7 +18,6 @@ commands:
   language:
   credits:
   support:
-  rank:
   globalrank:
     aliases:
       - gr
