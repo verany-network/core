@@ -70,6 +70,9 @@ public class PlayerJoinListener extends AbstractListener {
             Player player = event.getPlayer();
 
             event.setJoinMessage(null);
+            if(!player.getActivePotionEffects().isEmpty()) {
+                player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+            }
 
             IPlayerInfo playerInfo = Verany.getPlayer(player);
             playerInfo.setPlayer(player);
