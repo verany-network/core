@@ -15,6 +15,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayTimeCommand implements CommandExecutor {
+
+    private final String[] colonText = {""};
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         Player player = (Player) commandSender;
@@ -26,7 +29,11 @@ public class PlayTimeCommand implements CommandExecutor {
                 int count = 1;
                 for (Document document : Verany.getDocuments(CoreExecutor.INSTANCE, "players", "network", 10, "playTime")) {
                     IPlayerInfo target = Verany.PROFILE_OBJECT.getPlayer(UUID.fromString(document.getString("uuid"))).get();
-                    playerInfo.sendKey("playtime.top.time", new Placeholder("%count%", count), new Placeholder("%time%", Verany.formatSeconds((int) TimeUnit.MILLISECONDS.toSeconds(target.getPlayTime()))), new Placeholder("%player%", target.getNameWithColor()));
+
+                    int colon = 0;
+                    String time = Verany.formatSeconds((int) TimeUnit.MILLISECONDS.toSeconds(target.getPlayTime()));
+
+                    playerInfo.sendKey("playtime.top.time", new Placeholder("%count%", count), new Placeholder("%time%", time), new Placeholder("%player%", target.getNameWithColor()));
                     count++;
                 }
             }
