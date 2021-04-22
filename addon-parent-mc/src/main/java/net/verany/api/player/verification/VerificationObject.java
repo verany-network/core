@@ -7,6 +7,7 @@ import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.verifictation.IVerificationObject;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class VerificationObject extends DatabaseLoader implements IVerificationO
     public void unlink(VerificationType type) {
         getData(VerificationMap.class).getVerificationDataMap().remove(type);
         update();
-        Verany.REDIS_MANAGER.sendMessage("verification~unlink~" + key.toString());
+        Verany.MESSENGER.sendMessage("TeamSpeakBot", new JSONObject().put("teamspeak", "unlink").put("uuid", key.toString()), object -> {});
     }
 
     @Getter
