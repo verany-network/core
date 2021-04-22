@@ -31,7 +31,6 @@ public class PlayerQuitListener extends AbstractListener {
                 Verany.removePlayer(player.getUniqueId().toString(), IVolcanoPlayer.class);
             }
 
-            playerInfo.setPlayer(null);
             ((PlayerInfo) playerInfo).sendUpdate();
             playerInfo.update();
 
