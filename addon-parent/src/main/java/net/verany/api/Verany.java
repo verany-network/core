@@ -2,6 +2,7 @@ package net.verany.api;
 
 import lombok.SneakyThrows;
 import net.verany.api.event.EventManager;
+import net.verany.api.messaging.CheckTask;
 import net.verany.api.messaging.VeranyMessenger;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyModule.DatabaseConnection;
@@ -23,6 +24,7 @@ public class Verany extends AbstractVerany {
         if(!loaded) {
             messenger = new VeranyMessenger(new URI("ws://159.69.63.105:888"));
             messenger.connect();
+            Verany.addTask(new CheckTask(5000L, project));
         }
 
         load();
