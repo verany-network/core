@@ -514,7 +514,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void sendOnRandomServer(String group) {
-        Collection<ServiceInfoSnapshot> collection = CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServicesByGroup(group);
+        Collection<ServiceInfoSnapshot> collection = CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices(group);
         sendOnServer(collection.stream().skip((int) (collection.size() * Math.random())).findFirst().get().getName());
     }
 
