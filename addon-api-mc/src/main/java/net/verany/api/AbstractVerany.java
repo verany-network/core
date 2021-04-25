@@ -12,12 +12,11 @@ import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
+import net.verany.api.messaging.VeranyMessenger;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.plugin.IProfileObject;
-import net.verany.api.redis.RedisManager;
-import net.verany.api.redis.redispub.RedisPubSub;
 import net.verany.api.report.IReportObject;
 import net.verany.api.setup.AbstractSetupObject;
 import net.verany.api.setup.category.AbstractSetupCategory;
@@ -28,8 +27,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.ocpsoft.prettytime.PrettyTime;
-import org.sqlite.core.DB;
-import redis.clients.jedis.JedisPool;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -57,8 +54,8 @@ public abstract class AbstractVerany {
     @Getter
     private static boolean loaded = false;
     public static boolean shutdown = false;
-
-    public static RedisManager REDIS_MANAGER;
+    public static final String KEY = generate(10);
+    public static VeranyMessenger MESSENGER;
 
     public static void addTask(AbstractTask... tasks) {
         TASKS.addAll(Arrays.asList(tasks));
