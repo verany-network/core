@@ -19,7 +19,6 @@ import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.player.friend.FriendObject;
 import net.verany.api.player.verifictation.IVerificationObject;
-import net.verany.api.redis.events.VeranyMessageInEvent;
 import net.verany.executor.CoreExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -162,11 +161,19 @@ public class ProtectionListener extends AbstractListener {
                 IPlayerInfo playerInfo = Verany.getPlayer(uuid);
                 playerInfo.getFriendObject().update();
             } else if (event.getMessage().has("teamspeak")) {
+                System.out.println("from teamspeak");
+                System.out.println(event.getMessage().toString());
                 if (event.getMessage().getString("teamspeak").equals("verification")) {
                     String userName = event.getMessage().getString("userName");
                     Player player = Bukkit.getPlayer(event.getMessage().getString("playerName"));
                     if (player != null) {
                         IPlayerInfo playerInfo = Verany.getPlayer(player);
+                        CoreExecutor.INSTANCE.setMetadata(player, "object", event.getMessage());
+
+                        IVerificationObject.VerificationData verificationData = new IVerificationObject.VerificationData();
+                        verificationData.setKey(String.valueOf(event.getMessage().getInt("clientId")));
+                        playerInfo.getVerificationObject().createVerification(IVerificationObject.VerificationType.TEAMSPEAK, verificationData);
+
                         playerInfo.sendMessage(new AbstractComponentBuilder(playerInfo.getPrefix("Verification") + playerInfo.getKey("verification.teamspeak.accept", new Placeholder("%name%", userName))) {
                             @Override
                             public void onCreate() {
@@ -174,6 +181,8 @@ public class ProtectionListener extends AbstractListener {
                                 setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(playerInfo.getKey("verification.teamspeak.accept.hover")).create()));
                             }
                         });
+                    } else {
+                        event.answer(event.getMessage().put("cmd", "answer").put("offline", true));
                     }
                 }
             }
