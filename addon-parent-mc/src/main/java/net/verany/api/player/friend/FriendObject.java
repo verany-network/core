@@ -134,7 +134,7 @@ public class FriendObject extends DatabaseLoader implements IFriendObject {
     }
 
     private void updateData() {
-        Verany.REDIS_MANAGER.putObject("friends_" + uniqueId.toString(), getData(PlayerFriend.class));
+
     }
 
     private FriendData getFriendData(List<FriendData> friendData, UUID target) {
