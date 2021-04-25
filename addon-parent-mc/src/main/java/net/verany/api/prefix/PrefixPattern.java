@@ -44,7 +44,7 @@ public class PrefixPattern extends AbstractPrefixPattern {
         for (AbstractPrefixPattern value : VALUES)
             if (value.getKey().equalsIgnoreCase(key))
                 return value;
-        return null;
+        return BLUE;
     }
 
     public static void load() {
