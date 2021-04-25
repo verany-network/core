@@ -11,6 +11,7 @@ import net.verany.api.message.AbstractComponentBuilder;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.verifictation.IVerificationObject;
+import net.verany.executor.CoreExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -82,6 +83,13 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
                             return false;
                         }
                         verificationObject.confirmVerification(type);
+                        JSONObject object = (JSONObject) player.getMetadata("object").get(0).value();
+                        if (object == null) {
+                            player.sendMessage("§cAn error occurred! Please contact an admin!");
+                            return false;
+                        }
+                        CoreExecutor.INSTANCE.removeMetadata(player, "object");
+                        Verany.MESSENGER.sendMessage(object.put("cmd", "answer").put("uuid", player.getUniqueId().toString()));
                         break;
                     }
                     default:
