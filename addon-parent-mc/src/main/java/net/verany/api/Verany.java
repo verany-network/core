@@ -40,8 +40,6 @@ import net.verany.api.player.permission.group.PermissionGroup;
 import net.verany.api.plugin.IProfileObject;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
-import net.verany.api.redis.RedisManager;
-import net.verany.api.redis.redispub.RedisPubSub;
 import net.verany.api.report.ReportObject;
 import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
@@ -59,11 +57,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import redis.clients.jedis.JedisPool;
 
 import java.net.URI;
 import java.util.*;
@@ -80,8 +74,6 @@ public class Verany extends AbstractVerany {
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<INPC> NPCS = new CopyOnWriteArrayList<>();
     public static final List<MessageData> MESSAGES = new ArrayList<>();
-    public static final String KEY = generate(10);
-    public static VeranyMessenger MESSENGER;
 
     public static final IWorldObject WORLD_OBJECT = new WorldObject();
     public static final IGameModeObject GAME_MODE_OBJECT = new GameModeObject();
@@ -101,9 +93,6 @@ public class Verany extends AbstractVerany {
 
         }
         load();
-
-        REDIS_MANAGER = new RedisManager(new JedisPool("127.0.0.1"), new RedisPubSub());
-        REDIS_MANAGER.load(project);
 
         DatabaseConnection connection = new DatabaseConnection(module);
         project.setModule(module);
