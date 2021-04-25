@@ -47,7 +47,6 @@ import net.verany.api.player.party.IPartyObject;
 import net.verany.api.player.party.PartyObject;
 import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.PermissionObject;
-import net.verany.api.player.stats.IStatsObject;
 import net.verany.api.player.verification.VerificationObject;
 import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.plugin.IVeranyPlugin;
@@ -66,6 +65,7 @@ import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Setter
 @Getter
@@ -346,7 +346,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public EnumLanguage getLanguage() {
-        return getData(PlayerData.class).getLanguage();
+        AtomicReference<EnumLanguage> language = new AtomicReference<>();
+        getDataOptional(PlayerData.class).ifPresentOrElse(playerData -> language.set(playerData.getLanguage()), () -> language.set(EnumLanguage.ENGLISH));
+        return language.get();
     }
 
     @Override
@@ -428,7 +430,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public AbstractPrefixPattern getPrefixPattern() {
-        return getData(PlayerData.class).getPrefixPattern();
+        AtomicReference<AbstractPrefixPattern> atomicReference = new AtomicReference<>();
+        getDataOptional(PlayerData.class).ifPresentOrElse(playerData -> atomicReference.set(playerData.getPrefixPattern()), () -> atomicReference.set(PrefixPattern.BLUE));
+        return atomicReference.get();
     }
 
     @Override
@@ -443,7 +447,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public void sendUpdate() {
         if (!Verany.shutdown) {
             //Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
-            Verany.MESSENGER.sendMessage("core", new JSONObject().put("shouldUpdate", true).put("playerData", Verany.GSON.toJson(getData(PlayerData.class))).put("uuid", uniqueId.toString()), object -> {});
+            Verany.MESSENGER.sendMessage("core", new JSONObject().put("shouldUpdate", true).put("playerData", Verany.GSON.toJson(getData(PlayerData.class))).put("uuid", uniqueId.toString()), object -> {
+            });
         }
     }
 
