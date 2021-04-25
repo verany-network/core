@@ -6,6 +6,7 @@ import net.verany.api.loader.database.DatabaseLoadObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class Loader {
@@ -48,9 +49,14 @@ public abstract class Loader {
         return data;
     }
 
+    public <T extends LoadObject> Optional<T> getDataOptional(Class<T> tClass) {
+        return Optional.of((T) infoLists.stream().filter(loadInfo -> loadInfo.getType().getName().equals(tClass.getName())).findFirst().get().getObject());
+    }
+
+    @Deprecated
     public <T extends LoadObject> T getData(Class<T> tClass) {
         for (LoadInfo<?> infoList : infoLists)
-            if (infoList.getType().getName().equals(tClass.getName()))
+            if (infoList.getType().toString().equals(tClass.toString()))
                 return (T) infoList.getObject();
         return null;
     }
