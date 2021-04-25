@@ -6,7 +6,6 @@ import lombok.Setter;
 import net.verany.api.config.IngameConfig;
 import net.verany.api.event.events.PlayerAfkEvent;
 import net.verany.api.module.VeranyProject;
-import net.verany.api.redis.events.VeranyMessageInEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.potion.PotionEffect;
