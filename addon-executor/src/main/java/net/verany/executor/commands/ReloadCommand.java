@@ -163,7 +163,6 @@ public class ReloadCommand implements CommandExecutor {
                         case "messages":
                             reloadType = VeranyReloadEvent.ReloadType.PROXY_MESSAGES;
                             sender.sendMessage(Verany.getPrefix("VeranySpigot") + "§7Reloading proxy messages§8...");
-                            Verany.REDIS_MANAGER.sendMessage("update~messages~" + sender.getName());
                             break;
                         case "users":
                             reloadType = VeranyReloadEvent.ReloadType.PROXY_USERS;
