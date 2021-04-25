@@ -9,13 +9,11 @@ import net.verany.api.event.IEventManager;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
 import net.verany.api.messaging.VeranyMessenger;
-import net.verany.api.redis.redispub.RedisPubSub;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.ocpsoft.prettytime.PrettyTime;
-import redis.clients.jedis.JedisPool;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
