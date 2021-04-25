@@ -2,6 +2,7 @@ package net.verany.executor.commands;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import de.dytanic.cloudnet.wrapper.Wrapper;
 import net.verany.api.Verany;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.verifictation.IVerificationObject;
@@ -37,11 +38,11 @@ public class SupportCommand implements CommandExecutor, TabCompleter {
         if (strings.length == 1) {
             switch (strings[0].toLowerCase()) {
                 case "accept": {
-                    Verany.REDIS_MANAGER.sendMessage("teamspeak~support~accept~" + player.getUniqueId().toString());
+
                     break;
                 }
                 case "close": {
-                    Verany.REDIS_MANAGER.sendMessage("teamspeak~support~close~" + player.getUniqueId().toString());
+
                     break;
                 }
             }
