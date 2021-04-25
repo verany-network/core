@@ -2,6 +2,7 @@ package net.verany.api.event.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.verany.api.AbstractVerany;
 import net.verany.api.event.VeranyEvent;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -21,6 +22,10 @@ public class MessageInEvent extends Event {
 
     public HandlerList getHandlers() {
         return getHandlerList();
+    }
+
+    public void answer(JSONObject object) {
+        AbstractVerany.MESSENGER.sendMessage(object.put("cmd", "answer"));
     }
 
 }
