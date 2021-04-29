@@ -19,6 +19,7 @@ import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.IAFKObject;
 import net.verany.api.player.friend.FriendObject;
 import net.verany.api.player.verifictation.IVerificationObject;
+import net.verany.api.tablist.TabListObject;
 import net.verany.executor.CoreExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -156,6 +157,7 @@ public class ProtectionListener extends AbstractListener {
                 UUID uuid = UUID.fromString(event.getMessage().getString("uuid"));
                 IPlayerInfo playerInfo = Verany.getPlayer(uuid);
                 playerInfo.getPermissionObject().update();
+                Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));
             } else if (event.getMessage().has("friends")) {
                 UUID uuid = UUID.fromString(event.getMessage().getString("uuid"));
                 IPlayerInfo playerInfo = Verany.getPlayer(uuid);
