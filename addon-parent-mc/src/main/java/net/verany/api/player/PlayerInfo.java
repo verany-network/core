@@ -62,6 +62,7 @@ import org.bukkit.*;
 import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -669,6 +670,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         private String name;
         private EnumLanguage language;
+        @NotNull
         private String prefixPattern;
         private SkinData skinData;
         private Map<String, String> settingValues;
@@ -683,7 +685,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private long lastOnline;
         private List<String> logs;
 
-        public PlayerData(UUID key, String name, EnumLanguage language, String prefixPattern, int credits, Integer exp, Integer points, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
+        public PlayerData(UUID key, String name, EnumLanguage language, @NotNull String prefixPattern, int credits, Integer exp, Integer points, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
             super(key.toString());
             this.name = name;
             this.language = language;
