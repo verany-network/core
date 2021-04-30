@@ -1,5 +1,5 @@
 name: MC-Core-Executor
-version: 2021.2.1
+version: 2021.4.2
 main: net.verany.executor.CoreExecutor
 api-version: 1.16
 author: tylix
