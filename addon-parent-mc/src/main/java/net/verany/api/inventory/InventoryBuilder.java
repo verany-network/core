@@ -134,21 +134,6 @@ public class InventoryBuilder implements IInventoryBuilder {
     }
 
     @Override
-    public Consumer<InventoryClickEvent> getClickConsumer() {
-        return onClick;
-    }
-
-    @Override
-    public Consumer<InventoryCloseEvent> getCloseConsumer() {
-        return onClose;
-    }
-
-    @Override
-    public Consumer<InventoryClickEvent> getNullClickConsumer() {
-        return onNullClick;
-    }
-
-    @Override
     public Inventory createAndOpen(Player player) {
         if (inventoryType == null)
             inventory = Bukkit.createInventory(null, size, title);
