@@ -37,7 +37,8 @@ public interface IStatsObject extends IDefault<UUID> {
         ALL_TIME(Long.MAX_VALUE),
         MONTHLY(TimeUnit.DAYS.toMillis(30)),
         WEEKLY(TimeUnit.DAYS.toMillis(7)),
-        DAILY(TimeUnit.DAYS.toMillis(1));
+        DAILY(TimeUnit.DAYS.toMillis(1)),
+        SEASON(1_0);
 
         @Setter
         private long time;
