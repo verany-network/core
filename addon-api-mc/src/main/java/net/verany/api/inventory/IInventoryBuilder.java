@@ -28,11 +28,11 @@ public interface IInventoryBuilder {
 
     void onClose(InventoryCloseEvent event);
 
-    Consumer<InventoryClickEvent> getClickConsumer();
+    Consumer<InventoryClickEvent> getOnClick();
 
-    Consumer<InventoryCloseEvent> getCloseConsumer();
+    Consumer<InventoryCloseEvent> getOnClose();
 
-    Consumer<InventoryClickEvent> getNullClickConsumer();
+    Consumer<InventoryClickEvent> getOnNullClick();
 
     Inventory createAndOpen(Player player);
 
