@@ -11,7 +11,7 @@ Mit den folgenden Schritten wird es euch ermöglicht unsere Core in euer Projekt
 
 ### Installation
 
-1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://tcp.verany.net/)**. Alternativ kannst du dir diesen Build auch über Maven oder Gradle herunterladen.
+1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**. Alternativ kannst du dir diesen Build auch über Maven oder Gradle herunterladen.
 
 Installation unter Maven:
 ```java
