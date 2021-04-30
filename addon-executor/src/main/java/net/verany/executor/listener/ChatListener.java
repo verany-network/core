@@ -33,6 +33,8 @@ public class ChatListener extends AbstractListener {
             Player player = event.getPlayer();
             String message = event.getMessage();
 
+            if (!IngameConfig.CHAT.getValue()) return;
+
             event.setCancelled(true);
 
             if (player.hasMetadata("chat.request")) {
