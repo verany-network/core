@@ -50,7 +50,9 @@ public abstract class Loader {
     }
 
     public <T extends LoadObject> Optional<T> getDataOptional(Class<T> tClass) {
-        return Optional.ofNullable((T) infoLists.stream().filter(loadInfo -> loadInfo.getType().getName().equals(tClass.getName())).findFirst().orElse(null).getObject());
+        Optional<LoadInfo<?>> info = infoLists.stream().filter(loadInfo -> loadInfo.getType().getName().equals(tClass.getName())).findFirst();
+        if(info.isEmpty()) return Optional.empty();
+        return (Optional<T>) Optional.ofNullable(info.get().getObject());
     }
 
     @Deprecated

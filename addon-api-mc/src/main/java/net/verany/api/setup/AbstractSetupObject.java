@@ -70,7 +70,7 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
     }
 
     public LocationDataObject getDataObject() {
-        return getData(LocationDataObject.class);
+        return getDataOptional(LocationDataObject.class).orElse(null);
     }
 
     @Getter

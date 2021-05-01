@@ -57,7 +57,7 @@ public class CoreExecutor extends VeranyProject {
         new ChatListener(this);
         new ProtectionListener(this);
         new PlayerJoinListener(this);
-        new PlayerQuitListener(this);
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
 
         this.getCommand("reload").setExecutor(new ReloadCommand());
         this.getCommand("verify").setExecutor(new VerifyCommand());
@@ -82,8 +82,6 @@ public class CoreExecutor extends VeranyProject {
             IPlayerInfo playerInfo = new PlayerInfo(this, document.getString("name"));
             playerInfo.load(UUID.fromString(document.getString("uuid")));
             Verany.PROFILE_OBJECT.getRegisteredPlayers().add(playerInfo);
-
-            VeranyLog.debug(getModule(), playerInfo.getUniqueId().toString() + " loaded");
         }
 
         for (Document document : getConnection().getCollection("games").find()) {

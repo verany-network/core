@@ -70,7 +70,8 @@ public abstract class VeranyProject extends JavaPlugin implements Serializable, 
 
     @Override
     public <T extends LoadObject> T getData(UUID uuid, Class<T> dataClass, Class<? extends IDefault<UUID>> playerClass) {
-        return ((Loader) getPlayer(uuid, playerClass)).getData(dataClass);
+        if (((Loader) getPlayer(uuid, playerClass)).getDataOptional(dataClass).isEmpty()) return null;
+        return ((Loader) getPlayer(uuid, playerClass)).getDataOptional(dataClass).get();
     }
 
     @Override

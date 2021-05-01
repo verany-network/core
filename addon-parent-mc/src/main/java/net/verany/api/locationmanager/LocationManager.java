@@ -18,16 +18,18 @@ public class LocationManager extends AbstractLocationManager {
 
     @Override
     public void createLocation(String name, Location location) {
-        getData(VeranyLocations.class).getLocations().put(name, VeranyLocation.toVeranyLocation(location));
+        getDataOptional(VeranyLocations.class).ifPresent(veranyLocations -> veranyLocations.getLocations().put(name, VeranyLocation.toVeranyLocation(location)));
     }
 
     @Override
     public Location getLocation(String name) {
-        return getData(VeranyLocations.class).getLocations().get(name).toLocation();
+        if (getDataOptional(VeranyLocations.class).isEmpty()) return null;
+        return getDataOptional(VeranyLocations.class).get().getLocations().get(name).toLocation();
     }
 
     @Override
     public boolean existLocation(String name) {
-        return getData(VeranyLocations.class).getLocations().containsKey(name);
+        if (getDataOptional(VeranyLocations.class).isEmpty()) return false;
+        return getDataOptional(VeranyLocations.class).get().getLocations().containsKey(name);
     }
 }

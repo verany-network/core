@@ -135,7 +135,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         creditsObject.load(key);
 
         if (!name.equals(getName()))
-            getData(PlayerData.class).setName(name);
+            getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.setName(name));
 
         if (!Verany.shutdown)
             if (Bukkit.getPlayer(key) != null) {
@@ -156,7 +156,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         afkObject.update();
 
         player = null;
-        load(uniqueId);
+        if (!Verany.shutdown)
+            if (Bukkit.getPlayer(uniqueId) != null) {
+                player = Bukkit.getPlayer(uniqueId);
+                setSkinData();
+            }
     }
 
     private void load() {
@@ -180,32 +184,36 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public long getOnlineTime() {
-        return getData(PlayerData.class).getOnlineTime();
+        if (getDataOptional(PlayerData.class).isEmpty()) return 0;
+        return getDataOptional(PlayerData.class).get().getOnlineTime();
     }
 
     @Override
     public long getPlayTime() {
-        return getData(PlayerData.class).getPlayTime();
+        if (getDataOptional(PlayerData.class).isEmpty()) return 0;
+        return getDataOptional(PlayerData.class).get().getPlayTime();
     }
 
     @Override
     public long getFirstJoined() {
-        return getData(PlayerData.class).getFirstJoined();
+        if (getDataOptional(PlayerData.class).isEmpty()) return 0;
+        return getDataOptional(PlayerData.class).get().getFirstJoined();
     }
 
     @Override
     public long getLastOnline() {
-        return getData(PlayerData.class).getLastOnline();
+        if (getDataOptional(PlayerData.class).isEmpty()) return 0;
+        return getDataOptional(PlayerData.class).get().getLastOnline();
     }
 
     @Override
     public void addOnlineTime() {
-        getData(PlayerData.class).setOnlineTime(getOnlineTime() + 1000);
+        getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.setOnlineTime(getOnlineTime() + 1000));
     }
 
     @Override
     public void addPlayTime() {
-        getData(PlayerData.class).setPlayTime(getPlayTime() + 1000);
+        getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.setPlayTime(getPlayTime() + 1000));
     }
 
     @Override
@@ -258,14 +266,15 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
             data.add(property.getSignature());
             data.add(property.getValue());
         });
-        getData(PlayerData.class).setSkinData(new SkinData(data.get(0), data.get(1)));
+        getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.setSkinData(new SkinData(data.get(0), data.get(1))));
     }
 
     @Override
     public AbstractSkinData getSkinData() {
-        if (getData(PlayerData.class).getSkinData() == null && player != null)
+        if (getDataOptional(PlayerData.class).isEmpty()) return null;
+        if (getDataOptional(PlayerData.class).get().getSkinData() == null && player != null)
             setSkinData();
-        return getData(PlayerData.class).getSkinData();
+        return getDataOptional(PlayerData.class).get().getSkinData();
     }
 
     @Override
@@ -277,13 +286,16 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void passAchievement(VeranyAchievement achievement) {
-        getData(PlayerData.class).passAchievement(achievement);
-        achievementQueue.addToQueue(achievement);
+        getDataOptional(PlayerData.class).ifPresent(playerData -> {
+            playerData.passAchievement(achievement);
+            achievementQueue.addToQueue(achievement);
+        });
     }
 
     @Override
     public boolean hasAchievement(VeranyAchievement achievement) {
-        return getData(PlayerData.class).getPassedAchievements().contains(achievement);
+        if (getDataOptional(PlayerData.class).isEmpty()) return false;
+        return getDataOptional(PlayerData.class).get().getPassedAchievements().contains(achievement);
     }
 
     @Override
@@ -354,8 +366,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public EnumLanguage setLanguage(EnumLanguage language) {
-        Verany.sync(getProject(), () -> {
-            getData(PlayerData.class).setLanguage(language);
+        getDataOptional(PlayerData.class).ifPresent(playerData -> {
+            playerData.setLanguage(language);
             Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer()));
             sendUpdate();
         });
@@ -438,8 +450,8 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void setPrefixPattern(AbstractPrefixPattern pattern) {
-        Verany.sync(getProject(), () -> {
-            getData(PlayerData.class).setPrefixPattern(pattern.getKey());
+        getDataOptional(PlayerData.class).ifPresent(playerData -> {
+            playerData.setPrefixPattern(pattern.getKey());
             Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer()));
             sendUpdate();
         });
@@ -447,8 +459,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     public void sendUpdate() {
         if (!Verany.shutdown) {
-            //Verany.REDIS_MANAGER.sendMessage("update~player~" + uniqueId.toString() + "~" + new Gson().toJson(getData(PlayerData.class)));
-            Verany.MESSENGER.sendMessage("core", new JSONObject().put("shouldUpdate", true).put("playerData", Verany.GSON.toJson(getData(PlayerData.class))).put("uuid", uniqueId.toString()), object -> {
+            Verany.MESSENGER.sendMessage("core", new JSONObject().put("shouldUpdate", true).put("playerData", Verany.GSON.toJson(getDataOptional(PlayerData.class).orElse(null))).put("uuid", uniqueId.toString()), object -> {
             });
         }
     }
@@ -558,12 +569,13 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public <T> T getSettingValue(AbstractSetting<T> setting) {
-        return getData(PlayerData.class).getSettingValue(setting);
+        if (getDataOptional(PlayerData.class).isEmpty()) return setting.getDefaultValue();
+        return getDataOptional(PlayerData.class).get().getSettingValue(setting);
     }
 
     @Override
     public <T> void setSettingValue(AbstractSetting<T> setting, T value) {
-        getData(PlayerData.class).setSettingValue(setting, value);
+        getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.setSettingValue(setting, value));
     }
 
     @Override
@@ -632,8 +644,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void createLog(PlayerLog log) {
-        getData(PlayerData.class).addLog(log);
-        update();
+        getDataOptional(PlayerData.class).ifPresent(playerData -> playerData.addLog(log));
     }
 
     @Override
@@ -643,17 +654,16 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void addPoints(int amount) {
-        getData(PlayerData.class).setPoints(getPoints() + amount);
-        sendUpdate();
+        getDataOptional(PlayerData.class).ifPresent(playerData -> {
+            playerData.setPoints(getPoints() + amount);
+            sendUpdate();
+        });
     }
 
     @Override
     public int getPoints() {
-        try {
-            return getData(PlayerData.class).getPoints();
-        } catch (Exception exception) {
-            return 0;
-        }
+        if (getDataOptional(PlayerData.class).isPresent()) return getDataOptional(PlayerData.class).get().getPoints();
+        return 0;
     }
 
     private int getDataByText(String text) {
@@ -670,7 +680,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         private String name;
         private EnumLanguage language;
-        @NotNull
         private String prefixPattern;
         private SkinData skinData;
         private Map<String, String> settingValues;
@@ -678,7 +687,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private Integer credits;
         private Integer exp;
         private Integer points;
-        @IgnoreField
         private long onlineTime;
         private long playTime;
         private long firstJoined;
