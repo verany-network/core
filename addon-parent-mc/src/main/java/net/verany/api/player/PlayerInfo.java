@@ -31,6 +31,7 @@ import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.locationmanager.VeranyLocation;
 import net.verany.api.message.AbstractComponentBuilder;
+import net.verany.api.message.KeyBuilder;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.placeholder.Placeholder;
@@ -400,6 +401,15 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
+    public String getKey(KeyBuilder keyBuilder) {
+        String key = keyBuilder.getKey();
+        if (key == null) throw new MissingFormatArgumentException("Cannot use KeyBuilder without key");
+        AbstractPrefixPattern pattern = keyBuilder.getPrefixPattern();
+        Placeholder[] placeholders = keyBuilder.getPlaceholders();
+        return getKey(key, pattern == null ? getPrefixPattern() : pattern, placeholders);
+    }
+
+    @Override
     public String[] getKeyArray(String key, char regex, Placeholder... placeholders) {
         return getKeyArray(key, regex, getPrefixPattern(), placeholders);
     }
@@ -407,6 +417,16 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public String[] getKeyArray(String key, char regex, AbstractPrefixPattern prefixPattern, Placeholder... placeholders) {
         return getKey(key, prefixPattern, placeholders).split(Character.toString(regex));
+    }
+
+    @Override
+    public String[] getKeyArray(KeyBuilder keyBuilder) {
+        String key = keyBuilder.getKey();
+        if (key == null) throw new MissingFormatArgumentException("Cannot use KeyBuilder without key");
+        char regex = keyBuilder.getRegex();
+        AbstractPrefixPattern pattern = keyBuilder.getPrefixPattern();
+        Placeholder[] placeholders = keyBuilder.getPlaceholders();
+        return getKeyArray(key, regex, pattern == null ? getPrefixPattern() : pattern, placeholders);
     }
 
     @Override
@@ -432,6 +452,16 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
+    public String sendKey(KeyBuilder keyBuilder) {
+        String prefix = keyBuilder.getPrefix();
+        String key = keyBuilder.getKey();
+        if (key == null) throw new MissingFormatArgumentException("Cannot use KeyBuilder without key");
+        AbstractPrefixPattern pattern = keyBuilder.getPrefixPattern();
+        Placeholder[] placeholders = keyBuilder.getPlaceholders();
+        return sendKey(prefix, key, pattern == null ? getPrefixPattern() : pattern, placeholders);
+    }
+
+    @Override
     public String getPrefix(VeranyModule module) {
         return Verany.getPrefix(module.prefix(), getPrefixPattern());
     }
@@ -443,18 +473,18 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public AbstractPrefixPattern getPrefixPattern() {
-        AtomicReference<AbstractPrefixPattern> atomicReference = new AtomicReference<>();
-        getDataOptional(PlayerData.class).ifPresentOrElse(playerData -> atomicReference.set(playerData.getPrefixPattern()), () -> atomicReference.set(PrefixPattern.BLUE));
-        return atomicReference.get();
+        if (getDataOptional(PlayerData.class).isEmpty()) return PrefixPattern.BLUE;
+        return getDataOptional(PlayerData.class).get().getPrefixPattern();
     }
 
     @Override
     public void setPrefixPattern(AbstractPrefixPattern pattern) {
-        getDataOptional(PlayerData.class).ifPresent(playerData -> {
-            playerData.setPrefixPattern(pattern.getKey());
-            Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(getPrefixPattern(), pattern, getPlayer()));
-            sendUpdate();
-        });
+        if (getDataOptional(PlayerData.class).isEmpty()) return;
+        PlayerData playerData = getDataOptional(PlayerData.class).get();
+        playerData.setPrefixPattern(pattern.getKey());
+        update(PlayerData.class, playerData);
+        Bukkit.getPluginManager().callEvent(new PlayerPrefixUpdateEvent(pattern, getPlayer()));
+        sendUpdate();
     }
 
     public void sendUpdate() {
