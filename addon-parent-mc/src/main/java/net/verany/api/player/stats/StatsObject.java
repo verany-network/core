@@ -1,5 +1,6 @@
 package net.verany.api.player.stats;
 
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.verany.api.Verany;
@@ -30,7 +31,6 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     @Override
     public void update() {
         save("stats_data");
-        load(uniqueId);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
         checkStats(statsType);
         for (StatsLoadData.StatsData statsData : getData(StatsLoadData.class).getStringStatsDataMap().get(statsType.getKey()))
             if ((System.currentTimeMillis() - statsData.getTimestamp()) < statsTime.getTime())
-                toReturn.add((T) statsData.getValue());
+                toReturn.add(Verany.GSON.fromJson(statsData.getValue(), statsType.getTClass()));
         return toReturn;
     }
 
@@ -49,14 +49,15 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
         checkStats(statsType);
         for (StatsLoadData.StatsData statsData : getData(StatsLoadData.class).getStringStatsDataMap().get(statsType.getKey()))
             if (statsData.getTimestamp() >= date)
-                toReturn.add((T) statsData.getValue());
+                toReturn.add(Verany.GSON.fromJson(statsData.getValue(), statsType.getTClass()));
         return toReturn;
     }
 
     @Override
     public <T> void setStatsData(AbstractStatsType<T> statsType, T value) {
+        if (getDataOptional(StatsLoadData.class).isEmpty()) return;
         checkStats(statsType);
-        getData(StatsLoadData.class).getStringStatsDataMap().get(statsType.getKey()).add(new StatsLoadData.StatsData(value));
+        getDataOptional(StatsLoadData.class).get().getStringStatsDataMap().get(statsType.getKey()).add(new StatsLoadData.StatsData(Verany.GSON.toJson(value)));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     @Override
-    public int getVictoryChance(int playedGames, int wins, StatsTime time) {
+    public int getVictoryChance(int playedGames, int wins) {
         int percent = 0;
         if (playedGames != 0)
             percent = ((wins * 100) / playedGames);
@@ -115,8 +116,9 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     private <T> void checkStats(AbstractStatsType<T> statsType) {
-        if (!getData(StatsLoadData.class).getStringStatsDataMap().containsKey(statsType.getKey()))
-            getData(StatsLoadData.class).getStringStatsDataMap().put(statsType.getKey(), new ArrayList<>());
+        if (getDataOptional(StatsLoadData.class).isEmpty()) return;
+        if (!getDataOptional(StatsLoadData.class).get().getStringStatsDataMap().containsKey(statsType.getKey()))
+            getDataOptional(StatsLoadData.class).get().getStringStatsDataMap().put(statsType.getKey(), new ArrayList<>());
     }
 
     @Getter
@@ -131,7 +133,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
         @RequiredArgsConstructor
         @Getter
         public static class StatsData {
-            private final Object value;
+            private final String value;
             private final long timestamp = System.currentTimeMillis();
         }
 
