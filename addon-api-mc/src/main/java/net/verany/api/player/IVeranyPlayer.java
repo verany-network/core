@@ -2,6 +2,7 @@ package net.verany.api.player;
 
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.language.EnumLanguage;
+import net.verany.api.message.KeyBuilder;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.leveling.ICreditsObject;
 import net.verany.api.player.party.IPartyObject;
@@ -45,9 +46,13 @@ public interface IVeranyPlayer extends IDefault<UUID> {
 
     String getKey(String key, AbstractPrefixPattern prefixPattern, Placeholder... placeholders);
 
+    String getKey(KeyBuilder keyBuilder);
+
     String[] getKeyArray(String key, char regex, Placeholder... placeholders);
 
     String[] getKeyArray(String key, char regex, AbstractPrefixPattern prefixPattern, Placeholder... placeholders);
+
+    String[] getKeyArray(KeyBuilder keyBuilder);
 
     String sendKey(String key, Placeholder... placeholders);
 
@@ -56,5 +61,7 @@ public interface IVeranyPlayer extends IDefault<UUID> {
     String sendKey(String prefix, String key, Placeholder... placeholders);
 
     String sendKey(String prefix, String key, AbstractPrefixPattern prefixPattern, Placeholder... placeholders);
+
+    String sendKey(KeyBuilder keyBuilder);
 
 }
