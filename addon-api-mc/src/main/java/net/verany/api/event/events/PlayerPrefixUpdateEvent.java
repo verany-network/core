@@ -11,15 +11,13 @@ import org.bukkit.event.player.PlayerEvent;
 @Getter
 public class PlayerPrefixUpdateEvent extends PlayerEvent {
 
-    private final AbstractPrefixPattern oldPattern;
     private final AbstractPrefixPattern newPattern;
     private final IPlayerInfo playerInfo;
 
     private static final HandlerList handlers = new HandlerList();
 
-    public PlayerPrefixUpdateEvent(AbstractPrefixPattern oldPattern, AbstractPrefixPattern newPattern, Player who) {
+    public PlayerPrefixUpdateEvent(AbstractPrefixPattern newPattern, Player who) {
         super(who);
-        this.oldPattern = oldPattern;
         this.newPattern = newPattern;
         playerInfo = AbstractVerany.PROFILE_OBJECT.getPlayer(who.getUniqueId()).get();
     }
