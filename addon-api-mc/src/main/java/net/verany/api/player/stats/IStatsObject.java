@@ -29,7 +29,7 @@ public interface IStatsObject extends IDefault<UUID> {
 
     int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime);
 
-    int getVictoryChance(int playedGames, int wins, StatsTime time);
+    int getVictoryChance(int playedGames, int wins);
 
     @AllArgsConstructor
     @Getter
