@@ -18,7 +18,7 @@ public class TabListObject implements ITablistObject {
 
     @Override
     public Team getTeamForPlayer(Player player, Scoreboard scoreboard) {
-        IPermissionObject permissionObject = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get().getPermissionObject();
+        IPermissionObject permissionObject = Verany.getPlayer(player).getPermissionObject();
         return scoreboard.getTeam(permissionObject.getCurrentGroup().getGroup().getScoreboardId() + player.getUniqueId().toString().substring(0, 10));
     }
 
