@@ -2,9 +2,11 @@ package net.verany.api.voting;
 
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class VotingWrapper<T> implements AbstractVoting<T> {
 
@@ -64,5 +66,10 @@ public class VotingWrapper<T> implements AbstractVoting<T> {
     @Override
     public int getVotes(T value) {
         return votes.get(value);
+    }
+
+    @Override
+    public List<T> getValues() {
+        return new ArrayList<>(votes.keySet());
     }
 }
