@@ -22,4 +22,6 @@ public interface AbstractVoting<T> {
 
     int getVotes(T value);
 
+    List<T> getValues();
+
 }
