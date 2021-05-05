@@ -37,6 +37,7 @@ public class AfkObject implements IAFKObject {
     @Override
     public void load(UUID key) {
         this.key = key;
+        resetAfkTime();
     }
 
     @Override
