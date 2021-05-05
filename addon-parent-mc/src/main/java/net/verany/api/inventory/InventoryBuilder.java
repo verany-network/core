@@ -120,9 +120,11 @@ public class InventoryBuilder implements IInventoryBuilder {
             if (event.getSlot() == pageData.getNextPageItem()) {
                 event.setCancelled(true);
                 handler.onSwitch(PageSwitchHandler.Type.NEXT);
+                pageSwitchHandlers.remove(pageData);
             } else if (event.getSlot() == pageData.getPreviousPageItem()) {
                 event.setCancelled(true);
                 handler.onSwitch(pageData.getCurrentPage() == 1 ? PageSwitchHandler.Type.FIRST : PageSwitchHandler.Type.PREVIOUS);
+                pageSwitchHandlers.remove(pageData);
             }
         });
     }
