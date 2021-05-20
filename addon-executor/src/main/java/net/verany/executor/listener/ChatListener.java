@@ -33,11 +33,10 @@ public class ChatListener extends AbstractListener {
             Player player = event.getPlayer();
             String message = event.getMessage();
 
-            if (!IngameConfig.CHAT.getValue()) return;
-
-            event.setCancelled(true);
 
             if (player.hasMetadata("chat.request")) {
+
+                event.setCancelled(true);
 
                 Document document = (Document) player.getMetadata("chat.request").get(0).value();
                 ChatRequest<?> request = document.get("request", ChatRequest.class);
@@ -80,6 +79,10 @@ public class ChatListener extends AbstractListener {
                 }
                 return;
             }
+
+            if (!IngameConfig.CHAT.getValue()) return;
+
+            event.setCancelled(true);
 
             IPlayerInfo playerInfo = Verany.getPlayer(player);
 
