@@ -38,7 +38,7 @@ public class UpdateObject extends DatabaseLoader implements IUpdateObject {
     public List<UpdateEntry> getUnreadUpdates(UUID uuid) {
         if (getDataOptional(UpdateDataLoader.class).isEmpty()) return new ArrayList<>();
         List<UpdateEntry> readUpdates = getDataOptional(UpdateDataLoader.class).get().getReadUpdates(uuid);
-        return Lists.reverse(getUpdates(Comparator.comparing(UpdateEntry::getTimestamp)).stream().filter(entry -> !readUpdates.contains(entry) && entry.isPublished()).collect(Collectors.toList()));
+        return Lists.reverse(getUpdates(Comparator.comparing(UpdateEntry::getPublishDate)).stream().filter(entry -> !readUpdates.contains(entry) && entry.isPublished()).collect(Collectors.toList()));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class UpdateObject extends DatabaseLoader implements IUpdateObject {
             Deque<String> updateList = new LinkedList<>();
             for (String page : update.getPages())
                 updateList.add(ChatColor.translateAlternateColorCodes('&', page));
-            updateList.addFirst("Date: " + Verany.getPrettyTime(playerInfo.getLanguage().getLocale(), update.getTimestamp()) + "\n\n\n" + update.getTopic());
+            updateList.addFirst("Date: " + Verany.getPrettyTime(playerInfo.getLanguage().getLocale(), update.getPublishDate()) + "\n\n\n" + update.getTopic());
             pages.addAll(updateList);
         }
         return new ItemBuilder(Material.WRITTEN_BOOK).setBookInfo(new ItemBuilder.BookInfo("UPDATES", updates.get(0).getAuthor(), pages)).build();
