@@ -22,3 +22,10 @@ commands:
     aliases:
       - gr
   chatclear:
+
+
+loadBefore:
+  - CloudNet-Bridge
+
+depend:
+  - CloudNet-Bridge
