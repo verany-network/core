@@ -115,6 +115,8 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     void sendOnServer(String server);
 
+    void connectToRound(String server, String id);
+
     void sendOnRandomServer(String group);
 
     String getServer();
