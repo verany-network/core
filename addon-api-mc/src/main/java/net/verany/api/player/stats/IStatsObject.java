@@ -27,7 +27,7 @@ public interface IStatsObject extends IDefault<UUID> {
 
     String getKd(int kills, int deaths);
 
-    int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime);
+    int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime, Class<? extends IDefault<UUID>> player);
 
     int getVictoryChance(int playedGames, int wins);
 
