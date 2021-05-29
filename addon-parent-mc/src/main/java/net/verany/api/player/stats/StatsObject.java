@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.verany.api.Verany;
+import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
@@ -14,6 +15,8 @@ import java.util.*;
 
 @Getter
 public class StatsObject extends DatabaseLoader implements IStatsObject {
+
+    private static final Map<UUID, IStatsObject> cachedObjects = new HashMap<>();
 
     private UUID uniqueId;
 
@@ -103,8 +106,13 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     @Override
-    public int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime) {
-        return 0;
+    public int getRanking(AbstractStatsType<Integer> statsType, StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
+        int rank = 1;
+        for (IStatsObject statsObject : getStatsObjects(getProject(), statsType, statsTime, playerClass)) {
+            if (statsObject.getUniqueId().equals(uniqueId)) break;
+            rank++;
+        }
+        return rank;
     }
 
     @Override
@@ -138,4 +146,29 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
         }
 
     }
+
+    public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, IStatsObject.StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
+        List<IPlayerInfo> players = Verany.PROFILE_OBJECT.getRegisteredPlayers();
+        List<IStatsObject> sortData = new ArrayList<>();
+        for (IPlayerInfo player : players) {
+            if (player.getSkinData() == null) continue;
+            IStatsObject statsObject;
+            if (player.getPlayer(playerClass) != null) {
+                statsObject = player.getPlayer(playerClass).getStatsObject();
+            } else {
+                if (cachedObjects.containsKey(player.getUniqueId()))
+                    statsObject = cachedObjects.get(player.getUniqueId());
+                else {
+                    statsObject = new StatsObject(project);
+                    statsObject.load(player.getUniqueId());
+                    cachedObjects.put(player.getUniqueId(), statsObject);
+                }
+            }
+            sortData.add(statsObject);
+        }
+        List<IStatsObject> statsObjects = Verany.sortList(sortData, Comparator.comparingInt(value -> value.getStatsValue(statsType, statsTime)));
+        Collections.reverse(statsObjects);
+        return statsObjects;
+    }
+
 }
