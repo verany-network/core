@@ -3,11 +3,13 @@ package net.verany.api.player;
 import com.google.gson.Gson;
 import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
+import de.dytanic.cloudnet.ext.bridge.node.CloudNetBridgeModule;
 import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
 import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
 import de.dytanic.cloudnet.ext.bridge.player.executor.PlayerExecutor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_16_R3.DataWatcher;
 import net.minecraft.server.v1_16_R3.DataWatcherRegistry;
@@ -48,6 +50,7 @@ import net.verany.api.player.party.IPartyObject;
 import net.verany.api.player.party.PartyObject;
 import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.PermissionObject;
+import net.verany.api.player.stats.IStatsObject;
 import net.verany.api.player.verification.VerificationObject;
 import net.verany.api.player.verifictation.IVerificationObject;
 import net.verany.api.plugin.IVeranyPlugin;
@@ -58,6 +61,7 @@ import net.verany.api.settings.AbstractSetting;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.skin.SkinData;
 import net.verany.api.sound.AbstractVeranySound;
+import net.verany.volcano.player.IVolcanoPlayer;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.boss.BossBar;
@@ -66,6 +70,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -95,6 +100,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private IVerificationObject verificationObject;
     private IAFKObject afkObject;
 
+    private ICloudPlayer cloudPlayer;
+    private PlayerExecutor playerExecutor;
+
     private String defaultActionbar = null;
     private boolean shouldLoad = false;
     private AbstractBossBar defaultBossBar = null;
@@ -108,6 +116,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         this.name = name;
     }
 
+    @SneakyThrows
     @Override
     public void load(UUID key) {
         this.uniqueId = key;
@@ -128,6 +137,12 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         afkObject.load(key);
 
         load();
+
+        if (playerManager != null) {
+            cloudPlayer = playerManager.getOnlinePlayer(uniqueId);
+            if (cloudPlayer != null)
+                playerExecutor = playerManager.getPlayerExecutor(cloudPlayer);
+        }
 
         levelObject = new LevelObject(this);
         levelObject.load(key);
@@ -560,6 +575,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
+    public void connectToRound(String server, String id) {
+
+    }
+
+    @Override
     public void sendOnRandomServer(String group) {
         Collection<ServiceInfoSnapshot> collection = CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices(group);
         sendOnServer(collection.stream().skip((int) (collection.size() * Math.random())).findFirst().get().getName());
@@ -568,16 +588,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public String getServer() {
         return getCloudPlayer().getConnectedService().getServerName();
-    }
-
-    @Override
-    public ICloudPlayer getCloudPlayer() {
-        return playerManager.getOnlinePlayer(uniqueId);
-    }
-
-    @Override
-    public PlayerExecutor getPlayerExecutor() {
-        return playerManager.getPlayerExecutor(uniqueId);
     }
 
     @Override
