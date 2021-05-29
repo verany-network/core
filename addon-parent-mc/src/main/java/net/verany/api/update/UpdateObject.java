@@ -5,6 +5,7 @@ import net.verany.api.Verany;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.update.date.UpdateEntry;
 import org.bukkit.ChatColor;
@@ -75,9 +76,9 @@ public class UpdateObject extends DatabaseLoader implements IUpdateObject {
             Deque<String> updateList = new LinkedList<>();
             for (String page : update.getPages())
                 updateList.add(ChatColor.translateAlternateColorCodes('&', page));
-            updateList.addFirst("Date: " + Verany.getPrettyTime(playerInfo.getLanguage().getLocale(), update.getPublishDate()) + "\n\n\n" + update.getTopic());
+            updateList.addFirst(playerInfo.getKey("update.published", new Placeholder("%publish%", Verany.getPrettyTime(playerInfo.getLanguage().getLocale(), update.getPublishDate()))) + "\n\n\n" + ChatColor.translateAlternateColorCodes('&', update.getTopic()));
             pages.addAll(updateList);
         }
-        return new ItemBuilder(Material.WRITTEN_BOOK).setBookInfo(new ItemBuilder.BookInfo("UPDATES", updates.get(0).getAuthor(), pages)).build();
+        return new ItemBuilder(Material.WRITTEN_BOOK).setBookInfo(new ItemBuilder.BookInfo(updates.get(0).getTitle(), updates.get(0).getAuthor(), pages)).setDisplayName(playerInfo.getKey("update.book.name")).build();
     }
 }
