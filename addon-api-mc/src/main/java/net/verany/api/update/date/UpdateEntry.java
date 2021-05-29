@@ -13,6 +13,7 @@ public class UpdateEntry {
 
     private final String id = AbstractVerany.generate(10);
     private final String author;
+    private final String title = "unknown";
     private final String topic;
     private final Deque<String> pages;
     private final UUID creator;
