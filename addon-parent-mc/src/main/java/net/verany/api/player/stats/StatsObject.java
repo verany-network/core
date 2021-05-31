@@ -12,6 +12,7 @@ import net.verany.api.player.IPlayerInfo;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class StatsObject extends DatabaseLoader implements IStatsObject {
@@ -166,7 +167,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
             }
             sortData.add(statsObject);
         }
-        List<IStatsObject> statsObjects = Verany.sortList(sortData, Comparator.comparingInt(value -> value.getStatsValue(statsType, statsTime)));
+        List<IStatsObject> statsObjects = Verany.sortList(sortData.stream().distinct().collect(Collectors.toList()), Comparator.comparingInt(value -> value.getStatsValue(statsType, statsTime)));
         Collections.reverse(statsObjects);
         return statsObjects;
     }
