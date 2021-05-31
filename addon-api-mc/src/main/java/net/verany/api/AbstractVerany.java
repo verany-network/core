@@ -151,19 +151,17 @@ public abstract class AbstractVerany {
     }
 
     public static String intToRoman(int num) {
-        StringBuilder sb = new StringBuilder();
-        int times;
-        String[] romans = new String[]{"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
-        int[] ints = new int[]{1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
-        for (int i = ints.length - 1; i >= 0; i--) {
-            times = num / ints[i];
-            num %= ints[i];
-            while (times > 0) {
-                sb.append(romans[i]);
-                times--;
-            }
+        String[] rnChars = {"M", "CM", "D", "C", "XC", "L", "X", "IX", "V", "I"};
+        int[] rnVals = {1000, 900, 500, 100, 90, 50, 10, 9, 5, 1};
+        StringBuilder retVal = new StringBuilder();
+
+        for (int i = 0; i < rnVals.length; i++) {
+            int numberInPlace = num / rnVals[i];
+            if (numberInPlace == 0) continue;
+            retVal.append(numberInPlace == 4 && i > 0 ? rnChars[i] + rnChars[i - 1] : new String(new char[numberInPlace]).replace("\0", rnChars[i]));
+            num = num % rnVals[i];
         }
-        return sb.toString();
+        return retVal.toString();
     }
 
     public static String format(double number) {
