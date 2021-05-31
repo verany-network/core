@@ -19,7 +19,7 @@ subprojects {
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven {
-            url 'https://repo.cloudnetservice.eu/repository/releases/'
+            url 'https://repo.cloudnetservice.eu/repository/snapshots/'
         }
         maven {
             name = "sonatype-oss-snapshots"
@@ -31,10 +31,9 @@ subprojects {
         compileOnly 'org.projectlombok:lombok:1.18.10'
         compile 'com.google.code.gson:gson:2.8.5'
         compileOnly 'org.ocpsoft.prettytime:prettytime:4.0.5.Final'
-        compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/1.16.4/Paper-Server/target/paper-1.16.4.jar')
-        compile files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.3.1.jar");
         annotationProcessor 'org.projectlombok:lombok:1.18.10'
         implementation 'com.github.marcoacierno:pastebin-java-api:0.2.1'
+        compileOnly files('C:/Users/maxim/Desktop/Verany Season 2/Spigot/paper.jar')
         compile 'org.mongodb:mongo-java-driver:3.12.7'
 
         compile 'org.java-websocket:Java-WebSocket:1.5.1'
@@ -43,8 +42,8 @@ subprojects {
         implementation "net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"
         implementation "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
 
-        compile 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.3.0-RELEASE'
-        compile 'de.dytanic.cloudnet:cloudnet-bridge:3.3.0-RELEASE'
+        implementation 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.0-SNAPSHOT'
+        implementation 'de.dytanic.cloudnet:cloudnet-bridge:3.4.0-SNAPSHOT'
     }
 
 }
