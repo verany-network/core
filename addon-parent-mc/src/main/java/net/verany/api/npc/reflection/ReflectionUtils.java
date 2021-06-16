@@ -1,8 +1,10 @@
 package net.verany.api.npc.reflection;
 
 import net.minecraft.server.v1_16_R3.MathHelper;
+import net.verany.api.player.permission.Permissible;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.joor.Reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -12,18 +14,19 @@ import java.util.logging.Logger;
 
 public class ReflectionUtils {
 
-    public Field modifiers = this.getField(Field.class, "modifiers");
+    //public Field modifiers = this.getField(Field.class, "modifiers");
 
     public Field getField(Class<?> clazz, String name) {
         try {
             Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             if (Modifier.isFinal(field.getModifiers())) {
-                this.modifiers.set(field, field.getModifiers() & -17);
+                Reflect.on(Field.class).set("perm", field.getModifiers() & -17);
+                //this.modifiers.set(field, field.getModifiers() & -17);
             }
 
             return field;
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException var4) {
+        } catch (SecurityException | IllegalArgumentException | NoSuchFieldException var4) {
             Logger.getLogger(ReflectionUtils.class.getName()).log(Level.SEVERE, (String) null, var4);
             return null;
         }
