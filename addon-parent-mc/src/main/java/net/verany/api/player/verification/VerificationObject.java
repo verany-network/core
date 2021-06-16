@@ -31,7 +31,7 @@ public class VerificationObject extends DatabaseLoader implements IVerificationO
 
     @Override
     public void update() {
-        if (getData(VerificationMap.class) != null)
+        if (getDataOptional(VerificationMap.class).isPresent())
             save("verification_player");
         load();
     }
@@ -52,7 +52,7 @@ public class VerificationObject extends DatabaseLoader implements IVerificationO
             data.setExtra(getVerificationData(type).getExtra());
         }
 
-        getData(VerificationMap.class).getVerificationDataMap().put(type, data);
+        getDataOptional(VerificationMap.class).ifPresent(verificationMap -> verificationMap.getVerificationDataMap().put(type, data));
         update();
     }
 
@@ -72,27 +72,30 @@ public class VerificationObject extends DatabaseLoader implements IVerificationO
     }
 
     private boolean contains(VerificationType type) {
-        return getData(VerificationMap.class).getVerificationDataMap().containsKey(type);
+        if (getDataOptional(VerificationMap.class).isEmpty()) return false;
+        return getDataOptional(VerificationMap.class).get().getVerificationDataMap().containsKey(type);
     }
 
     @Override
     public void createVerification(VerificationType type, VerificationData data) {
         if (isVerified(type)) return;
         if (requestedVerification(type)) return;
-        getData(VerificationMap.class).getVerificationDataMap().put(type, data);
+        getDataOptional(VerificationMap.class).ifPresent(verificationMap -> verificationMap.getVerificationDataMap().put(type, data));
         update();
     }
 
     @Override
     public VerificationData getVerificationData(VerificationType type) {
-        return getData(VerificationMap.class).getVerificationDataMap().get(type);
+        if (getDataOptional(VerificationMap.class).isEmpty()) return null;
+        return getDataOptional(VerificationMap.class).get().getVerificationDataMap().get(type);
     }
 
     @Override
     public void unlink(VerificationType type) {
-        getData(VerificationMap.class).getVerificationDataMap().remove(type);
+        getDataOptional(VerificationMap.class).get().getVerificationDataMap().remove(type);
         update();
-        Verany.MESSENGER.sendMessage("TeamSpeakBot", new JSONObject().put("teamspeak", "unlink").put("uuid", key.toString()), object -> {});
+        Verany.MESSENGER.sendMessage("TeamSpeakBot", new JSONObject().put(type.name().toLowerCase(), "unlink").put("uuid", key.toString()), object -> {
+        });
     }
 
     @Getter
