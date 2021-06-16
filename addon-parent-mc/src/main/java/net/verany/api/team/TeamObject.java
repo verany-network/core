@@ -54,6 +54,7 @@ public class TeamObject<T extends AbstractGameTeam> implements ITeamObject<T> {
     public void addPlayerToTeam(UUID uuid, T team) {
         removePlayersTeam(uuid);
         this.team.put(uuid, team);
+        System.out.println("pit: " + getPlayersInTeam(team).size() + " ~ t: " + team.getName());
     }
 
     @Override
@@ -63,9 +64,11 @@ public class TeamObject<T extends AbstractGameTeam> implements ITeamObject<T> {
 
     @Override
     public T getRandomFreeTeam() {
-        T random = teams.stream().skip(new Random().nextInt(teams.size())).findFirst().orElse(null);
+        T random = teams.get(new Random().nextInt(teams.size()));
         if (random == null) return null;
-        if (getPlayersInTeam(random).size() >= maxPlayersInTeam)
+        int playersInTeam = getPlayersInTeam(random).size();
+        System.out.println("pit: " + playersInTeam + " ~ mpit: " + maxPlayersInTeam + " ~ t: " + random.getName());
+        if (playersInTeam >= maxPlayersInTeam)
             return getRandomFreeTeam();
         return random;
     }
