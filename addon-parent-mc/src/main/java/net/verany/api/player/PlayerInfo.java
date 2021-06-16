@@ -409,8 +409,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         message = message.replace("$f", prefixPattern.getColor().getFirstColor().toString());
         message = message.replace("$s", prefixPattern.getColor().getSecondColor().toString());
 
-        for (Placeholder placeholder : placeholders)
-            message = message.replace(placeholder.getTarget(), placeholder.getReplacement().toString());
+        if (placeholders != null)
+            for (Placeholder placeholder : placeholders)
+                message = message.replace(placeholder.getTarget(), placeholder.getReplacement().toString());
 
         return Verany.serializeHex(message);
     }
