@@ -1,9 +1,9 @@
-net/verany/api/json/JsonConfig.java
- net.verany.api.json.JsonConfig
+net/verany/api/Verany.java
+ net.verany.api.Verany
 net/verany/api/list/ListHandler.java
  net.verany.api.list.ListHandler
-net/verany/api/module/SettingLoader.java
- net.verany.api.module.SettingLoader
+net/verany/api/loader/database/DatabaseLoader.java
+ net.verany.api.loader.database.DatabaseLoader
 net/verany/api/event/EventManager.java
  net.verany.api.event.EventManager
 net/verany/api/permission/PermissionGroup.java
@@ -12,7 +12,7 @@ net/verany/api/setting/SettingWrapper.java
  net.verany.api.setting.SettingWrapper
 net/verany/api/loader/config/ConfigLoader.java
  net.verany.api.loader.config.ConfigLoader
-net/verany/api/Verany.java
- net.verany.api.Verany
-net/verany/api/loader/database/DatabaseLoader.java
- net.verany.api.loader.database.DatabaseLoader
+net/verany/api/module/SettingLoader.java
+ net.verany.api.module.SettingLoader
+net/verany/api/json/JsonConfig.java
+ net.verany.api.json.JsonConfig
