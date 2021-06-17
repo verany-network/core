@@ -3,6 +3,7 @@ package net.verany.executor.listener;
 import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
 import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
+import joptsimple.internal.Reflection;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 import net.verany.api.Verany;
@@ -37,6 +38,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scoreboard.Team;
+import org.joor.Reflect;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
@@ -102,16 +104,7 @@ public class PlayerJoinListener extends AbstractListener {
         Verany.registerListener(project, PlayerLoadCompleteEvent.class, event -> {
             Player player = event.getPlayer();
 
-            try {
-                Field field = CraftHumanEntity.class.getDeclaredField("perm");
-                field.setAccessible(true);
-                Field modifiersField = field.getClass().getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-                field.set(player, new Permissible(player));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Reflect.on(player).set("perm", new Permissible(player));
 
             player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
             Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));
