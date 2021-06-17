@@ -75,8 +75,3 @@ Lizensierung
 
 Natürlich sind wir für die Arbeit an unserem Projekt dankbar, aber es muss erwähnt werden, dass alle Dateien, die hier zu finden sind, dem Verany-Projekt dienen.
 Alle Beiträge unterliegen den Bestimmungen der EULA.
-
-Zusätzliche Hinweise
-----------------
-
-Forks für den privaten Bereich sind nicht gestattet.
