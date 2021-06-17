@@ -13,7 +13,7 @@ Mit den folgenden Schritten wird es euch ermöglicht unsere Core in euer Projekt
 
 1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**. Alternativ kannst du dir diesen Build auch über Maven oder Gradle herunterladen.
 
-Installation unter Maven:
+Installation unter Gradle:
 ```java
 repositories {
     maven { url = uri("https://maven.verany.net/repo/") } // Core
@@ -23,6 +23,7 @@ dependencies {
     compileOnlyApi("net.verany:Verany-Core_MC:2021.2.1") // Core
 }
 ```
+Installation unter Maven:
 ```xml
 <!-- Verany Core -->
 <repository>
