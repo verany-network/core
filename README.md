@@ -1,8 +1,8 @@
-Verany Minecraft Core
+Verany Proxy Core
 =============
 
 Willkommen zur Core Einrichtung,
-hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wir ihr diese anschließend einbezieht.
+hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wir ihr diese anschließend selbst bearbeiten könnt.
 
 Die Core einbeziehen
 ----------------------
@@ -11,7 +11,47 @@ Mit den folgenden Schritten wird es euch ermöglicht unsere Core in euer Projekt
 
 ### Installation
 
-Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**. Anschließend kannst du diese einfach in dein Projekt einbeziehen und das Projekt umgestalten.
+1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**.
+
+Installation unter Gradle:
+```java
+
+dependencies {
+    compileOnly files("S:/YOURPATH/addon-parent-mc/build/libs/addon-parent-mc-2021.6.1.jar")
+}
+```
+
+2. Richte deine Main Klasse unseren Vorgaben entsprechend ein:
+```java
+package net.verany.project;
+ 
+import net.verany.api.Verany;
+import net.verany.api.module.VeranyModule;
+import net.verany.api.module.VeranyProject;
+ 
+@VeranyModule(name = "Project", (maxRounds = 2,) prefix = "TestPrefix", version = "2021.2.1", authors = {"Developer"}, user = "user", host = "verany.net", password = "password", databases = {"project"})
+public class YourProject extends VeranyProject {
+ 
+    @Override
+    public void onEnable() {
+        // Connect to Database etc.
+        Verany.loadModule(this);
+        init();
+    }
+ 
+    @Override
+    public void onDisable() {
+        // Disconnect from Database
+        getConnection().disconnect();
+    }
+ 
+    @Override
+    public void init() {
+ 
+    }
+}
+```
+
 
 Lizensierung
 ---------------------------
