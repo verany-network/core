@@ -11,32 +11,14 @@ Mit den folgenden Schritten wird es euch ermöglicht unsere Core in euer Projekt
 
 ### Installation
 
-1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**. Alternativ kannst du dir diesen Build auch über Maven oder Gradle herunterladen.
+1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**.
 
 Installation unter Gradle:
 ```java
-repositories {
-    maven { url = uri("https://maven.verany.net/repo/") } // Core
-}
 
 dependencies {
-    compileOnlyApi("net.verany:Verany-Core_MC:2021.2.1") // Core
+    compileOnly files("S:/YOURPATH/addon-parent-mc/build/libs/addon-parent-mc-2021.6.1.jar")
 }
-```
-Installation unter Maven:
-```xml
-<!-- Verany Core -->
-<repository>
-    <id>Verany</id>
-    <url>https://maven.verany.net/repo/</url>
-</repository>
-
-<!-- Verany Core API -->
-<dependency>
-    <groupId>net.verany</groupId>
-    <artifactId>Verany-Core</artifactId>
-    <version>2021.2.1</version>
-</dependency>
 ```
 
 2. Richte deine Main Klasse unseren Vorgaben entsprechend ein:
