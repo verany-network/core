@@ -30,7 +30,7 @@ dependencies {
     <url>https://maven.verany.net/repo/</url>
 </repository>
 
-<!-- Veranya Core API -->
+<!-- Verany Core API -->
 <dependency>
     <groupId>net.verany</groupId>
     <artifactId>Verany-Core</artifactId>
