@@ -3,6 +3,7 @@ plugins {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INHERIT
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
