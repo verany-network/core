@@ -55,7 +55,7 @@ public class AchievementQueue {
                         descriptionBuilder.append(s).append("\n");
                     count++;
                 }
-                playerInfo.sendMessage(new AbstractComponentBuilder(playerInfo.getPrefix("VeranySpigot") + playerInfo.getKey("achievement.passed", new Placeholder("%name%", playerInfo.getKey("achievement." + achievement.getName().toLowerCase())))) {
+                playerInfo.sendMessage(new AbstractComponentBuilder(playerInfo.getPrefix("VeranyCore") + playerInfo.getKey("achievement.passed", new Placeholder("%name%", playerInfo.getKey("achievement." + achievement.getName().toLowerCase())))) {
                     @Override
                     public void onCreate() {
                         setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(descriptionBuilder.toString()).create()));
