@@ -1,7 +1,0 @@
-plugins {
-    id 'java'
-}
-
-dependencies {
-    compileOnly files("C:/Users/maxim/Desktop/Verany Season 2/Spigot/core-round-manager/round-parent/build/libs/round-parent-2021.3.1.jar");
-}

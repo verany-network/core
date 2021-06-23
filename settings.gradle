@@ -1,8 +1,0 @@
-rootProject.name = 'VeranyCore-Addon'
-include 'addon-api'
-include 'addon-parent'
-include 'addon-api-mc'
-include 'addon-parent-mc'
-include 'addon-executor'
-include 'addon-proxy'
-
