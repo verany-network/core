@@ -1,4 +1,4 @@
-Verany Proxy Core
+Verany Core
 =============
 
 Willkommen zur Core Einrichtung,
