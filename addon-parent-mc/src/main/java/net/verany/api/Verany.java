@@ -16,6 +16,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.verany.api.command.CommandEntry;
 import net.verany.api.command.executor.VeranyCommandExecutor;
+import net.verany.api.database.Database;
 import net.verany.api.event.EventConsumer;
 import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.GameModeObject;
@@ -43,14 +44,15 @@ import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.report.ReportObject;
 import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
-import net.verany.volcano.VeranyServer;
+
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.*;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -81,7 +83,7 @@ public class Verany extends AbstractVerany {
     public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
     @SneakyThrows
-    public static void loadModule(VeranyProject project) {
+    public static void loadModule(VeranyProject project, Database database) {
         VeranyModule module = project.getClass().getAnnotation(VeranyModule.class);
 
         if (!isLoaded()) {
@@ -94,10 +96,9 @@ public class Verany extends AbstractVerany {
         }
         load();
 
-        DatabaseConnection connection = new DatabaseConnection(module);
+        DatabaseConnection connection = new DatabaseConnection(module, database.getUser(), database.getHostname(), database.getPassword(), database.getDatabases());
         project.setModule(module);
         project.setConnection(connection);
-
     }
 
     public static void pushAway(Player player, Location loc) {
@@ -313,7 +314,7 @@ public class Verany extends AbstractVerany {
     }
 
     public static void registerGameMode(VeranyProject project, AbstractGameMode gameMode) {
-        VeranyServer.registerGameMode(project, gameMode);
+        //VeranyServer.registerGameMode(project, gameMode);
     }
 
     public static void createMessage(VeranyProject project, String key) {

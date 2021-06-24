@@ -27,25 +27,17 @@ public @interface VeranyModule {
 
     String[] authors();
 
-    String user();
-
-    String host();
-
-    String password();
-
-    String[] databases();
-
     @Getter
     class DatabaseConnection {
         private final VeranyModule module;
         private final List<DatabaseManager> databaseManagers;
 
-        public DatabaseConnection(VeranyModule module) {
+        public DatabaseConnection(VeranyModule module, String user, String hostname, String password, String[] databases) {
             this.module = module;
             this.databaseManagers = new ArrayList<>();
 
-            for (String database : module.databases())
-                databaseManagers.add(new DatabaseManager(module.user(), module.host(), module.password(), database));
+            for (String database : databases)
+                databaseManagers.add(new DatabaseManager(user, hostname, password, database));
         }
 
         public MongoCollection<Document> getCollection(String collection) {
