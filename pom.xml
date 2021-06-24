@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.ocpsoft.prettytime</groupId>
       <artifactId>prettytime</artifactId>
-      <version>4.0.5.Final</version>
+      <version>5.0.1.Final</version>
     </dependency>
     <dependency>
       <groupId>com.github.marcoacierno</groupId>
