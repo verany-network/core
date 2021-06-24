@@ -17,4 +17,4 @@ jobs:
       - name: Publish package
         run: mvn --batch-mode deploy
         env:
-          GITHUB_TOKEN: ${{ GITHUB_TOKEN }}
+          CORE_TOKEN: ${{ CORE_TOKEN }}
