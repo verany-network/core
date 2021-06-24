@@ -1,6 +1,6 @@
 package net.verany.api.npc;
 
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
+import net.minecraft.world.entity.EnumItemSlot;
 import net.verany.api.npc.animation.NPCAnimation;
 import net.verany.api.npc.datawatcher.DataWatcherGenerator;
 import net.verany.api.skin.AbstractSkinData;

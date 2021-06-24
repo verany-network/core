@@ -1,8 +1,10 @@
 package net.verany.api.npc.datawatcher;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.network.syncher.DataWatcherObject;
+import net.minecraft.network.syncher.DataWatcherRegistry;
+import net.minecraft.network.syncher.DataWatcherSerializer;
 
 public class DataWatcherGenerator {
 

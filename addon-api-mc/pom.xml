@@ -11,6 +11,16 @@
 
     <artifactId>addon-api-mc</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper</artifactId>
+            <version>1.17-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../lib/paper-1.17-30.jar</systemPath>
+        </dependency>
+    </dependencies>
+
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>

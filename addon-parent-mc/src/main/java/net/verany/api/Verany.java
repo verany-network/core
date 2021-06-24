@@ -7,6 +7,17 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -38,21 +49,20 @@ import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.ProfileObject;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.player.permission.group.PermissionGroup;
-import net.verany.api.plugin.IProfileObject;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.report.ReportObject;
 import net.verany.api.world.IWorldObject;
 import net.verany.api.world.WorldObject;
-
+import net.verany.volcano.VeranyServer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.*;
+import org.bukkit.command.PluginCommand;
 
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -60,12 +70,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-
-import java.net.URI;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 public class Verany extends AbstractVerany {
 
@@ -314,7 +318,7 @@ public class Verany extends AbstractVerany {
     }
 
     public static void registerGameMode(VeranyProject project, AbstractGameMode gameMode) {
-        //VeranyServer.registerGameMode(project, gameMode);
+        VeranyServer.registerGameMode(project, gameMode);
     }
 
     public static void createMessage(VeranyProject project, String key) {

@@ -3,7 +3,24 @@ package net.verany.api.npc;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.network.protocol.game.PacketPlayInUseEntity;
+import net.minecraft.network.protocol.game.PacketPlayOutAnimation;
+import net.minecraft.network.protocol.game.PacketPlayOutEntity;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
+import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo;
+import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.level.PlayerInteractManager;
+import net.minecraft.server.level.WorldServer;
+
+import net.minecraft.world.entity.EnumItemSlot;
+import net.minecraft.world.item.ItemStack;
 import net.verany.api.Verany;
 import net.verany.api.npc.animation.NPCAnimation;
 import net.verany.api.npc.datawatcher.DataWatcherGenerator;
@@ -12,9 +29,10 @@ import net.verany.api.skin.AbstractSkinData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+
+import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -82,7 +100,7 @@ public class NPCObject extends ReflectionUtils implements INPC {
         this.players = players;
         this.gameProfile = new GameProfile(new UUID(this.random.nextLong(), 0L), ChatColor.translateAlternateColorCodes('&', this.name));
         this.worldServer = ((CraftWorld) location.getWorld()).getHandle();
-        this.entityPlayer = new EntityPlayer(server.getServer(), this.worldServer, this.gameProfile, new PlayerInteractManager(this.worldServer));
+        this.entityPlayer = new EntityPlayer(server.getServer(), this.worldServer, this.gameProfile);
         this.watcher = (new DataWatcherGenerator(entityPlayer.getDataWatcher())).setHeath(20.0F).setSkinParts(DataWatcherGenerator.SkinState.ALL).setMainHand(DataWatcherGenerator.MainHandState.LEFT).build();
         this.entityPlayer.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         this.onGround = this.entityPlayer.isOnGround();
@@ -92,11 +110,11 @@ public class NPCObject extends ReflectionUtils implements INPC {
     @Override
     public void spawn() {
         try {
-            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this.entityPlayer);
+            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a, this.entityPlayer);
             this.sendPacket(this.players, packet);
             PacketPlayOutNamedEntitySpawn spawnPacket = new PacketPlayOutNamedEntitySpawn(this.entityPlayer);
             this.sendPacket(this.players, spawnPacket);
-            this.setHeadRotation(this.entityPlayer.yaw);
+            this.setHeadRotation(this.entityPlayer.getHeadRotation());
             if (!NPCS.containsKey(this.entityPlayer.getId())) {
                 System.out.println("NPC SPAWN ID:" + this.entityPlayer.getId() + " UUID: " + this.entityPlayer.getUniqueID().toString());
                 NPCS.put(this.entityPlayer.getId(), this);
@@ -162,7 +180,7 @@ public class NPCObject extends ReflectionUtils implements INPC {
     @Override
     public void removeFromTablist() {
         try {
-            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, this.entityPlayer);
+            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.b, this.entityPlayer);
             this.sendPacket(this.players, packet);
         } catch (SecurityException | IllegalArgumentException var2) {
             Logger.getLogger(NPCObject.class.getName()).log(Level.SEVERE, (String) null, var2);
