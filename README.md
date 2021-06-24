@@ -2,34 +2,66 @@ Verany Core
 =============
 
 Willkommen zur Core Einrichtung,
-hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wir ihr diese anschließend selbst bearbeiten könnt.
+hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wie ihr diese anschließend selbst bearbeiten könnt.
 
-Die Core einbeziehen
-----------------------
+> Achtung: Einige Inhalte dieser Datei sind noch nicht final umgesetzt und werden erst demnächst hinzugefügt. Sollte etwas nicht richtig funktionieren wende dich bitte an eine Development-Team Leitung. Beispielsweise sollen die Verbindungsdaten und Informationen im VeranyModule in eine JSON auf dem Server ausgelagert werden.
 
-Gegeben sein muss natürlich das allgemeine Verständnis zur objektorientierten Entwicklung in Java mit der aktuellsten IntelliJ IDE.
+### Installation unter Maven
 
-### Installation
-
-1. Installiere dir die aktuellste Core in unseren **[GitHub Releases](https://github.com/verany-network/core/releases/)**.
-
-Installation unter Gradle:
+Füge das zu deiner pom.xml hinzu:
 ```java
+<repository>
+    <id>verany</id>
+    <url>https://verany.net/repo/repository/maven-public/</url>
+</repository>
+```
 
+Und füg dann die Dependency hinzu:
+```java
+<dependency>
+    <groupId>net.verany.core</groupId>
+    <artifactId>core-api</artifactId>
+    <version>1.17-R0.1-SNAPSHOT</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+### Installation unter Gradle
+
+Füge das zu deiner build.gradle hinzu:
+```java
+repositories {
+    maven { url "https://verany.net/repo/repository/maven-public/" }
+}
+```
+dann die Dependency:
+```java
 dependencies {
-    compileOnly files("S:/YOURPATH/addon-parent-mc/build/libs/addon-parent-mc-2021.6.1.jar")
+    compileOnly "net.verany.core:core-api:1.17-R0.1-SNAPSHOT"
 }
 ```
 
-2. Richte deine Main Klasse unseren Vorgaben entsprechend ein:
+Beispiel zur Verwendung
+=============
 ```java
 package net.verany.project;
  
 import net.verany.api.Verany;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
+import net.verany.api.config.IngameConfig;
+
  
-@VeranyModule(name = "Project", (maxRounds = 2,) prefix = "TestPrefix", version = "2021.2.1", authors = {"Developer"}, user = "user", host = "verany.net", password = "password", databases = {"project"})
+@VeranyModule(
+        name = "YourProject",
+        prefix = "YourProject",
+        version = "2021.6.1", // Jahr, Monat und die Versionsnummer 
+        authors = {"Notch"},
+        user = "ProjectDatabase",
+        host = "127.0.0.1",
+        password = "password",
+        databases = {"yourproject"}
+)
 public class YourProject extends VeranyProject {
  
     @Override
@@ -51,6 +83,9 @@ public class YourProject extends VeranyProject {
     }
 }
 ```
+
+### Weitere Beispiele
+findest du unter [Core Beispiele](https://docs.verany.net/core).
 
 
 Lizensierung
