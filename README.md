@@ -7,7 +7,7 @@ hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wir ihr diese ans
 Die Core einbeziehen
 ----------------------
 
-Mit den folgenden Schritten wird es euch ermöglicht unsere Core in euer Projekt einzubeziehen. Gegeben sein muss natürlich das allgemeine Verständnis zur objektorientierten Entwicklung in Java mit der aktuellsten IntelliJ IDE.
+Gegeben sein muss natürlich das allgemeine Verständnis zur objektorientierten Entwicklung in Java mit der aktuellsten IntelliJ IDE.
 
 ### Installation
 
