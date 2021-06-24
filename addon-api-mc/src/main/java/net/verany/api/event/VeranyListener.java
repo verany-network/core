@@ -1,4 +1,11 @@
 package net.verany.api.event;
 
-public interface VeranyListener {
+import net.verany.api.event.events.MessageInEvent;
+
+public abstract class VeranyListener {
+
+  public void onMessageIn(MessageInEvent event) {
+
+  }
+
 }

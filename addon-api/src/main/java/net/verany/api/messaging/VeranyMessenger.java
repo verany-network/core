@@ -5,7 +5,6 @@ import net.verany.api.event.events.MessageInEvent;
 import net.verany.api.module.VeranyProject;
 import org.bson.Document;
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

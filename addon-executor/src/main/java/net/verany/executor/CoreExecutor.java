@@ -44,46 +44,18 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 
 @Getter
-@VeranyModule(name = "CoreExecutor", prefix = "Core", version = "0.1", authors = {"tylix"}, user = "tylix", host = "159.69.63.105", password = "RxNqA18HB56SS7GW", databases = {"network", "bots", "friends", "rank", "verification", "socket"})
+@VeranyModule(name = "CoreExecutor", prefix = "Core", version = "0.1", authors = {"tylix", "Gamingcode"})
 public class CoreExecutor extends VeranyProject {
 
     public static CoreExecutor INSTANCE;
 
-    private final File file = new File("plugins//Core//database.json");
-
     @Override
     public void onEnable() {
-        initJsonConfig();
 
-        Verany.loadModule(this, loadJsonConfig());
+        Verany.loadModule(this);
 
         INSTANCE = this;
         init();
-    }
-
-    private void initJsonConfig() {
-        if (file.exists()) return;
-        Gson gson = new Gson();
-
-        Database database = new Database("user", "password", "127.0.0.1", new String[]{"database1", "database2"});
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            file.createNewFile();
-            fileWriter.write(gson.toJson(database));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Database loadJsonConfig() {
-        if (!file.exists()) initJsonConfig();
-
-        Gson gson = new Gson();
-        try {
-            return gson.fromJson(new FileReader(file), Database.class);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     @Override

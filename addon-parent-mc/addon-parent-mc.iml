@@ -11,18 +11,18 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="addon-api-mc" />
     <orderEntry type="module-library">
-      <library name="Maven: net.verany:round-parent:1.0-SNAPSHOT">
+      <library name="Maven: io.papermc.paper:paper:1.17-R0.1-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/round-parent-2021.3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../addon-api-mc/../lib/paper-1.17-30.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: io.papermc.paper:paper:1.17-R0.1-SNAPSHOT">
+      <library name="Maven: net.verany:round-parent:1.0-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../addon-api-mc/../lib/paper-1.17-30.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/round-parent-2021.3.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

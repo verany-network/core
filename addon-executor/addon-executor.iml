@@ -20,16 +20,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="addon-api-mc" />
     <orderEntry type="module-library">
       <library name="Maven: io.papermc.paper:paper:1.17-R0.1-SNAPSHOT">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../addon-parent-mc/../lib/paper-1.17-30.jar!/" />
+          <root url="jar://$MODULE_DIR$/../addon-api-mc/../lib/paper-1.17-30.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="addon-api-mc" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.20" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.5" level="project" />
     <orderEntry type="library" name="Maven: org.ocpsoft.prettytime:prettytime:4.0.5.Final" level="project" />

@@ -87,7 +87,7 @@ public class Verany extends AbstractVerany {
     public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
     @SneakyThrows
-    public static void loadModule(VeranyProject project, Database database) {
+    public static void loadModule(VeranyProject project) {
         VeranyModule module = project.getClass().getAnnotation(VeranyModule.class);
 
         if (!isLoaded()) {
@@ -100,7 +100,7 @@ public class Verany extends AbstractVerany {
         }
         load();
 
-        DatabaseConnection connection = new DatabaseConnection(module, database.getUser(), database.getHostname(), database.getPassword(), database.getDatabases());
+        DatabaseConnection connection = new DatabaseConnection(module);
         project.setModule(module);
         project.setConnection(connection);
     }

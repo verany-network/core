@@ -24,13 +24,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/../lib/round-parent-2021.3.1.jar</systemPath>
         </dependency>
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/../lib/paper-1.17-30.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <properties>

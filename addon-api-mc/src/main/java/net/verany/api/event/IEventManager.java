@@ -1,9 +1,11 @@
 package net.verany.api.event;
 
+import java.util.List;
+
 public interface IEventManager {
 
     <T extends VeranyListener> void registerListener(T listener);
 
-    <T extends VeranyEvent> void execute(T event);
+    List<VeranyListener> getListeners();
 
 }
