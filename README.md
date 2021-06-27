@@ -85,7 +85,7 @@ public class YourProject extends VeranyProject {
 ```
 
 ### Weitere Beispiele
-findest du unter [Core Beispiele](https://docs.verany.net/core).
+findest du unter [Core Beispiele](https://github.com/verany-network/core/discussions/12).
 
 
 Lizensierung
