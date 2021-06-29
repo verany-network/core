@@ -33,8 +33,8 @@ public class ExampleCommand extends AbstractCommand implements TabCompleter {
         super(project);
 
         Verany.registerCommand(project, new CommandEntry("test", "command.test", this), (sender, args) -> {
-            if (args.length != 2) {
-                sender.sendMessage("Wrong usage! /test <name/age> <value>");
+            if (args.length != 1) {
+                sender.sendMessage("Wrong usage! /test <name/age>");
                 return;
             }
 
