@@ -1,0 +1,9 @@
+name: ExampleProject
+version: 2021.6.1
+author: tylix
+main: net.verany.api.example.ExamplePlugin
+api-version: 1.17
+
+commands:
+  test:
+    permission: command.test
