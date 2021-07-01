@@ -44,42 +44,53 @@ dependencies {
 Beispiel zur Verwendung
 =============
 ```java
-package net.verany.project;
- 
+package net.verany.api.example;
+
 import net.verany.api.Verany;
+import net.verany.api.example.commands.ExampleCommand;
+import net.verany.api.example.listener.PlayerJoinListener;
+import net.verany.api.example.listener.PlayerQuitListener;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
-import net.verany.api.config.IngameConfig;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 
- 
-@VeranyModule(
-        name = "YourProject",
-        prefix = "YourProject",
-        version = "2021.6.1", // Jahr, Monat und die Versionsnummer 
-        authors = {"Notch"},
-        user = "ProjectDatabase",
-        host = "127.0.0.1",
-        password = "password",
-        databases = {"yourproject"}
-)
-public class YourProject extends VeranyProject {
- 
+@VeranyModule(name = "Example", prefix = "Example", version = "2021.6.1", authors = {"tylix"})
+public class ExamplePlugin extends VeranyProject {
+
+    public static ExamplePlugin INSTANCE;
+
+    public ExamplePlugin() {
+        INSTANCE = this;
+    }
+
     @Override
     public void onEnable() {
-        // Connect to Database etc.
         Verany.loadModule(this);
+
         init();
     }
- 
-    @Override
-    public void onDisable() {
-        // Disconnect from Database
-        getConnection().disconnect();
-    }
- 
+
     @Override
     public void init() {
- 
+
+        initCommands();
+        initListener();
+    }
+
+    private void initCommands() {
+        new ExampleCommand(this);
+    }
+
+    private void initListener() {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new PlayerJoinListener(), this);
+        pluginManager.registerEvents(new PlayerQuitListener(), this);
+    }
+
+    @Override
+    public void onDisable() {
+
     }
 }
 ```
