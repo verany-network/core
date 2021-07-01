@@ -9,7 +9,7 @@ import net.verany.api.adapter.InterfaceAdapter;
 import net.verany.api.event.EventRegistry;
 import net.verany.api.event.IEventManager;
 import net.verany.api.gamemode.AbstractGameMode;
-import net.verany.api.gamemode.countdown.AbstractCountdown;
+import net.verany.volcano.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
 import net.verany.api.messaging.VeranyMessenger;
@@ -28,7 +28,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.*;

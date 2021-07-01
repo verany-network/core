@@ -9,3 +9,10 @@
 /.idea
 /src
 /gradle
+addon-api/target
+addon-api-mc/target
+addon-executor/target
+addon-parent/target
+addon-parent-mc/target
+TestProject/
+examples/target
