@@ -85,6 +85,11 @@ public class ExamplePlugin extends VeranyProject {
         pluginManager.registerEvents(new PlayerJoinListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(), this);
     }
+    
+    @Override
+    public void onDisable() {
+        Verany.shutdown(this);
+    }
 }
 ```
 
