@@ -2,8 +2,8 @@ package net.verany.api.skull;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.minecraft.server.v1_16_R3.BlockPosition;
-import net.minecraft.server.v1_16_R3.TileEntitySkull;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.world.level.block.entity.TileEntitySkull;
 import net.verany.api.skin.AbstractSkinData;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,7 +35,7 @@ public class SkullBuilder implements ISkullBuilder {
         this.skull = new ItemStack(Material.PLAYER_HEAD, 1);
         this.skullMeta = (SkullMeta) skull.getItemMeta();
         try {
-            skullMetaClass = Class.forName("org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaSkull");
+            skullMetaClass = Class.forName("org.bukkit.craftbukkit.v1_17_R1.inventory.CraftMetaSkull");
             tileEntityClass = TileEntitySkull.class;
             blockPositionClass = BlockPosition.class;
         } catch (ClassNotFoundException e) {
@@ -48,7 +48,7 @@ public class SkullBuilder implements ISkullBuilder {
         this.skull = new ItemStack(Material.PLAYER_HEAD, 1);
         this.skullMeta = (SkullMeta) skull.getItemMeta();
         try {
-            skullMetaClass = Class.forName("org.bukkit.craftbukkit.v1_16_R3.inventory.CraftMetaSkull");
+            skullMetaClass = Class.forName("org.bukkit.craftbukkit.v1_17_R1.inventory.CraftMetaSkull");
             tileEntityClass = TileEntitySkull.class;
             blockPositionClass = BlockPosition.class;
         } catch (ClassNotFoundException e) {

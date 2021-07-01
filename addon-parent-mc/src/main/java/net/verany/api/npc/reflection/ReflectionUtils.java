@@ -1,6 +1,6 @@
 package net.verany.api.npc.reflection;
 
-import net.minecraft.server.v1_16_R3.MathHelper;
+import net.minecraft.util.MathHelper;
 import net.verany.api.player.permission.Permissible;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

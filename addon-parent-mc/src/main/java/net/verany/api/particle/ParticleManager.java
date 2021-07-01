@@ -1,10 +1,10 @@
 package net.verany.api.particle;
 
-import net.minecraft.server.v1_16_R3.PacketDataSerializer;
-import net.minecraft.server.v1_16_R3.PacketPlayOutWorldParticles;
-import net.minecraft.server.v1_16_R3.ParticleType;
+import lombok.Getter;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.protocol.game.PacketPlayOutWorldParticles;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class ParticleManager {
@@ -31,7 +31,7 @@ public class ParticleManager {
 
     public void sendPlayer(Player player) {
         PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(particle, this.longDistance, (float) this.location.getX(), (float) this.location.getY(), (float) this.location.getZ(), this.offsetX, this.offsetY, this.offsetZ, this.speed, this.amount);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        ((CraftPlayer) player).getHandle().networkManager.sendPacket(packet);
     }
 
 }
