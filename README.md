@@ -67,13 +67,11 @@ public class ExamplePlugin extends VeranyProject {
     @Override
     public void onEnable() {
         Verany.loadModule(this);
-
         init();
     }
 
     @Override
     public void init() {
-
         initCommands();
         initListener();
     }
@@ -86,11 +84,6 @@ public class ExamplePlugin extends VeranyProject {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerJoinListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(), this);
-    }
-
-    @Override
-    public void onDisable() {
-
     }
 }
 ```
