@@ -1,4 +1,4 @@
-package net.verany.api.gamemode.countdown;
+package net.verany.volcano.countdown;
 
 import lombok.Getter;
 import lombok.Setter;
