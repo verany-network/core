@@ -1,7 +1,7 @@
 name: ExampleProject
 version: 2021.6.1
 author: tylix
-main: net.verany.api.example.ExamplePlugin
+main: net.verany.api.example.normal.ExamplePlugin
 api-version: 1.17
 
 commands:
