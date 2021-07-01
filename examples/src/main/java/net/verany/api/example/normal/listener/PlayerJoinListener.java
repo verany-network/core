@@ -1,11 +1,11 @@
-package net.verany.api.example.listener;
+package net.verany.api.example.normal.listener;
 
 import net.verany.api.Verany;
 import net.verany.api.actionbar.DefaultActionbar;
 import net.verany.api.actionbar.NumberActionbar;
-import net.verany.api.example.ExamplePlugin;
-import net.verany.api.example.player.ExamplePlayer;
-import net.verany.api.example.player.IExamplePlayer;
+import net.verany.api.example.normal.ExamplePlugin;
+import net.verany.api.example.normal.player.ExamplePlayer;
+import net.verany.api.example.normal.player.IExamplePlayer;
 import net.verany.api.player.IPlayerInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

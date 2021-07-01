@@ -1,7 +1,7 @@
-package net.verany.api.example.listener;
+package net.verany.api.example.normal.listener;
 
 import net.verany.api.Verany;
-import net.verany.api.example.player.IExamplePlayer;
+import net.verany.api.example.normal.player.IExamplePlayer;
 import net.verany.api.player.IPlayerInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

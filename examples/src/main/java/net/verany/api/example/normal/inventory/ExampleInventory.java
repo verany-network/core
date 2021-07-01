@@ -1,6 +1,6 @@
-package net.verany.api.example.inventory;
+package net.verany.api.example.normal.inventory;
 
-import net.verany.api.example.ExamplePlugin;
+import net.verany.api.example.normal.ExamplePlugin;
 import net.verany.api.inventory.InventoryBuilder;
 import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.message.KeyBuilder;

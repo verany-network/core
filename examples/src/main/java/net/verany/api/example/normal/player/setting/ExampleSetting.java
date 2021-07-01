@@ -1,4 +1,4 @@
-package net.verany.api.example.player.setting;
+package net.verany.api.example.normal.player.setting;
 
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.settings.SettingWrapper;

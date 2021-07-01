@@ -1,21 +1,12 @@
-package net.verany.api.example.player;
+package net.verany.api.example.roundsystem.player;
 
 import net.verany.api.Verany;
-import net.verany.api.example.inventory.ExampleInventory;
-import net.verany.api.example.player.setting.ExampleSetting;
-import net.verany.api.hotbar.HotbarItem;
-import net.verany.api.itembuilder.ItemBuilder;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.scoreboard.IScoreboardBuilder;
 import net.verany.api.scoreboard.ScoreboardBuilder;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.UUID;
 
@@ -48,38 +39,6 @@ public class ExamplePlayer extends DatabaseLoader implements IExamplePlayer {
     @Override
     public UUID getUniqueId() {
         return uniqueId;
-    }
-
-    @Override
-    public void setItems() {
-
-        boolean settingVal = playerInfo.getSettingValue(ExampleSetting.EXAMPLE_SETTING);
-
-        if (settingVal) {
-            int amount = playerInfo.getSettingValue(ExampleSetting.EXAMPLE_SETTING_1);
-
-            playerInfo.setItem(0, new HotbarItem(new ItemBuilder(Material.IRON_SWORD).setAmount(amount).setDisplayName("Iron Sword").setUnbreakable(true), player) {
-                @Override
-                public void onClick(InventoryClickEvent event) {
-                    event.setCancelled(true);
-                }
-
-                @Override
-                public void onDrop(PlayerDropItemEvent event) {
-                    event.setCancelled(true);
-                }
-
-                @Override
-                public void onInteract(PlayerInteractEvent event) {
-                    if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                        new ExampleInventory(playerInfo).setItems();
-                    }
-                }
-            });
-        }
-
-        playerInfo.setSettingValue(ExampleSetting.EXAMPLE_SETTING, true);
-        playerInfo.setSettingValue(ExampleSetting.EXAMPLE_SETTING_1, 5);
     }
 
     @Override

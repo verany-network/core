@@ -1,4 +1,4 @@
-package net.verany.api.example.commands;
+package net.verany.api.example.normal.commands;
 
 import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import net.verany.api.command.AbstractCommand;
 import net.verany.api.command.CommandEntry;
 import net.verany.api.enumhelper.EnumHelper;
 import net.verany.api.enumhelper.IdentifierType;
-import net.verany.api.example.player.IExamplePlayer;
+import net.verany.api.example.normal.player.IExamplePlayer;
 import net.verany.api.module.VeranyProject;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

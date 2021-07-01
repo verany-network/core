@@ -1,9 +1,9 @@
-package net.verany.api.example;
+package net.verany.api.example.normal;
 
 import net.verany.api.Verany;
-import net.verany.api.example.commands.ExampleCommand;
-import net.verany.api.example.listener.PlayerJoinListener;
-import net.verany.api.example.listener.PlayerQuitListener;
+import net.verany.api.example.normal.commands.ExampleCommand;
+import net.verany.api.example.normal.listener.PlayerJoinListener;
+import net.verany.api.example.normal.listener.PlayerQuitListener;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import org.bukkit.Bukkit;

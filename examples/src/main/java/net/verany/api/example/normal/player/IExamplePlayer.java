@@ -1,4 +1,4 @@
-package net.verany.api.example.player;
+package net.verany.api.example.normal.player;
 
 import lombok.Getter;
 import lombok.Setter;
