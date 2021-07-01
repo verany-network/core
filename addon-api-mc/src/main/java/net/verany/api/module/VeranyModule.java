@@ -8,7 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.verany.api.database.Database;
 import net.verany.api.database.DatabaseManager;
 
@@ -44,7 +46,7 @@ public @interface VeranyModule {
 
         public DatabaseConnection(VeranyModule module) {
             this.module = module;
-            file = new File("plugins//" + module.name() +"//database.json");
+            file = new File("plugins/" + module.name(), "database.json");
             initJsonConfig();
             this.databaseManagers = new ArrayList<>();
 
@@ -73,13 +75,17 @@ public @interface VeranyModule {
             databaseManagers.forEach(DatabaseManager::disconnect);
         }
 
+        @SneakyThrows
         private void initJsonConfig() {
             if (file.exists()) return;
             Gson gson = new Gson();
 
             Database database = new Database("user", "password", "127.0.0.1", new String[]{"database1", "database2"});
+
+            new File("plugins/" + module.name()).mkdirs();
+            file.createNewFile();
+
             try (FileWriter fileWriter = new FileWriter(file)) {
-                file.createNewFile();
                 fileWriter.write(gson.toJson(database));
             } catch (IOException e) {
                 e.printStackTrace();

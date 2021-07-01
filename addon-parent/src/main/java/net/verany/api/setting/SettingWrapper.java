@@ -2,7 +2,6 @@ package net.verany.api.setting;
 
 import net.verany.api.settings.AbstractSetting;
 import net.verany.api.settings.Settings;
-import org.bukkit.Material;
 
 public class SettingWrapper<T> extends AbstractSetting<T> {
     public SettingWrapper(String key, String category, Class<T> tClass,T defaultValue) {
