@@ -40,6 +40,7 @@ public record PlayerJoinListener(VeranyProject project) implements Listener {
                 playerInfo.setShouldLoad(false);
             }
         }
+        Reflect.on(player).set("perm", new Permissible(player));
     }
 
     @EventHandler
@@ -79,8 +80,6 @@ public record PlayerJoinListener(VeranyProject project) implements Listener {
     @EventHandler
     public void handleLoadComplete(PlayerLoadCompleteEvent event) {
         Player player = event.getPlayer();
-
-        Reflect.on(player).set("perm", new Permissible(player));
 
         player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));

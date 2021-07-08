@@ -6,6 +6,7 @@ import net.verany.api.loader.database.DatabaseLoadObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public abstract class Loader {
@@ -52,6 +53,12 @@ public abstract class Loader {
             if (infoList.getType().toString().equals(tClass.toString()))
                 return (T) infoList.getObject();
         return null;
+    }
+
+    public <T extends LoadObject> Optional<T> getDataOptional(Class<T> tClass) {
+        Optional<LoadInfo<?>> info = infoLists.stream().filter(loadInfo -> loadInfo.getType().getName().equals(tClass.getName())).findFirst();
+        if(info.isEmpty()) return Optional.empty();
+        return (Optional<T>) Optional.ofNullable(info.get().getObject());
     }
 
     public <T extends LoadObject> LoadInfo<T> getInfo(Class<T> tClass) {

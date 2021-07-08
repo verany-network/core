@@ -93,7 +93,7 @@ public class Verany extends AbstractVerany {
         if (!isLoaded()) {
             PROFILE_OBJECT = new ProfileObject();
             EVENT_REGISTRY.setPlugin(project);
-            MESSENGER = new VeranyMessenger(new URI("ws://159.69.63.105:888"));
+            MESSENGER = new VeranyMessenger(new URI("wss://wss.verany.net:888"));
             MESSENGER.connect();
             reportObject = new ReportObject(project);
 

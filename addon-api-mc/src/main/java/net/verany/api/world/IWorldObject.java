@@ -8,7 +8,6 @@ import net.verany.api.world.schematic.ISchematicPaster;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -48,13 +47,8 @@ public interface IWorldObject {
         BLOCK_BY_BLOCK
     }
 
-    @AllArgsConstructor
-    @Getter
-    class PasteFinish {
-        private final long time;
-        private final List<Block> placedBlocks;
-        private final FinishType finishType;
-
+    record PasteFinish(long time, List<Block> placedBlocks,
+                       IWorldObject.PasteFinish.FinishType finishType) {
         public enum FinishType {
             SUCCESS,
             CANCELED,
