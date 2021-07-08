@@ -21,7 +21,7 @@ public class PlayerQuitListener implements Listener {
     public void handleQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        event.setQuitMessage(null);
+        event.quitMessage(null);
 
         IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId()).get();
 

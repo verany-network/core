@@ -4,23 +4,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPosition;
-import net.minecraft.network.protocol.game.PacketPlayInUseEntity;
-import net.minecraft.network.protocol.game.PacketPlayOutAnimation;
-import net.minecraft.network.protocol.game.PacketPlayOutEntity;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
-import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.PlayerInteractManager;
 import net.minecraft.server.level.WorldServer;
-
 import net.minecraft.world.entity.EnumItemSlot;
-import net.minecraft.world.item.ItemStack;
 import net.verany.api.Verany;
 import net.verany.api.npc.animation.NPCAnimation;
 import net.verany.api.npc.datawatcher.DataWatcherGenerator;
@@ -35,6 +23,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -219,8 +208,8 @@ public class NPCObject extends ReflectionUtils implements INPC {
     @Override
     public void setEquipment(EnumItemSlot slot, Material material) {
         try {
-            ItemStack itemStack = material != Material.AIR && material != null ? CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(material)) : CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR));
-            List<Pair<EnumItemSlot, ItemStack>> pairs = new ArrayList<>();
+            net.minecraft.world.item.ItemStack itemStack = material != Material.AIR && material != null ? CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(material)) : CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR));
+            List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> pairs = new ArrayList<>();
             pairs.add(new Pair<>(slot, itemStack));
             PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(this.entityPlayer.getId(), pairs);
             this.sendPacket(this.players, packet);

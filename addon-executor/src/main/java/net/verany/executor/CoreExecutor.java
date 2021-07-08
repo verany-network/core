@@ -1,24 +1,17 @@
 package net.verany.executor;
 
-import com.google.gson.Gson;
 import com.mongodb.client.model.Filters;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.UUID;
-import lombok.Data;
+
 import lombok.Getter;
 import net.verany.api.Verany;
 import net.verany.api.actionbar.ActionbarTask;
 import net.verany.api.bossbar.BossBarTask;
 import net.verany.api.chat.task.ChatTask;
-import net.verany.api.database.Database;
 import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.GameModeWrapper;
-import net.verany.api.gamemode.countdown.task.CountdownTask;
+import net.verany.volcano.countdown.task.CountdownTask;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
@@ -49,12 +42,15 @@ public class CoreExecutor extends VeranyProject {
 
     public static CoreExecutor INSTANCE;
 
+    public CoreExecutor() {
+        INSTANCE = this;
+    }
+
     @Override
     public void onEnable() {
 
         Verany.loadModule(this);
 
-        INSTANCE = this;
         init();
     }
 
@@ -68,12 +64,14 @@ public class CoreExecutor extends VeranyProject {
         Verany.shutdown(this);
     }
 
+
     @Override
     public void init() {
         super.init();
         new ChatListener(this);
         new ProtectionListener(this);
-        new PlayerJoinListener(this);
+        System.out.println("register login listener");
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
 
         this.getCommand("reload").setExecutor(new ReloadCommand());

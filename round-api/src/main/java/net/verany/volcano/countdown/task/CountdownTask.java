@@ -1,7 +1,7 @@
-package net.verany.api.gamemode.countdown.task;
+package net.verany.volcano.countdown.task;
 
 import net.verany.api.AbstractVerany;
-import net.verany.api.gamemode.countdown.AbstractCountdown;
+import net.verany.volcano.countdown.AbstractCountdown;
 import net.verany.api.task.AbstractTask;
 
 import java.util.Arrays;

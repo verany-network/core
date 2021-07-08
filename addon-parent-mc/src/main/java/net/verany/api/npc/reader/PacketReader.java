@@ -3,14 +3,14 @@ package net.verany.api.npc.reader;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import net.minecraft.server.v1_16_R3.Packet;
-import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.PacketPlayInUseEntity;
 import net.verany.api.Verany;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.npc.INPC;
 import net.verany.api.npc.event.NPCInteractEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -29,7 +29,7 @@ public class PacketReader {
 
     public void inject() {
         CraftPlayer cPlayer = (CraftPlayer) this.player;
-        channel = cPlayer.getHandle().playerConnection.networkManager.channel;
+        channel = cPlayer.getHandle().networkManager.k;
         channel.pipeline().addAfter("decoder", "PacketInjector", new MessageToMessageDecoder<Packet<?>>() {
             @Override
             protected void decode(ChannelHandlerContext arg0, Packet<?> packet, List<Object> arg2) throws Exception {
@@ -52,8 +52,10 @@ public class PacketReader {
 
             if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK") || getValue(packet, "action").toString().equalsIgnoreCase("INTERACT") || getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT"))
                 for (INPC npc : Verany.NPCS)
-                    if (npc.getId() == id)
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new NPCInteractEvent(player, npc, PacketPlayInUseEntity.EnumEntityUseAction.valueOf(getValue(packet, "action").toString().toUpperCase()))));
+                    if (npc.getId() == id) {
+                        System.out.println("action=" + getValue(packet, "action"));
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> Bukkit.getPluginManager().callEvent(new NPCInteractEvent(player, npc)));
+                    }
         }
     }
 

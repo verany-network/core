@@ -3,7 +3,7 @@ package net.verany.api.gamemode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.verany.api.gamemode.countdown.AbstractCountdown;
+import net.verany.volcano.countdown.AbstractCountdown;
 
 @AllArgsConstructor
 @Getter

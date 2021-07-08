@@ -1,5 +1,9 @@
 package net.verany.executor.listener;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.verany.api.Verany;
 import net.verany.api.chat.request.ChatRequest;
 import net.verany.api.chat.request.ChatRequestCallback;
@@ -11,28 +15,25 @@ import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
-import net.verany.volcano.GameSetting;
+import net.verany.volcano.round.GameSetting;
 import net.verany.volcano.player.IVolcanoPlayer;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class ChatListener extends AbstractListener {
 
     public ChatListener(VeranyProject project) {
         super(project);
 
-        Verany.registerListener(project, AsyncPlayerChatEvent.class, event -> {
+        Verany.registerListener(project, AsyncChatEvent.class, event -> {
             Player player = event.getPlayer();
-            String message = event.getMessage();
-
+            String message = Verany.serializer.serialize(event.message());
 
             if (player.hasMetadata("chat.request")) {
 
@@ -42,7 +43,7 @@ public class ChatListener extends AbstractListener {
                 ChatRequest<?> request = document.get("request", ChatRequest.class);
                 ChatRequestCallback callback = document.get("callback", ChatRequestCallback.class);
 
-                if (event.getMessage().equalsIgnoreCase("exit")) {
+                if (message.equalsIgnoreCase("exit")) {
                     callback.accept(ChatRequestCallback.FinishType.CANCELLED);
                     project.removeMetadata(player, "chat.request");
                     return;
@@ -50,8 +51,7 @@ public class ChatListener extends AbstractListener {
 
                 ChatRequestCallback.FinishType finishType = ChatRequestCallback.FinishType.SUCCESS;
                 try {
-                    if (request instanceof NumberChatRequest) {
-                        NumberChatRequest chatRequest = (NumberChatRequest) request;
+                    if (request instanceof NumberChatRequest chatRequest) {
                         int i = Integer.parseInt(message);
                         if (i < chatRequest.getMin() || i > chatRequest.getMax()) {
                             finishType = ChatRequestCallback.FinishType.FAIL.message("Value not allowed!");
@@ -60,8 +60,7 @@ public class ChatListener extends AbstractListener {
                         chatRequest.setValue(i);
                         return;
                     }
-                    if (request instanceof StringChatRequest) {
-                        StringChatRequest stringRequest = (StringChatRequest) request;
+                    if (request instanceof StringChatRequest stringRequest) {
                         if (message.split(" ").length > stringRequest.getMaxArguments()) {
                             finishType = ChatRequestCallback.FinishType.FAIL.message("Too many arguments!");
                             return;

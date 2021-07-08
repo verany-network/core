@@ -7,8 +7,6 @@ import net.verany.api.itembuilder.map.ImageRender;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.map.CraftMapRenderer;
-import org.bukkit.craftbukkit.v1_16_R3.map.CraftMapView;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;

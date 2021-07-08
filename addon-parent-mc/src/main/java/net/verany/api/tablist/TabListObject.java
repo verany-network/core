@@ -2,11 +2,8 @@ package net.verany.api.tablist;
 
 import net.verany.api.Verany;
 import net.verany.api.config.IngameConfig;
-import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.IPermissionObject;
-import net.verany.api.player.permission.group.AbstractPermissionGroup;
-import net.verany.api.player.permission.group.PermissionGroup;
-import net.verany.volcano.GameSetting;
+import net.verany.volcano.round.GameSetting;
 import net.verany.volcano.player.IVolcanoPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -16,9 +16,9 @@ public class ParticleTask extends AbstractTask {
 
     @Override
     public void run() {
-        for (Location location : data.getLocations()) {
-            ParticleManager particleManager = new ParticleManager(data.getParticle(), location, true, data.getOffsetX(), data.getOffsetY(), data.getOffsetZ(), data.getSpeed(), data.getAmount());
-            for (Player player : data.getPlayers())
+        for (Location location : data.locations()) {
+            ParticleManager particleManager = new ParticleManager(data.particle(), location, true, data.offsetX(), data.offsetY(), data.offsetZ(), data.speed(), data.amount());
+            for (Player player : data.players())
                 particleManager.sendPlayer(player);
         }
     }
