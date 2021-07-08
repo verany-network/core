@@ -111,7 +111,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private long lastActionbarTime = -1;
 
     public PlayerInfo(VeranyProject project, String name) {
-        super(project, "players");
+        super(project, "players", "network");
         this.name = name;
     }
 
@@ -259,13 +259,11 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public int switchPage(String page, IInventoryBuilder.PageSwitchHandler.Type type) {
-        switch (type) {
-            case NEXT:
-                return nextPage(page);
-            case PREVIOUS:
-                return previousPage(page);
-        }
-        return 1;
+        return switch (type) {
+            case NEXT -> nextPage(page);
+            case PREVIOUS -> previousPage(page);
+            default -> 1;
+        };
     }
 
     @Override
@@ -384,7 +382,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         getDataOptional(PlayerData.class).ifPresent(playerData -> {
             playerData.setLanguage(language);
             Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer()));
-            sendUpdate();
+            sendUpdate(Destination.ALL, playerData);
         });
         return language;
     }
@@ -512,9 +510,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public void addActionbar(AbstractActionbar data) {
         if (!actionbarQueue.isEmpty()) {
-            if (data instanceof NumberActionbar && actionbarQueue.get(0) instanceof NumberActionbar) {
-                NumberActionbar dataActionbar = (NumberActionbar) data;
-                NumberActionbar actionbar = (NumberActionbar) actionbarQueue.get(0);
+            if (data instanceof NumberActionbar dataActionbar && actionbarQueue.get(0) instanceof NumberActionbar actionbar) {
                 if (dataActionbar.getText().equals(actionbar.getText())) {
                     actionbar.setAmount(actionbar.getAmount() + dataActionbar.getAmount());
 
