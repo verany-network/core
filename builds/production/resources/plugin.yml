@@ -1,0 +1,8 @@
+name: NPCAPI
+version: 1.0.0
+author: CrashedLife
+main: net.verany.api.npc.NPCAPI
+website: www.verany.net
+
+commands:
+  npc:
