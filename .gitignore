@@ -1,14 +1,22 @@
-# Project exclude paths
-/.gradle/
+
+# Verany Global Project exclude paths
+gradlew.bat
+gradlew
+/gradle
+.gradle
+gradle
+.idea
+.vscode
+.temp
+node_modules
+settings
+
 /addon-api/build/classes/java/main/
 /addon-parent/build/classes/java/main/
 /addon-executor/build
 /addon-parent-mc/build
 /addon-api-mc/build
-.idea
-/.idea
 /src
-/gradle
 addon-api/target
 addon-api-mc/target
 addon-executor/target
