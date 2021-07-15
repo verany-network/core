@@ -3,11 +3,9 @@ name: Publish to Nexus
 
 on:
   workflow_dispatch:
-  push:
+  release:
     branches:
-      - master
-      - feature/*
-      - release/*
+      - release/production
 
 jobs:
   build:
@@ -21,12 +19,12 @@ jobs:
         with:
           distribution: adopt
           java-version: 16
-      - name: Build with Gradle
-        run: ./gradlew --build-cache build
-      - name: Test with Gradle
-        run: ./gradlew test
+      - name: Build with Maven
+        run: ./mvn --build-cache build
+      - name: Test with Maven
+        run: ./mvn test
       - name: Publish to eldonexus
-        run: ./gradlew publishMavenPublicationToEldoNexusRepository
+        run: ./mvn publishMavenPublicationToEldoNexusRepository
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
