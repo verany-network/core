@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class LanguageData {
 
-    private final EnumLanguage language;
+    private final AbstractLanguage language;
     private final String message;
 
 }

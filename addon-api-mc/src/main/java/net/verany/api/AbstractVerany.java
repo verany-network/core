@@ -9,10 +9,11 @@ import net.verany.api.adapter.InterfaceAdapter;
 import net.verany.api.event.EventRegistry;
 import net.verany.api.event.IEventManager;
 import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.language.AbstractLanguage;
 import net.verany.volcano.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
-import net.verany.api.messaging.VeranyMessenger;
+import net.verany.api.websocket.VeranyMessenger;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 
 public abstract class AbstractVerany {
 
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractGameMode.class, new InterfaceAdapter<AbstractGameMode>()).registerTypeAdapter(AbstractSetupCategory.class, new InterfaceAdapter<AbstractSetupCategory>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractLanguage.class, new InterfaceAdapter<AbstractLanguage>()).registerTypeAdapter(AbstractGameMode.class, new InterfaceAdapter<AbstractGameMode>()).registerTypeAdapter(AbstractSetupCategory.class, new InterfaceAdapter<AbstractSetupCategory>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
     public static final JsonParser PARSER = new JsonParser();
 
     public static final List<Loader> LOADERS = new ArrayList<>();

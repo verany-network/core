@@ -28,7 +28,10 @@ import net.verany.api.event.events.PlayerPrefixUpdateEvent;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.inventory.IInventoryBuilder;
+import net.verany.api.language.AbstractLanguage;
 import net.verany.api.language.EnumLanguage;
+import net.verany.api.language.LanguageWrapper;
+import net.verany.api.language.VeranyLanguage;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.locationmanager.VeranyLocation;
@@ -179,7 +182,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, EnumLanguage.ENGLISH, PrefixPattern.BLUE.getKey(), 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
+        load(new LoadInfo<>("user_info", PlayerData.class, new PlayerData(uniqueId, name, VeranyLanguage.ENGLISH.getName(), PrefixPattern.BLUE.getKey(), 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
     }
 
     @Override
@@ -371,6 +374,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
+    @Deprecated
     public EnumLanguage getLanguage() {
         AtomicReference<EnumLanguage> language = new AtomicReference<>();
         getDataOptional(PlayerData.class).ifPresentOrElse(playerData -> language.set(playerData.getLanguage()), () -> language.set(EnumLanguage.ENGLISH));
@@ -378,11 +382,27 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     @Override
+    @Deprecated
     public EnumLanguage setLanguage(EnumLanguage language) {
         getDataOptional(PlayerData.class).ifPresent(playerData -> {
             playerData.setLanguage(language);
             Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getLanguage(), language, getPlayer()));
-            sendUpdate(Destination.ALL, playerData);
+        });
+        return language;
+    }
+
+    @Override
+    public AbstractLanguage getCurrentLanguage() {
+        AtomicReference<AbstractLanguage> language = new AtomicReference<>();
+        getDataOptional(PlayerData.class).ifPresentOrElse(playerData -> language.set(playerData.getCurrentLanguage()), () -> language.set(VeranyLanguage.ENGLISH));
+        return language.get();
+    }
+
+    @Override
+    public AbstractLanguage setCurrentLanguage(AbstractLanguage language) {
+        getDataOptional(PlayerData.class).ifPresent(playerData -> {
+            playerData.setCurrentLanguage(language);
+            Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getPlayer()));
         });
         return language;
     }
@@ -394,7 +414,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public String getKey(String key, AbstractPrefixPattern prefixPattern, Placeholder... placeholders) {
-        EnumLanguage language = getLanguage();
+        AbstractLanguage language = getCurrentLanguage();
         String message;
 
         if (Verany.getMessage(key, language) == null) {
@@ -715,7 +735,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public static class PlayerData extends DatabaseLoadObject {
 
         private String name;
-        private EnumLanguage language;
+        private String language;
         private String prefixPattern;
         private SkinData skinData;
         private Map<String, String> settingValues;
@@ -729,7 +749,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         private long lastOnline;
         private List<String> logs;
 
-        public PlayerData(UUID key, String name, EnumLanguage language, @NotNull String prefixPattern, int credits, Integer exp, Integer points, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
+        public PlayerData(UUID key, String name, String language, @NotNull String prefixPattern, int credits, Integer exp, Integer points, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
             super(key.toString());
             this.name = name;
             this.language = language;
@@ -741,6 +761,24 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
             this.points = points;
             this.firstJoined = System.currentTimeMillis();
             this.logs = logs;
+        }
+
+        @Deprecated
+        public EnumLanguage getLanguage() {
+            return EnumLanguage.valueOf(language);
+        }
+
+        @Deprecated
+        public void setLanguage(EnumLanguage language) {
+            this.language = language.name();
+        }
+
+        public void setCurrentLanguage(AbstractLanguage language) {
+            this.language = language.getName();
+        }
+
+        public AbstractLanguage getCurrentLanguage() {
+            return LanguageWrapper.getLanguage(language);
         }
 
         public AbstractPrefixPattern getPrefixPattern() {

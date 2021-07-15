@@ -2,12 +2,11 @@ package net.verany.api;
 
 import lombok.SneakyThrows;
 import net.verany.api.event.EventManager;
-import net.verany.api.messaging.CheckTask;
-import net.verany.api.messaging.VeranyMessenger;
+import net.verany.api.websocket.CheckTask;
+import net.verany.api.websocket.VeranyMessenger;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyModule.DatabaseConnection;
 import net.verany.api.module.VeranyProject;
-import org.bson.Document;
 
 import java.net.URI;
 

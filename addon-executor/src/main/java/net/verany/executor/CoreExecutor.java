@@ -11,6 +11,9 @@ import net.verany.api.bossbar.BossBarTask;
 import net.verany.api.chat.task.ChatTask;
 import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.GameModeWrapper;
+import net.verany.api.language.AbstractLanguage;
+import net.verany.api.language.VeranyLanguage;
+import net.verany.executor.commands.*;
 import net.verany.volcano.countdown.task.CountdownTask;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
@@ -19,16 +22,6 @@ import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.afk.task.AfkTask;
 import net.verany.api.player.friend.settings.FriendSetting;
 import net.verany.api.player.onlinetime.OnlineTimeTask;
-import net.verany.executor.commands.AFKCommand;
-import net.verany.executor.commands.ChatClearCommand;
-import net.verany.executor.commands.CreditsCommand;
-import net.verany.executor.commands.GlobalRankCommand;
-import net.verany.executor.commands.LanguageCommand;
-import net.verany.executor.commands.OnlineTimeCommand;
-import net.verany.executor.commands.PlayTimeCommand;
-import net.verany.executor.commands.ReloadCommand;
-import net.verany.executor.commands.SupportCommand;
-import net.verany.executor.commands.VerifyCommand;
 import net.verany.executor.listener.ChatListener;
 import net.verany.executor.listener.PlayerJoinListener;
 import net.verany.executor.listener.PlayerQuitListener;
@@ -70,9 +63,11 @@ public class CoreExecutor extends VeranyProject {
         super.init();
         new ChatListener(this);
         new ProtectionListener(this);
-        System.out.println("register login listener");
+        new RemoveDuplicateKeyCommand(this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
+
+        Bukkit.getCommandMap().clearCommands();
 
         this.getCommand("reload").setExecutor(new ReloadCommand());
         this.getCommand("verify").setExecutor(new VerifyCommand());
@@ -91,6 +86,7 @@ public class CoreExecutor extends VeranyProject {
         this.getCommand("chatclear").setExecutor(new ChatClearCommand());
 
         FriendSetting.REQUESTS.getCategory();
+        VeranyLanguage.load();
         Verany.loadPermissionGroups(this);
 
         for (Document document : getConnection().getCollection("players").find()) {

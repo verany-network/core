@@ -1,6 +1,7 @@
 package net.verany.api.player;
 
 import net.verany.api.interfaces.IDefault;
+import net.verany.api.language.AbstractLanguage;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.message.KeyBuilder;
 import net.verany.api.placeholder.Placeholder;
@@ -38,9 +39,15 @@ public interface IVeranyPlayer extends IDefault<UUID> {
 
     void addPlayTime();
 
+    @Deprecated
     EnumLanguage getLanguage();
 
+    @Deprecated
     EnumLanguage setLanguage(EnumLanguage language);
+
+    AbstractLanguage getCurrentLanguage();
+
+    AbstractLanguage setCurrentLanguage(AbstractLanguage language);
     
     String getKey(String key, Placeholder... placeholders);
 

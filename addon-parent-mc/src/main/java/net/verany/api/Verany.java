@@ -1,5 +1,6 @@
 package net.verany.api;
 
+import com.crowdin.client.core.model.Credentials;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.mongodb.BasicDBObject;
@@ -7,6 +8,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +21,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -27,19 +31,22 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.verany.api.command.CommandEntry;
 import net.verany.api.command.executor.VeranyCommandExecutor;
-import net.verany.api.database.Database;
 import net.verany.api.event.EventConsumer;
 import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.gamemode.GameModeObject;
 import net.verany.api.gamemode.IGameModeObject;
-import net.verany.api.gamemode.VeranyGameMode;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.item.VeranyItem;
+import net.verany.api.json.JsonConfig;
+import net.verany.api.language.AbstractLanguage;
 import net.verany.api.language.EnumLanguage;
 import net.verany.api.language.LanguageData;
+import net.verany.api.language.LanguageWrapper;
+import net.verany.api.message.CrowdinObject;
+import net.verany.api.message.ICrowdinObject;
 import net.verany.api.message.MessageData;
-import net.verany.api.messaging.VeranyMessenger;
+import net.verany.api.websocket.VeranyMessenger;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyModule.DatabaseConnection;
 import net.verany.api.module.VeranyProject;
@@ -94,7 +101,7 @@ public class Verany extends AbstractVerany {
             PROFILE_OBJECT = new ProfileObject();
             EVENT_REGISTRY.setPlugin(project);
             MESSENGER = new VeranyMessenger(new URI("wss://wss.verany.net:888"));
-            MESSENGER.connect();
+            MESSENGER.connectBlocking();
             reportObject = new ReportObject(project);
 
         }
@@ -206,6 +213,10 @@ public class Verany extends AbstractVerany {
         return toReturn;
     }
 
+    public static int getMaxPages(int totalItems, int limit) {
+        return (int) Math.ceil((float) totalItems / limit);
+    }
+
     public static List<ArmorStand> spawnArmorStand(Location location, String... textLines) {
         List<ArmorStand> toReturn = new ArrayList<>();
         for (String textLine : textLines) {
@@ -232,14 +243,13 @@ public class Verany extends AbstractVerany {
         if (pluginCommand == null) return;
 
         pluginCommand.setExecutor((commandSender, command, s, strings) -> {
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
+            if (commandSender instanceof Player player)
                 executor.onExecute(getPlayer(player), strings);
-            }
             return false;
         });
 
         pluginCommand.setPermission(commandEntry.getPermission());
+        pluginCommand.setAliases(commandEntry.getAliases());
 
         if (commandEntry.getTabCompleter() != null)
             pluginCommand.setTabCompleter(commandEntry.getTabCompleter());
@@ -301,20 +311,59 @@ public class Verany extends AbstractVerany {
 
     public static void reloadMessages(VeranyProject project) {
         MESSAGES.clear();
+        loadLanguages(project);
         loadMessages(project);
     }
 
+    @SneakyThrows
     private static void loadMessages(VeranyProject project) {
+        /*ICrowdinObject crowdinObject = new CrowdinObject(new JsonConfig(new File("plugins/" + project.getModule().name() + "/crowdin.json")));
+        crowdinObject.load("connection");*/
         System.out.println("Loading messages...");
         long current = System.currentTimeMillis();
         for (Document document : project.getConnection().getCollection("network", "messages").find()) {
             String key = document.getString("key");
             List<LanguageData> languageData = new ArrayList<>();
-            for (EnumLanguage value : EnumLanguage.values())
-                languageData.add(new LanguageData(value, document.getString(value.name().toLowerCase())));
+            /*for (EnumLanguage value : EnumLanguage.values())
+                languageData.add(new LanguageData(value, document.getString(value.name().toLowerCase())));*/
+            for (AbstractLanguage language : LanguageWrapper.LANGUAGES) {
+                languageData.add(new LanguageData(language, document.getString(language.getName())));
+            }
             MESSAGES.add(new MessageData(key, languageData));
         }
         System.out.println("Loading messages complete. (" + MESSAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
+    }
+
+    private static void loadLanguages(VeranyProject project) {
+        LanguageWrapper.LANGUAGES.clear();
+        System.out.println("Loading languages...");
+        long current = System.currentTimeMillis();
+        MongoCollection<Document> collection = project.getConnection().getCollection("network", "languages");
+        System.out.println("collection passed");
+        for (AbstractLanguage language : AbstractLanguage.LANGUAGES) {
+            System.out.println("language: " + language.getName());
+            if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled()) continue;
+            String json = GSON.toJson(language);
+            System.out.println("json: " + json);
+            collection.insertOne(GSON.fromJson(json, Document.class));
+        }
+        for (Document document : collection.find()) {
+            if (LanguageWrapper.getLanguage(document.getString("name")) != null || !document.getBoolean("enabled")) continue;
+            AbstractLanguage language = LanguageWrapper.getLanguage(document);
+            System.out.println("registered new language " + language.getName());
+        }
+        System.out.println("Loading languages complete. (" + LanguageWrapper.LANGUAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
+    }
+
+    public static String getResourceFileAsString(String path) throws IOException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        try (InputStream is = classLoader.getResourceAsStream(path)) {
+            if (is == null) return null;
+            try (InputStreamReader isr = new InputStreamReader(is);
+                 BufferedReader reader = new BufferedReader(isr)) {
+                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            }
+        }
     }
 
     public static void registerGameMode(VeranyProject project, AbstractGameMode gameMode) {
@@ -348,11 +397,11 @@ public class Verany extends AbstractVerany {
         return i;
     }
 
-    public static String getMessage(String key, EnumLanguage language) {
+    public static String getMessage(String key, AbstractLanguage language) {
         for (MessageData message : MESSAGES)
             if (message.getKey().equals(key))
                 for (LanguageData languageData : message.getLanguageDataList())
-                    if (languageData.getLanguage().equals(language))
+                    if (languageData.getLanguage().getName().equals(language.getName()))
                         return languageData.getMessage();
         return null;
     }

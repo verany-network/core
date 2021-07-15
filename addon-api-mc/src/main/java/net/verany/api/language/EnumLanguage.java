@@ -7,6 +7,7 @@ import java.util.Locale;
 
 @AllArgsConstructor
 @Getter
+@Deprecated
 public enum EnumLanguage {
     ENGLISH(Locale.ENGLISH),
     GERMAN(Locale.GERMAN),
