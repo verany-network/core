@@ -1,4 +1,4 @@
-Verany Core
+Verany Core Dokumentation
 =============
 
 Willkommen zur Core Einrichtung,
