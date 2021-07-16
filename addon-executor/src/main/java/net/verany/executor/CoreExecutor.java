@@ -64,16 +64,14 @@ public class CoreExecutor extends VeranyProject {
         new ChatListener(this);
         new ProtectionListener(this);
         new RemoveDuplicateKeyCommand(this);
+        new LanguageCommand(this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
-
-        Bukkit.getCommandMap().clearCommands();
 
         this.getCommand("reload").setExecutor(new ReloadCommand());
         this.getCommand("verify").setExecutor(new VerifyCommand());
         this.getCommand("verify").setTabCompleter(new VerifyCommand());
         this.getCommand("afk").setExecutor(new AFKCommand());
-        this.getCommand("language").setExecutor(new LanguageCommand());
         this.getCommand("onlinetime").setExecutor(new OnlineTimeCommand());
         this.getCommand("playtime").setExecutor(new PlayTimeCommand());
         this.getCommand("credits").setExecutor(new CreditsCommand());

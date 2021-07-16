@@ -778,7 +778,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         }
 
         public AbstractLanguage getCurrentLanguage() {
-            return LanguageWrapper.getLanguage(language);
+            return LanguageWrapper.getLanguage(language).orElse(VeranyLanguage.ENGLISH);
         }
 
         public AbstractPrefixPattern getPrefixPattern() {

@@ -1,8 +1,10 @@
 package net.verany.api.language;
 
+import net.verany.api.AbstractVerany;
 import org.bson.Document;
 
 import java.util.Locale;
+import java.util.Optional;
 
 public class LanguageWrapper extends AbstractLanguage {
 
@@ -12,11 +14,12 @@ public class LanguageWrapper extends AbstractLanguage {
 
     public LanguageWrapper(String name, Locale locale, boolean enabled) {
         super(name, locale.toLanguageTag(), enabled);
-        LANGUAGES.add(this);
+        if (getLanguage(name).isEmpty())
+            AbstractVerany.LANGUAGES.add(this);
     }
 
-    public static AbstractLanguage getLanguage(String name) {
-        return LANGUAGES.stream().filter(abstractLanguage -> abstractLanguage.getName().equalsIgnoreCase(name)).findFirst().orElse(VeranyLanguage.ENGLISH);
+    public static Optional<AbstractLanguage> getLanguage(String name) {
+        return AbstractVerany.LANGUAGES.stream().filter(abstractLanguage -> abstractLanguage.getName().equalsIgnoreCase(name)).findFirst();
     }
 
     public static AbstractLanguage getLanguage(Document document) {

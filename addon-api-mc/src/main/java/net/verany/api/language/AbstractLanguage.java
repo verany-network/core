@@ -15,8 +15,6 @@ import java.util.Locale;
 @Setter
 public abstract class AbstractLanguage {
 
-    public static final List<AbstractLanguage> LANGUAGES = new ArrayList<>();
-
     private final String name;
     private final String languageTag;
     private boolean enabled = true;

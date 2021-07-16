@@ -86,7 +86,7 @@ public class Verany extends AbstractVerany {
     public static final List<HotbarItem> HOTBAR_ITEMS = new CopyOnWriteArrayList<>();
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<INPC> NPCS = new CopyOnWriteArrayList<>();
-    public static final List<MessageData> MESSAGES = new ArrayList<>();
+    public static final List<MessageData> MESSAGES = new CopyOnWriteArrayList<>();
 
     public static final IWorldObject WORLD_OBJECT = new WorldObject();
     public static final IGameModeObject GAME_MODE_OBJECT = new GameModeObject();
@@ -317,16 +317,12 @@ public class Verany extends AbstractVerany {
 
     @SneakyThrows
     private static void loadMessages(VeranyProject project) {
-        /*ICrowdinObject crowdinObject = new CrowdinObject(new JsonConfig(new File("plugins/" + project.getModule().name() + "/crowdin.json")));
-        crowdinObject.load("connection");*/
         System.out.println("Loading messages...");
         long current = System.currentTimeMillis();
         for (Document document : project.getConnection().getCollection("network", "messages").find()) {
             String key = document.getString("key");
             List<LanguageData> languageData = new ArrayList<>();
-            /*for (EnumLanguage value : EnumLanguage.values())
-                languageData.add(new LanguageData(value, document.getString(value.name().toLowerCase())));*/
-            for (AbstractLanguage language : LanguageWrapper.LANGUAGES) {
+            for (AbstractLanguage language : LANGUAGES) {
                 languageData.add(new LanguageData(language, document.getString(language.getName())));
             }
             MESSAGES.add(new MessageData(key, languageData));
@@ -335,24 +331,20 @@ public class Verany extends AbstractVerany {
     }
 
     private static void loadLanguages(VeranyProject project) {
-        LanguageWrapper.LANGUAGES.clear();
         System.out.println("Loading languages...");
         long current = System.currentTimeMillis();
         MongoCollection<Document> collection = project.getConnection().getCollection("network", "languages");
-        System.out.println("collection passed");
-        for (AbstractLanguage language : AbstractLanguage.LANGUAGES) {
-            System.out.println("language: " + language.getName());
+        for (AbstractLanguage language : LANGUAGES) {
             if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled()) continue;
             String json = GSON.toJson(language);
-            System.out.println("json: " + json);
             collection.insertOne(GSON.fromJson(json, Document.class));
         }
         for (Document document : collection.find()) {
-            if (LanguageWrapper.getLanguage(document.getString("name")) != null || !document.getBoolean("enabled")) continue;
+            if (LanguageWrapper.getLanguage(document.getString("name")).isPresent() || !document.getBoolean("enabled")) continue;
             AbstractLanguage language = LanguageWrapper.getLanguage(document);
             System.out.println("registered new language " + language.getName());
         }
-        System.out.println("Loading languages complete. (" + LanguageWrapper.LANGUAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
+        System.out.println("Loading languages complete. (" + LANGUAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
     }
 
     public static String getResourceFileAsString(String path) throws IOException {

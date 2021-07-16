@@ -16,6 +16,8 @@ commands:
     aliases:
       - ot
   language:
+    aliases:
+      - sprache
   credits:
   support:
   globalrank:
