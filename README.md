@@ -11,8 +11,9 @@ hier lernt ihr wie ihr die Core in euer Projekt einbezieht und wie ihr diese ans
 Füge das zu deiner pom.xml hinzu:
 ```java
 <repository>
-    <id>verany</id>
-    <url>https://verany.net/repo/repository/maven-public/</url>
+    <id>verany-core-releases</id>
+    <name>verany nexus</name>
+    <url>https://nexus.verany.net/content/repositories/releases/</url>
 </repository>
 ```
 
@@ -21,7 +22,7 @@ Und füg dann die Dependency hinzu:
 <dependency>
     <groupId>net.verany.core</groupId>
     <artifactId>core-api</artifactId>
-    <version>1.17-R0.1-SNAPSHOT</version>
+    <version>1.17.1-R0.1-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>
 ```
