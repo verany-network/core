@@ -1,5 +1,6 @@
 package net.verany.api;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -10,6 +11,7 @@ import net.verany.api.event.EventRegistry;
 import net.verany.api.event.IEventManager;
 import net.verany.api.gamemode.AbstractGameMode;
 import net.verany.api.language.AbstractLanguage;
+import net.verany.api.language.VeranyLanguage;
 import net.verany.volcano.countdown.AbstractCountdown;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
@@ -45,6 +47,7 @@ public abstract class AbstractVerany {
     public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
     public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
+    public static final List<AbstractLanguage> LANGUAGES = new CopyOnWriteArrayList<>();
     public static final List<AbstractSetupObject> SETUP_OBJECTS = new CopyOnWriteArrayList<>();
     public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static IEventManager eventManager;
