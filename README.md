@@ -26,21 +26,6 @@ Und füg dann die Dependency hinzu:
 </dependency>
 ```
 
-### Installation unter Gradle
-
-Füge das zu deiner build.gradle hinzu:
-```java
-repositories {
-    maven { url "https://verany.net/repo/repository/maven-public/" }
-}
-```
-dann die Dependency:
-```java
-dependencies {
-    compileOnly "net.verany.core:core-api:1.17-R0.1-SNAPSHOT"
-}
-```
-
 Beispiel zur Verwendung
 =============
 ```java
