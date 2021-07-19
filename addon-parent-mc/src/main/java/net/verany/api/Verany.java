@@ -39,13 +39,11 @@ import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.inventory.IInventoryBuilder;
 import net.verany.api.item.VeranyItem;
 import net.verany.api.json.JsonConfig;
-import net.verany.api.language.AbstractLanguage;
-import net.verany.api.language.EnumLanguage;
-import net.verany.api.language.LanguageData;
-import net.verany.api.language.LanguageWrapper;
+import net.verany.api.language.*;
 import net.verany.api.message.CrowdinObject;
 import net.verany.api.message.ICrowdinObject;
 import net.verany.api.message.MessageData;
+import net.verany.api.task.MainTask;
 import net.verany.api.websocket.VeranyMessenger;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyModule.DatabaseConnection;
@@ -73,7 +71,10 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -87,6 +88,7 @@ public class Verany extends AbstractVerany {
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<INPC> NPCS = new CopyOnWriteArrayList<>();
     public static final List<MessageData> MESSAGES = new CopyOnWriteArrayList<>();
+    private static final MainTask mainTask = new MainTask();
 
     public static final IWorldObject WORLD_OBJECT = new WorldObject();
     public static final IGameModeObject GAME_MODE_OBJECT = new GameModeObject();
@@ -106,6 +108,7 @@ public class Verany extends AbstractVerany {
 
         }
         load();
+        Bukkit.getScheduler().runTaskAsynchronously(project, mainTask);
 
         DatabaseConnection connection = new DatabaseConnection(module);
         project.setModule(module);
@@ -231,7 +234,13 @@ public class Verany extends AbstractVerany {
     }
 
     public static <T extends Event> void registerListener(Plugin plugin, Class<T> tClass, EventConsumer<T> eventConsumer) {
-        registerListener(plugin, tClass, eventConsumer, EventPriority.NORMAL);
+        //registerListener(plugin, tClass, eventConsumer, EventPriority.NORMAL);
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onExecute(T event) {
+                eventConsumer.call(event);
+            }
+        }, plugin);
     }
 
     public static <T extends Event> void registerListener(Plugin plugin, Class<T> tClass, EventConsumer<T> eventConsumer, EventPriority priority) {
@@ -335,12 +344,14 @@ public class Verany extends AbstractVerany {
         long current = System.currentTimeMillis();
         MongoCollection<Document> collection = project.getConnection().getCollection("network", "languages");
         for (AbstractLanguage language : LANGUAGES) {
-            if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled()) continue;
+            if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled())
+                continue;
             String json = GSON.toJson(language);
             collection.insertOne(GSON.fromJson(json, Document.class));
         }
         for (Document document : collection.find()) {
-            if (LanguageWrapper.getLanguage(document.getString("name")).isPresent() || !document.getBoolean("enabled")) continue;
+            if (LanguageWrapper.getLanguage(document.getString("name")).isPresent() || !document.getBoolean("enabled"))
+                continue;
             AbstractLanguage language = LanguageWrapper.getLanguage(document);
             System.out.println("registered new language " + language.getName());
         }
@@ -363,9 +374,13 @@ public class Verany extends AbstractVerany {
     }
 
     public static void createMessage(VeranyProject project, String key) {
+        if (project.getConnection().getCollection("network", "Messages").find(Filters.eq("key", key)).first() != null) {
+            System.out.println("tried to create key " + key + " but already exist!");
+            return;
+        }
         Document document = new Document("key", key);
-        for (EnumLanguage value : EnumLanguage.values())
-            document.append(value.name().toLowerCase(), key);
+        for (AbstractLanguage value : LANGUAGES)
+            document.append(value.getName(), key);
         project.getConnection().getCollection("network", "messages").insertOne(document);
     }
 

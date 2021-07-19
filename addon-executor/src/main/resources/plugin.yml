@@ -24,9 +24,6 @@ commands:
     aliases:
       - gr
   chatclear:
-  removeduplicatekeys:
-    aliases:
-      - rmdk
 
 depend:
   - CloudNet-Bridge

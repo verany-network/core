@@ -80,8 +80,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @Getter
 public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
-    private final IPlayerManager playerManager = CloudNetDriver.getInstance().getServicesRegistry().getFirstService(IPlayerManager.class);
-
     private UUID uniqueId;
     private final String name;
 
@@ -90,7 +88,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private final List<AbstractActionbar> actionbarQueue = new ArrayList<>();
     private final List<BossBar> activeBossBars = new ArrayList<>();
 
-    private AchievementQueue achievementQueue = new AchievementQueue(this, getProject());
+    private final AchievementQueue achievementQueue;
 
     private Player player = null;
     private IPermissionObject permissionObject;
@@ -116,6 +114,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public PlayerInfo(VeranyProject project, String name) {
         super(project, "players", "network");
         this.name = name;
+        this.achievementQueue = new AchievementQueue(this, getProject());
     }
 
     @SneakyThrows
@@ -140,7 +139,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
         load();
 
+        IPlayerManager playerManager = CloudNetDriver.getInstance().getServicesRegistry().getFirstService(IPlayerManager.class);
         if (playerManager != null) {
+            System.out.println("playermanager not null");
             cloudPlayer = playerManager.getOnlinePlayer(uniqueId);
             if (cloudPlayer != null)
                 playerExecutor = playerManager.getPlayerExecutor(cloudPlayer);

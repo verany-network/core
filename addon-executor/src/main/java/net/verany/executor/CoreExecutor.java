@@ -63,7 +63,6 @@ public class CoreExecutor extends VeranyProject {
         super.init();
         new ChatListener(this);
         new ProtectionListener(this);
-        new RemoveDuplicateKeyCommand(this);
         new LanguageCommand(this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
