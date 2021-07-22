@@ -1,9 +1,8 @@
-package net.verany.api.messaging;
+package net.verany.api.websocket;
 
 import net.verany.api.AbstractVerany;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.task.AbstractTask;
-import org.java_websocket.exceptions.WebsocketNotConnectedException;
 
 public class CheckTask extends AbstractTask {
 
