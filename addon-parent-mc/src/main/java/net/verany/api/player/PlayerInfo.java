@@ -404,6 +404,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         getDataOptional(PlayerData.class).ifPresent(playerData -> {
             playerData.setCurrentLanguage(language);
             Bukkit.getPluginManager().callEvent(new PlayerLanguageUpdateEvent(getPlayer()));
+            sendUpdate();
         });
         return language;
     }
@@ -416,13 +417,13 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public String getKey(String key, AbstractPrefixPattern prefixPattern, Placeholder... placeholders) {
         AbstractLanguage language = getCurrentLanguage();
-        String message;
+        String message = Verany.getMessage(key, language);
 
-        if (Verany.getMessage(key, language) == null) {
+        if (message == null) {
             Verany.createMessage(getProject(), key);
             Verany.reloadMessages(getProject());
+            message = key;
         }
-        message = Verany.getMessage(key, language);
 
         message = message.replace("$f", prefixPattern.getColor().getFirstColor().toString());
         message = message.replace("$s", prefixPattern.getColor().getSecondColor().toString());

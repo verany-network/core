@@ -78,6 +78,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+import org.json.JSONObject;
 
 public class Verany extends AbstractVerany {
 
@@ -106,6 +107,7 @@ public class Verany extends AbstractVerany {
             MESSENGER.connectBlocking();
             reportObject = new ReportObject(project);
 
+            MESSENGER.sendMessage("core", new JSONObject(), jsonObject -> {});
         }
         load();
         Bukkit.getScheduler().runTaskAsynchronously(project, mainTask);
@@ -234,13 +236,7 @@ public class Verany extends AbstractVerany {
     }
 
     public static <T extends Event> void registerListener(Plugin plugin, Class<T> tClass, EventConsumer<T> eventConsumer) {
-        //registerListener(plugin, tClass, eventConsumer, EventPriority.NORMAL);
-        Bukkit.getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onExecute(T event) {
-                eventConsumer.call(event);
-            }
-        }, plugin);
+        registerListener(plugin, tClass, eventConsumer, EventPriority.NORMAL);
     }
 
     public static <T extends Event> void registerListener(Plugin plugin, Class<T> tClass, EventConsumer<T> eventConsumer, EventPriority priority) {
@@ -374,7 +370,7 @@ public class Verany extends AbstractVerany {
     }
 
     public static void createMessage(VeranyProject project, String key) {
-        if (project.getConnection().getCollection("network", "Messages").find(Filters.eq("key", key)).first() != null) {
+        if (project.getConnection().getCollection("network", "messages").find(Filters.eq("key", key)).first() != null) {
             System.out.println("tried to create key " + key + " but already exist!");
             return;
         }

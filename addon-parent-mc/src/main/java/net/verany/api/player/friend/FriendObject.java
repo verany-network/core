@@ -29,7 +29,7 @@ public class FriendObject extends DatabaseLoader implements IFriendObject {
         Map<String, Object> defaultSettingMap = new HashMap<>();
         for (AbstractSetting<?> friend : Settings.getSettingByCategory("friends"))
             defaultSettingMap.put(friend.getKey(), friend.getDefaultValue());
-        load(new LoadInfo<>("user_friend", PlayerFriend.class, new PlayerFriend(key, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", defaultSettingMap)));
+        load(new LoadInfo<>("user_friend", PlayerFriend.class, new PlayerFriend(key, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), ONLINE, defaultSettingMap)));
     }
 
     @Override
@@ -112,14 +112,20 @@ public class FriendObject extends DatabaseLoader implements IFriendObject {
     }
 
     @Override
-    public String getStatus() {
-        return getData(PlayerFriend.class).getStatus();
+    public int getStatus() {
+        if (getDataOptional(PlayerFriend.class).isEmpty()) return 0;
+        return getDataOptional(PlayerFriend.class).get().getStatus();
     }
 
     @Override
-    public void setStatus(String status) {
-        getData(PlayerFriend.class).setStatus(status);
-        updateData();
+    public void setStatus(int status) {
+        if (getDataOptional(PlayerFriend.class).isEmpty()) return;
+        getDataOptional(PlayerFriend.class).get().setStatus(status);
+    }
+
+    @Override
+    public boolean hasStatus(int status) {
+        return getStatus() == status;
     }
 
     @Override
@@ -152,10 +158,10 @@ public class FriendObject extends DatabaseLoader implements IFriendObject {
         private final List<FriendData> requests;
         private final List<FriendData> blocked;
         private final List<FriendData> bestFriends;
-        private String status;
+        private Integer status;
         private final Map<String, Object> settingValue;
 
-        public PlayerFriend(UUID uuid, List<FriendData> friends, List<FriendData> requests, List<FriendData> blocked, List<FriendData> bestFriends, String status, Map<String, Object> settingValue) {
+        public PlayerFriend(UUID uuid, List<FriendData> friends, List<FriendData> requests, List<FriendData> blocked, List<FriendData> bestFriends, Integer status, Map<String, Object> settingValue) {
             super(uuid.toString());
             this.friends = friends;
             this.requests = requests;
