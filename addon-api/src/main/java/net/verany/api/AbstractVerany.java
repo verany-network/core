@@ -18,7 +18,7 @@ import lombok.Getter;
 import net.verany.api.event.IEventManager;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.Loader;
-import net.verany.api.messaging.VeranyMessenger;
+import net.verany.api.websocket.VeranyMessenger;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
 import org.ocpsoft.prettytime.PrettyTime;

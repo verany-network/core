@@ -1,4 +1,4 @@
-package net.verany.api.messaging;
+package net.verany.api.websocket;
 
 import net.verany.api.AbstractVerany;
 import net.verany.api.event.events.MessageInEvent;
@@ -10,7 +10,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.net.URI;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -19,14 +25,40 @@ public class VeranyMessenger extends WebSocketClient {
 
     private final Map<String, Consumer<JSONObject>> callbackMap = new HashMap<>();
     public boolean closed = false;
+    private final Runnable onOpen;
 
-    public VeranyMessenger(URI serverUri) {
+    public VeranyMessenger(URI serverUri, Runnable onOpen) {
         super(serverUri);
+        this.onOpen = onOpen;
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                }};
+
+        try {
+
+            SSLContext ssl = SSLContext.getInstance("SSL");
+            ssl.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            SSLSocketFactory socketFactory = ssl.getSocketFactory();
+            this.setSocketFactory(socketFactory);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         closed = false;
+        onOpen.run();
     }
 
     @Override
