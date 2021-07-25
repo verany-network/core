@@ -67,8 +67,7 @@ public class ExamplePlugin extends VeranyProject {
 
     @Override
     public void onEnable() {
-        Verany.loadModule(this);
-        init();
+        Verany.loadModule(this, this::init);
     }
 
     @Override
