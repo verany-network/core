@@ -160,8 +160,9 @@ public class ProtectionListener extends AbstractListener {
                 Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));
             } else if (event.getMessage().has("friends")) {
                 UUID uuid = UUID.fromString(event.getMessage().getString("uuid"));
-                IPlayerInfo playerInfo = Verany.getPlayer(uuid);
-                playerInfo.getFriendObject().update();
+                Verany.PROFILE_OBJECT.getPlayer(uuid).ifPresent(playerInfo -> playerInfo.getFriendObject().update());
+                /*IPlayerInfo playerInfo = Verany.getPlayer(uuid);
+                playerInfo.getFriendObject().update();*/
             } else if (event.getMessage().has("teamspeak")) {
                 System.out.println("from teamspeak");
                 System.out.println(event.getMessage().toString());
