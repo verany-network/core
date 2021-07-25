@@ -5,7 +5,7 @@
     <parent>
         <artifactId>core-verany</artifactId>
         <groupId>net.verany</groupId>
-        <version>2021.7.6.3</version>
+        <version>2021.7.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>net.verany</groupId>
             <artifactId>addon-api</artifactId>
-            <version>2021.7.6.3</version>
+            <version>2021.7.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
