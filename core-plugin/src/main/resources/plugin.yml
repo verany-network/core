@@ -1,0 +1,29 @@
+name: MC-Core-Executor
+version: 2021.7.7
+main: net.verany.api.Core
+api-version: 1.16
+author: tylix
+
+commands:
+  reload:
+    aliases: [rl]
+  verify:
+  afk:
+  playtime:
+    aliases:
+      - pt
+  onlinetime:
+    aliases:
+      - ot
+  language:
+    aliases:
+      - sprache
+  credits:
+  support:
+  globalrank:
+    aliases:
+      - gr
+  chatclear:
+
+depend:
+  - CloudNet-Bridge
