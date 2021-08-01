@@ -11,6 +11,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.verany.api.command.CommandEntry;
 import net.verany.api.command.executor.VeranyCommandExecutor;
+import net.verany.api.event.EventConsumer;
 import net.verany.api.event.EventRegistry;
 import net.verany.api.hotbar.HotbarItem;
 import net.verany.api.inventory.IInventoryBuilder;
@@ -24,20 +25,24 @@ import net.verany.api.module.VeranyPlugin;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.IVeranyPlayer;
+import net.verany.api.player.permission.group.AbstractPermissionGroup;
+import net.verany.api.region.GameRegion;
 import net.verany.api.setup.AbstractSetupObject;
+import net.verany.api.task.AbstractTask;
+import net.verany.api.task.MainTask;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -46,10 +51,14 @@ public class Verany extends AbstractVerany {
     private static final BlockFace[] AXIS = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private static final BlockFace[] RADIAL = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
 
+    @Deprecated
+    public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static final List<HotbarItem> HOTBAR_ITEMS = new CopyOnWriteArrayList<>();
     public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<AbstractSetupObject> SETUP_OBJECTS = new CopyOnWriteArrayList<>();
+    public static final List<GameRegion> GAME_REGIONS = new ArrayList<>();
+    private static MainTask mainTask;
 
     public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
@@ -62,9 +71,15 @@ public class Verany extends AbstractVerany {
 
         AbstractVerany.SOCKET_OPEN.add(onSocketConnect);
 
+        if (mainTask == null) {
+            mainTask = new MainTask();
+            Bukkit.getScheduler().runTaskAsynchronously(project, mainTask);
+        }
+
     }
 
     public static void shutdown(VeranyProject project) {
+        project.getConnection().getCollection("socket", "sockets").deleteOne(Filters.eq("key", KEY));
         Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Shutdown")));
         LOADERS.forEach(Loader::save);
         project.getConnection().disconnect();
@@ -89,11 +104,11 @@ public class Verany extends AbstractVerany {
 
 
     public static IPlayerInfo getPlayer(UUID uuid) {
-        return PROFILE_OBJECT.getPlayer(uuid, IPlayerInfo.class).orElse(null);
+        return getPlayer(uuid, IPlayerInfo.class);
     }
 
     public static IPlayerInfo getPlayer(String name) {
-        return PROFILE_OBJECT.getPlayer(name, IPlayerInfo.class).orElse(null);
+        return getPlayers(IPlayerInfo.class).stream().filter(iPlayerInfo -> iPlayerInfo.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public static IPlayerInfo getPlayer(Player player) {
@@ -191,9 +206,36 @@ public class Verany extends AbstractVerany {
         loadMessages(project);
     }
 
+    public static void sync(VeranyPlugin project, Runnable runnable) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(project, runnable);
+    }
 
     public static String serializeHex(String text) {
         return serializer.serialize(TextComponent.ofChildren(MiniMessage.get().parse(text)));
+    }
+
+    @Deprecated
+    public static <T extends Event> void registerListener(Plugin plugin, Class<T> tClass, EventConsumer<T> eventConsumer) {
+        registerListener(plugin, tClass, eventConsumer, EventPriority.NORMAL);
+    }
+
+    @Deprecated
+    public static <T extends Event> void registerListener(Plugin plugin, Class<T> tClass, EventConsumer<T> eventConsumer, EventPriority priority) {
+        Bukkit.getPluginManager().registerEvent(tClass, eventConsumer, priority, (listener, event) -> eventConsumer.call((T) event), plugin);
+    }
+
+    public static void registerRegion(GameRegion region) {
+        GAME_REGIONS.add(region);
+    }
+
+    @Deprecated
+    public static void addTask(AbstractTask... tasks) {
+        TASKS.addAll(Arrays.asList(tasks));
+    }
+
+    @Deprecated
+    public static void removeTask(AbstractTask task) {
+        TASKS.remove(task);
     }
 
 }

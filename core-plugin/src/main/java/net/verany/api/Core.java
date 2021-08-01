@@ -7,7 +7,10 @@ import lombok.SneakyThrows;
 import net.verany.api.event.EventManager;
 import net.verany.api.language.AbstractLanguage;
 import net.verany.api.language.LanguageData;
+import net.verany.api.listener.ChatListener;
 import net.verany.api.listener.PlayerJoinListener;
+import net.verany.api.listener.PlayerQuitListener;
+import net.verany.api.listener.ProtectionListener;
 import net.verany.api.message.MessageData;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyPlugin;
@@ -37,6 +40,14 @@ public class Core extends VeranyPlugin {
         INSTANCE = this;
     }
 
+    static {
+        try {
+            Class.forName("net.verany.api.language.VeranyLanguage");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onEnable() {
         Verany.loadModule(this, this::init);
@@ -56,7 +67,7 @@ public class Core extends VeranyPlugin {
         for (Document players : getConnection().getCollection("players").find()) {
             IPlayerInfo playerInfo = new PlayerInfo(this, players.getString("name"));
             playerInfo.load(UUID.fromString(players.getString("uuid")));
-            Verany.PROFILE_OBJECT.setPlayer(IPlayerInfo.class, playerInfo);
+            Verany.setPlayer(IPlayerInfo.class, playerInfo);
         }
 
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
@@ -69,6 +80,9 @@ public class Core extends VeranyPlugin {
     private void initListeners() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerJoinListener(this), this);
+        pluginManager.registerEvents(new PlayerQuitListener(this), this);
+        pluginManager.registerEvents(new ProtectionListener(this), this);
+        pluginManager.registerEvents(new ChatListener(this), this);
     }
 
     @Override
@@ -77,25 +91,19 @@ public class Core extends VeranyPlugin {
     }
 
     private void loadPermissionGroups() {
-        AbstractPermissionGroup.VALUES.clear();
+        PermissionGroup.VALUES.clear();
         MongoCollection<Document> collection = getConnection().getCollection("rank", "groups");
-        for (AbstractPermissionGroup value : AbstractPermissionGroup.VALUES)
+        for (AbstractPermissionGroup value : PermissionGroup.VALUES)
             if (collection.find(Filters.eq("name", value.getName())).first() == null)
                 collection.insertOne(Verany.GSON.fromJson(Verany.GSON.toJson(value), Document.class));
         for (Document document : collection.find()) {
             AbstractPermissionGroup permissionGroup = Verany.GSON.fromJson(document.toJson(), PermissionGroup.class);
-            if (AbstractPermissionGroup.getGroupByName(permissionGroup.getName()) == null)
-                AbstractPermissionGroup.VALUES.add(permissionGroup);
+            if (PermissionGroup.getGroupByName(permissionGroup.getName()) == null)
+                PermissionGroup.VALUES.add(permissionGroup);
         }
-        for (AbstractPermissionGroup value : AbstractPermissionGroup.VALUES)
+        for (AbstractPermissionGroup value : PermissionGroup.VALUES)
             for (AbstractPermissionGroup child : value.getChildren())
                 value.getPermissions().addAll(child.getPermissions());
     }
-
-    public static void updatePermissionGroup(VeranyProject project, AbstractPermissionGroup group) {
-        project.getConnection().getCollection("rank", "groups").updateOne(new BasicDBObject("name", group.getName()), new BasicDBObject("$set", new BasicDBObject("permissions", group.getPermissions())));
-        project.getConnection().getCollection("rank", "groups").updateOne(new BasicDBObject("name", group.getName()), new BasicDBObject("$set", new BasicDBObject("children", group.getStringChildren())));
-    }
-
 
 }

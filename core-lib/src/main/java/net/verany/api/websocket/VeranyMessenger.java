@@ -86,6 +86,7 @@ public class VeranyMessenger extends WebSocketClient {
     public void onClose(int code, String reason, boolean remote) {
         closed = true;
         onClose.run();
+
         System.out.println(
                 "Connection closed by " + (remote ? "remote peer" : "us") + " Code: " + code + " Reason: "
                         + reason);

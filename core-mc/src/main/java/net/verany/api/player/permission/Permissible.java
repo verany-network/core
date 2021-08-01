@@ -23,7 +23,7 @@ public class Permissible extends PermissibleBase {
             }
 
             public void setOp(boolean paramBoolean) {
-                player.setOp(paramBoolean);
+                player.setOp(true);
             }
         });
         this.player = player;
@@ -31,7 +31,7 @@ public class Permissible extends PermissibleBase {
 
     @Override
     public boolean hasPermission(@NotNull String inName) {
-        IPermissionObject permissionObject = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId(), IPlayerInfo.class).get().getPermissionObject();
+        IPermissionObject permissionObject = Verany.getPlayer(player.getUniqueId()).getPermissionObject();
         return permissionObject.hasPermission(inName);
     }
 

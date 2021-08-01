@@ -97,7 +97,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private long currentActionbarTime = -1;
     private long lastActionbarTime = -1;
 
-    private Document requestDoc = null;
     private final AchievementQueue achievementQueue;
 
     private final Map<String, Integer> pageMap = new HashMap<>();
@@ -114,12 +113,12 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public void load(UUID key) {
         this.uniqueId = key;
+
         permissionObject = new PermissionObject(this, getProject());
         permissionObject.load(key);
 
         friendObject = new FriendObject(getProject());
         friendObject.load(key);
-
 
         verificationObject = new VerificationObject(getProject());
         verificationObject.load(key);
@@ -156,22 +155,28 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void update() {
+        save("user_info");
 
+        permissionObject.update();
+        friendObject.update();
+        afkObject.update();
+
+        player = null;
     }
 
     @Override
     public void removeMetadata(String key) {
-
+        plugin.removeMetadata(player, key);
     }
 
     @Override
     public String getNameWithColor() {
-        return permissionObject.getCurrentGroup().getGroup().getColor() + getName();
+        return ChatColor.valueOf(permissionObject.getCurrentGroup().getGroup().getColor()) + getName();
     }
 
     @Override
     public String getGroupWithColor() {
-        return permissionObject.getCurrentGroup().getGroup().getColor() + permissionObject.getCurrentGroup().getGroup().getName();
+        return ChatColor.valueOf(permissionObject.getCurrentGroup().getGroup().getColor()) + permissionObject.getCurrentGroup().getGroup().getName();
     }
 
     @Override
@@ -411,7 +416,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         document.append("callback", callback);
         document.append("timestamp", System.currentTimeMillis() + request.getWaitMillis());
 
-        requestDoc = document;
+        getPlugin().setMetadata(player, "chat.request", document);
 
         if (request.getMessage() != null && request.getMessage().length != 0)
             sendMessage(request.getMessage());
@@ -470,7 +475,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
         try {
             URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uniqueId.toString() + "?unsigned=false");
             InputStreamReader reader = new InputStreamReader(url.openStream());
-            JsonObject textureProperty = JsonParser.parseReader(reader).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
+            JsonObject textureProperty = new JsonParser().parse(reader).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
             String texture = textureProperty.get("value").getAsString();
             String signature = textureProperty.get("signature").getAsString();
 

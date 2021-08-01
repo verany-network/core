@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 @Setter
 public abstract class AbstractPermissionGroup {
 
-    public static final List<AbstractPermissionGroup> VALUES = new CopyOnWriteArrayList<>();
-
     private String name;
     private String color;
     private String scoreboardId;
@@ -27,11 +25,7 @@ public abstract class AbstractPermissionGroup {
     private final List<String> children = new ArrayList<>();
 
     public List<AbstractPermissionGroup> getChildren() {
-        return children.stream().map(AbstractPermissionGroup::getGroupByName).collect(Collectors.toList());
-    }
-
-    public static AbstractPermissionGroup getGroupByName(String name) {
-        return VALUES.stream().filter(abstractPermissionGroup -> abstractPermissionGroup.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return children.stream().map(PermissionGroup::getGroupByName).collect(Collectors.toList());
     }
 
     public List<String> getStringChildren() {

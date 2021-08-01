@@ -60,7 +60,6 @@ public abstract class AbstractVerany {
         MESSENGER.connect();
     }
 
-
     public static String getPrefix(String s, AbstractPrefixPattern pattern) {
         boolean hasUpperCaseInMiddle = false;
         int a = 0;

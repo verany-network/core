@@ -42,7 +42,7 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     }
 
     private void load() {
-        load(new LoadInfo<>("user_rank", PlayerRank.class, new PlayerRank(uniqueId.toString(), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME))));
+        load(new LoadInfo<>("user_rank", PlayerRank.class, new PlayerRank(uniqueId, new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME), new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME), new ArrayList<>())));
     }
 
     @Override
@@ -60,40 +60,48 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
 
     @Override
     public GroupData getCurrentGroup() {
-        return getData(PlayerRank.class).getCurrentGroup();
+        if (getDataOptional(PlayerRank.class).isEmpty())
+            return new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME);
+        return getDataOptional(PlayerRank.class).get().getCurrentGroup();
     }
 
     @Override
     public List<String> getPermissions() {
-        return getData(PlayerRank.class).getPermissions();
+        if (getDataOptional(PlayerRank.class).isEmpty()) return new ArrayList<>();
+        return getDataOptional(PlayerRank.class).get().getPermissions();
     }
 
     @Override
     public void addPermission(String permission) {
-        getData(PlayerRank.class).getPermissions().add(permission);
+        if (getDataOptional(PlayerRank.class).isEmpty()) return;
+        getDataOptional(PlayerRank.class).get().getPermissions().add(permission);
         update();
     }
 
     @Override
     public void removePermission(String permission) {
-        getData(PlayerRank.class).getPermissions().remove(permission);
+        if (getDataOptional(PlayerRank.class).isEmpty()) return;
+        getDataOptional(PlayerRank.class).get().getPermissions().remove(permission);
         update();
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        boolean hasChildrenPermission = false;
+        List<String> permissions = getPermissions();
+        /*boolean hasChildrenPermission = false;
         for (AbstractPermissionGroup child : getCurrentGroup().getGroup().getChildren())
-            if (child.getPermissions().contains(permission)) {
+            if (child.getPermissions().stream().anyMatch(s -> s.equalsIgnoreCase(permission))) {
                 hasChildrenPermission = true;
                 break;
-            }
-        return getPermissions().contains(permission) || getPermissions().contains("*") || hasChildrenPermission || getCurrentGroup().getGroup().getPermissions().contains(permission) || getCurrentGroup().getGroup().getPermissions().contains("*");
+            }*/
+        return permissions.stream().anyMatch(s -> s.equalsIgnoreCase(permission)) || permissions.contains("*") || /*hasChildrenPermission || */getCurrentGroup().getGroup().getPermissions().contains(permission) || getCurrentGroup().getGroup().getPermissions().contains("*");
     }
 
     @Override
     public GroupData getLastGroup() {
-        return getData(PlayerRank.class).getLastGroup();
+        if (getDataOptional(PlayerRank.class).isEmpty())
+            return new GroupData(PermissionGroup.PLAYER, GroupTime.LIFETIME);
+        return getDataOptional(PlayerRank.class).get().getLastGroup();
     }
 
     @Getter
@@ -102,12 +110,13 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
 
         private GroupData currentGroup;
         private GroupData lastGroup;
-        private final List<String> permissions = new ArrayList<>();
+        private final List<String> permissions;
 
-        public PlayerRank(String uuid, GroupData currentGroup, GroupData lastGroup) {
+        public PlayerRank(UUID uuid, GroupData currentGroup, GroupData lastGroup, List<String> permissions) {
             super(uuid);
             this.currentGroup = currentGroup;
             this.lastGroup = lastGroup;
+            this.permissions = permissions;
         }
     }
 }

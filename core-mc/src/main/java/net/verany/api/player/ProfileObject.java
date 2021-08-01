@@ -1,6 +1,7 @@
 package net.verany.api.player;
 
 import lombok.Getter;
+import net.verany.api.Verany;
 import net.verany.api.interfaces.IDefault;
 
 import java.util.*;
@@ -8,8 +9,6 @@ import java.util.stream.Collectors;
 
 @Getter
 public class ProfileObject implements IProfileObject {
-
-    private final Map<String, List<? extends IVeranyPlayer>> registeredPlayers = new HashMap<>();
 
     @Override
     public <T extends IVeranyPlayer> Optional<T> getPlayer(UUID uuid, Class<T> tClass) {
@@ -22,7 +21,7 @@ public class ProfileObject implements IProfileObject {
     }
 
     @Override
-    public <T extends IVeranyPlayer> Optional<T> getPlayer(String name, Class<T> tClass) {
+    public <T extends IVeranyPlayer> Optional<T> getPlayer(String name, Class<T> tClass) {;
         return getRegisteredPlayers(tClass).stream().filter(iPlayerInfo -> iPlayerInfo.getName().equalsIgnoreCase(name)).findFirst();
     }
 
@@ -38,14 +37,20 @@ public class ProfileObject implements IProfileObject {
 
     @Override
     public <T extends IVeranyPlayer> void setPlayer(Class<T> tClass, T player) {
-        getRegisteredPlayers(tClass).add(player);
+        //registeredPlayers.get(tClass.getName()).add(player);
     }
 
     @Override
     public <T extends IVeranyPlayer> List<T> getRegisteredPlayers(Class<T> tClass) {
-        if (!registeredPlayers.containsKey(tClass.getName()))
+        return Verany.getPlayers(tClass);
+        /*if (!registeredPlayers.containsKey(tClass.getName()))
             registeredPlayers.put(tClass.getName(), new ArrayList<>());
-        return registeredPlayers.get(tClass.getName()).stream().map(iVeranyPlayer -> (T) iVeranyPlayer).collect(Collectors.toList());
+        List<T> toReturn = new ArrayList<>();
+        for (IVeranyPlayer iVeranyPlayer : registeredPlayers.get(tClass.getName())) {
+            toReturn.add((T) iVeranyPlayer);
+        }
+        return toReturn;*/
+        //return registeredPlayers.get(tClass.getName()).stream().map(iVeranyPlayer -> (T) iVeranyPlayer).collect(Collectors.toList());
     }
 
 
