@@ -1,11 +1,14 @@
 package net.verany.api.region;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.verany.api.Verany;
 import net.verany.api.cuboid.Cuboid;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -22,8 +25,11 @@ public abstract class GameRegion {
         return cuboid.isInside(location);
     }
 
-    public void displayBorder(Player player) {
-        
+    public void displayBorder(ParticleBuilder builder) {
+        List<Location> locations = Verany.getHollowCube(cuboid.getLowerNE(), cuboid.getUpperSW());
+        for (Location location : locations) {
+            builder.location(location).spawn();
+        }
     }
 
 }

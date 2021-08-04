@@ -33,6 +33,7 @@ import net.verany.api.task.MainTask;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -52,13 +53,11 @@ public class Verany extends AbstractVerany {
     private static final BlockFace[] RADIAL = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
 
     @Deprecated
-    public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static final List<HotbarItem> HOTBAR_ITEMS = new CopyOnWriteArrayList<>();
     public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<AbstractSetupObject> SETUP_OBJECTS = new CopyOnWriteArrayList<>();
     public static final List<GameRegion> GAME_REGIONS = new ArrayList<>();
-    private static MainTask mainTask;
 
     public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
@@ -236,6 +235,37 @@ public class Verany extends AbstractVerany {
     @Deprecated
     public static void removeTask(AbstractTask task) {
         TASKS.remove(task);
+    }
+
+    public static List<Location> getHollowCube(Location corner1, Location corner2) {
+        List<Location> result = new ArrayList<>();
+        World world = corner1.getWorld();
+        int minX = Math.min(corner1.getBlockX(), corner2.getBlockX());
+        int minY = Math.min(corner1.getBlockY(), corner2.getBlockY());
+        int minZ = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
+        int maxX = Math.max(corner1.getBlockX(), corner2.getBlockX());
+        int maxY = Math.max(corner1.getBlockY(), corner2.getBlockY());
+        int maxZ = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                result.add(new Location(world, x, y, minZ));
+                result.add(new Location(world, x, y, maxZ));
+            }
+            for (int z = minZ; z <= maxZ; z++) {
+                result.add(new Location(world, x, minY, z));
+                result.add(new Location(world, x, maxY, z));
+            }
+        }
+
+        for (int z = minZ; z <= maxZ; z++) {
+            for (int y = minY; y <= maxY; y++) {
+                result.add(new Location(world, minX, y, z));
+                result.add(new Location(world, maxX, y, z));
+            }
+        }
+
+        return result;
     }
 
 }
