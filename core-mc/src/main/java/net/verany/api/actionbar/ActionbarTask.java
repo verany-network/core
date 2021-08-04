@@ -1,12 +1,19 @@
 package net.verany.api.actionbar;
 
-import lombok.RequiredArgsConstructor;
 import net.verany.api.Verany;
-import net.verany.api.module.VeranyPlugin;
 import net.verany.api.player.IPlayerInfo;
+import net.verany.api.plugin.IVeranyPlugin;
+import net.verany.api.task.AbstractTask;
 import org.bukkit.entity.Player;
 
-public record ActionbarTask(VeranyPlugin project) implements Runnable {
+public class ActionbarTask extends AbstractTask {
+
+    private final IVeranyPlugin project;
+
+    public ActionbarTask(long waitTime, IVeranyPlugin project) {
+        super(waitTime);
+        this.project = project;
+    }
 
     @Override
     public void run() {

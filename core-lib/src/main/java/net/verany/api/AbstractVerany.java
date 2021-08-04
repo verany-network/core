@@ -23,6 +23,8 @@ import net.verany.api.player.IProfileObject;
 import net.verany.api.player.IVeranyPlayer;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.prefix.AbstractPrefixPattern;
+import net.verany.api.task.AbstractTask;
+import net.verany.api.task.MainTask;
 import net.verany.api.websocket.VeranyMessenger;
 import net.verany.volcano.countdown.AbstractCountdown;
 import org.bson.Document;
@@ -46,6 +48,8 @@ public abstract class AbstractVerany {
     public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
     public static final List<Runnable> SOCKET_OPEN = new ArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
+    public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
+    public static MainTask mainTask;
 
     public static VeranyMessenger MESSENGER;
     public static IProfileObject PROFILE_OBJECT;

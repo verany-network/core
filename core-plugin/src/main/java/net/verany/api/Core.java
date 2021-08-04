@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import lombok.SneakyThrows;
+import net.verany.api.actionbar.ActionbarTask;
 import net.verany.api.event.EventManager;
 import net.verany.api.language.AbstractLanguage;
 import net.verany.api.language.LanguageData;
@@ -72,6 +73,8 @@ public class Core extends VeranyPlugin {
 
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.OFF);
+
+        Verany.addTask(new ActionbarTask(100, this));
 
         initListeners();
 
