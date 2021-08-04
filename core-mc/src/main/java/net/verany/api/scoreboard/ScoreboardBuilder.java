@@ -1,5 +1,6 @@
 package net.verany.api.scoreboard;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -19,7 +20,7 @@ public class ScoreboardBuilder implements IScoreboardBuilder {
 
     public ScoreboardBuilder(Player player) {
         this.scoreboard = player.getScoreboard();
-        this.objective = player.getScoreboard().getObjective(DisplaySlot.SIDEBAR) == null ? player.getScoreboard().registerNewObjective("aaa", "bbb") : player.getScoreboard().getObjective(DisplaySlot.SIDEBAR);
+        this.objective = player.getScoreboard().getObjective("aaa") == null ? player.getScoreboard().registerNewObjective("aaa", "bbb", Component.text("?")) : player.getScoreboard().getObjective("aaa");
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         for (int i = 0; i <= 15; i++) {
@@ -30,7 +31,7 @@ public class ScoreboardBuilder implements IScoreboardBuilder {
 
     @Override
     public void setTitle(String title) {
-        objective.setDisplayName(title.length() > 32 ? title.substring(0, 32) : title);
+        objective.displayName(Component.text(title.length() > 32 ? title.substring(0, 32) : title));
     }
 
     @Override
@@ -42,8 +43,8 @@ public class ScoreboardBuilder implements IScoreboardBuilder {
 
         String prefix = getFirstSplit(text);
         String suffix = getFirstSplit(ChatColor.getLastColors(prefix) + getSecondSplit(text));
-        team.setPrefix(prefix);
-        team.setSuffix(suffix);
+        team.prefix(Component.text(prefix));
+        team.suffix(Component.text(suffix));
     }
 
     @Override
