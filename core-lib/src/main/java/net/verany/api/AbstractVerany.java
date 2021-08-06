@@ -48,6 +48,7 @@ public abstract class AbstractVerany {
     public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
     public static final List<Runnable> SOCKET_OPEN = new ArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
+    @Deprecated
     public static final List<AbstractTask> TASKS = new CopyOnWriteArrayList<>();
     public static MainTask mainTask;
 

@@ -52,7 +52,6 @@ public class Verany extends AbstractVerany {
     private static final BlockFace[] AXIS = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private static final BlockFace[] RADIAL = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
 
-    @Deprecated
     public static final List<HotbarItem> HOTBAR_ITEMS = new CopyOnWriteArrayList<>();
     public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
