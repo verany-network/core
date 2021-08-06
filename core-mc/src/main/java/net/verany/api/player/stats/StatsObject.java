@@ -3,6 +3,7 @@ package net.verany.api.player.stats;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.verany.api.Verany;
+import net.verany.api.interfaces.IDefault;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
 import net.verany.api.module.VeranyProject;
@@ -18,6 +19,10 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     private static final Map<UUID, IStatsObject> cachedObjects = new HashMap<>();
 
     private UUID uniqueId;
+
+    public StatsObject(VeranyProject project, String database) {
+        super(project, "stats", database);
+    }
 
     public StatsObject(VeranyProject project) {
         super(project, "stats");
@@ -105,7 +110,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     @Override
-    public int getRanking(AbstractStatsType<Integer> statsType, StatsTime statsTime, Class<? extends IVeranyPlayer> playerClass) {
+    public int getRanking(AbstractStatsType<Integer> statsType, StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
         int rank = 1;
         for (IStatsObject statsObject : getStatsObjects(getProject(), statsType, statsTime, playerClass)) {
             if (statsObject.getUniqueId().equals(uniqueId)) break;
@@ -146,7 +151,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
 
     }
 
-    public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, IStatsObject.StatsTime statsTime, Class<? extends IVeranyPlayer> playerClass) {
+    public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, IStatsObject.StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
         List<IPlayerInfo> players = Verany.PROFILE_OBJECT.getRegisteredPlayers(IPlayerInfo.class);
         List<IStatsObject> sortData = new ArrayList<>();
         for (IPlayerInfo player : players) {

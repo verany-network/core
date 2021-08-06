@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.verany.api.interfaces.IDefault;
+import net.verany.api.interfaces.VeranyCloneable;
 import net.verany.api.player.IVeranyPlayer;
 
 import java.util.List;
@@ -25,13 +26,12 @@ public interface IStatsObject extends IDefault<UUID> {
 
     String getKd(int kills, int deaths);
 
-    int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime, Class<? extends IVeranyPlayer> player);
+    int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime, Class<? extends IDefault<UUID>> player);
 
     int getVictoryChance(int playedGames, int wins);
 
-    @AllArgsConstructor
     @Getter
-    enum StatsTime implements Cloneable {
+    enum StatsTime {
         ALL_TIME(Long.MAX_VALUE),
         MONTHLY(TimeUnit.DAYS.toMillis(30)),
         WEEKLY(TimeUnit.DAYS.toMillis(7)),
@@ -40,14 +40,18 @@ public interface IStatsObject extends IDefault<UUID> {
 
         @Setter
         private long time;
+        private final long defaultTime;
 
-        @SneakyThrows
-        public StatsTime of(int amount) {
-            StatsTime toReturn = (StatsTime) clone();
-            long currentTime = toReturn.getTime();
-            toReturn.setTime(currentTime * amount);
-            return toReturn;
+        StatsTime(long time) {
+            this.time = time;
+            this.defaultTime = time;
         }
+
+        public StatsTime of(int amount) {
+            setTime(defaultTime * amount);
+            return this;
+        }
+
     }
 
 
