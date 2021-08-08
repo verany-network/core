@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 public class PlayerEntry extends DatabaseLoadObject {
 
-    private String name, language, prefix;
+    private String name, language, prefix, ip;
     private AbstractSkinData skin;
     private Map<String, Object> settingValues;
     private List<String> passedAchievements;
