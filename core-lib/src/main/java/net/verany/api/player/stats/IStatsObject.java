@@ -7,6 +7,8 @@ import lombok.SneakyThrows;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.interfaces.VeranyCloneable;
 import net.verany.api.player.IVeranyPlayer;
+import net.verany.api.player.permission.duration.AbstractGroupTime;
+import net.verany.api.player.permission.duration.GroupTime;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,27 +30,27 @@ public interface IStatsObject extends IDefault<UUID> {
 
     int getRanking(AbstractStatsType<Integer> points, StatsTime statsTime, Class<? extends IDefault<UUID>> player);
 
+    int getRanking(AbstractStatsType<Integer> points, long statsTime, Class<? extends IDefault<UUID>> player);
+
     int getVictoryChance(int playedGames, int wins);
 
     @Getter
     enum StatsTime {
-        ALL_TIME(Long.MAX_VALUE),
-        MONTHLY(TimeUnit.DAYS.toMillis(30)),
-        WEEKLY(TimeUnit.DAYS.toMillis(7)),
-        DAILY(TimeUnit.DAYS.toMillis(1)),
-        SEASON(1_0);
+        ALL_TIME(GroupTime.LIFETIME),
+        MONTHLY(GroupTime.MONTHS.of(1)),
+        WEEKLY(GroupTime.DAYS.of(7)),
+        DAILY(GroupTime.DAYS.of(1)),
+        SEASON(GroupTime.SEASON);
 
         @Setter
-        private long time;
-        private final long defaultTime;
+        private AbstractGroupTime.GroupDuration time;
 
-        StatsTime(long time) {
+        StatsTime(AbstractGroupTime.GroupDuration time) {
             this.time = time;
-            this.defaultTime = time;
         }
 
         public StatsTime of(int amount) {
-            setTime(defaultTime * amount);
+            setTime(new AbstractGroupTime.GroupDuration(amount, time.getMillis() * amount, time.getKey()));
             return this;
         }
 

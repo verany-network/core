@@ -45,7 +45,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
         List<T> toReturn = new ArrayList<>();
         checkStats(statsType);
         for (StatsLoadData.StatsData statsData : getData(StatsLoadData.class).getStringStatsDataMap().get(statsType.getKey()))
-            if ((System.currentTimeMillis() - statsData.getTimestamp()) < statsTime.getTime())
+            if ((System.currentTimeMillis() - statsData.getTimestamp()) < statsTime.getTime().getMillis())
                 toReturn.add(Verany.GSON.fromJson(statsData.getValue(), statsType.getTClass()));
         return toReturn;
     }
@@ -111,8 +111,13 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
 
     @Override
     public int getRanking(AbstractStatsType<Integer> statsType, StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
+        return getRanking(statsType, statsTime.getTime().getMillis(), playerClass);
+    }
+
+    @Override
+    public int getRanking(AbstractStatsType<Integer> points, long statsTime, Class<? extends IDefault<UUID>> player) {
         int rank = 1;
-        for (IStatsObject statsObject : getStatsObjects(getProject(), statsType, statsTime, playerClass)) {
+        for (IStatsObject statsObject : getStatsObjects(getProject(), points, statsTime, player)) {
             if (statsObject.getUniqueId().equals(uniqueId)) break;
             rank++;
         }
@@ -151,7 +156,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
 
     }
 
-    public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, IStatsObject.StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
+    public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, long statsTime, Class<? extends IDefault<UUID>> playerClass) {
         List<IPlayerInfo> players = Verany.PROFILE_OBJECT.getRegisteredPlayers(IPlayerInfo.class);
         List<IStatsObject> sortData = new ArrayList<>();
         for (IPlayerInfo player : players) {
@@ -173,6 +178,10 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
         List<IStatsObject> statsObjects = Verany.sortList(sortData.stream().distinct().collect(Collectors.toList()), Comparator.comparingInt(value -> value.getStatsValue(statsType, statsTime)));
         Collections.reverse(statsObjects);
         return statsObjects;
+    }
+
+    public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, StatsTime statsTime, Class<? extends IDefault<UUID>> playerClass) {
+        return getStatsObjects(project, statsType, statsTime.getTime().getMillis(), playerClass);
     }
 
 }
