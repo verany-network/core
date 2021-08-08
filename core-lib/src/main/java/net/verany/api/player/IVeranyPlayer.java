@@ -12,6 +12,7 @@ import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.placeholder.Placeholder;
 import net.verany.api.player.ban.IBanEntry;
+import net.verany.api.player.friend.IFriendObject;
 import net.verany.api.player.leveling.ICreditsObject;
 import net.verany.api.player.leveling.ILevelObject;
 import net.verany.api.player.permission.IPermissionObject;
@@ -86,6 +87,8 @@ public interface IVeranyPlayer extends IDefault<UUID> {
     void addPoints(int amount);
 
     int getPoints();
+
+    IFriendObject getFriendObject();
 
     @Deprecated
     EnumLanguage getLanguage();
