@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>core-proxy</artifactId>
+    <artifactId>core-proxy-api</artifactId>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>net.verany</groupId>
-            <artifactId>core-proxy-api</artifactId>
+            <artifactId>core-lib</artifactId>
             <version>2021.7.7</version>
         </dependency>
         <dependency>

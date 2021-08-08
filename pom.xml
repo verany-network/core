@@ -15,6 +15,8 @@
         <module>core</module>
         <module>core-plugin</module>
         <module>core-mc-api</module>
+        <module>core-proxy-api</module>
+        <module>core-proxy-plugin</module>
     </modules>
 
     <properties>
@@ -35,6 +37,10 @@
         <repository>
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
+        </repository>
+        <repository>
+            <id>velocity</id>
+            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
         </repository>
     </repositories>
 
@@ -128,5 +134,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>
