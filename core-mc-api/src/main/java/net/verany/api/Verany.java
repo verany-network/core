@@ -164,46 +164,6 @@ public class Verany extends AbstractVerany {
         return toReturn;
     }
 
-    @SneakyThrows
-    private static void loadMessages(VeranyProject project) {
-        System.out.println("Loading messages...");
-        long current = System.currentTimeMillis();
-        for (Document document : project.getConnection().getCollection("network", "messages").find()) {
-            String key = document.getString("key");
-            List<LanguageData> languageData = new ArrayList<>();
-            for (AbstractLanguage language : Verany.LANGUAGES) {
-                languageData.add(new LanguageData(language, document.getString(language.getName())));
-            }
-            Verany.MESSAGES.add(new MessageData(key, languageData));
-        }
-        System.out.println("Loading messages complete. (" + Verany.MESSAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
-    }
-
-    private static void loadLanguages(VeranyProject project) {
-        System.out.println("Loading languages...");
-        long current = System.currentTimeMillis();
-        MongoCollection<Document> collection = project.getConnection().getCollection("network", "languages");
-        for (AbstractLanguage language : Verany.LANGUAGES) {
-            if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled())
-                continue;
-            String json = Verany.GSON.toJson(language);
-            collection.insertOne(Verany.GSON.fromJson(json, Document.class));
-        }
-        for (Document document : collection.find()) {
-            if (AbstractLanguage.getLanguage(document.getString("name")).isPresent() || !document.getBoolean("enabled"))
-                continue;
-            AbstractLanguage language = Verany.getLanguage(document);
-            System.out.println("registered new language " + language.getName());
-        }
-        System.out.println("Loading languages complete. (" + Verany.LANGUAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
-    }
-
-    public static void reloadMessages(VeranyProject project) {
-        Verany.MESSAGES.clear();
-        loadLanguages(project);
-        loadMessages(project);
-    }
-
     public static void sync(VeranyPlugin project, Runnable runnable) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(project, runnable);
     }

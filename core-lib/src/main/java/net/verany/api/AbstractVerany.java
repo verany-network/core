@@ -344,6 +344,47 @@ public abstract class AbstractVerany {
         return new DecimalFormat().format(o).replace(",", ".");
     }
 
+
+    @SneakyThrows
+    private static void loadMessages(VeranyProject project) {
+        System.out.println("Loading messages...");
+        long current = System.currentTimeMillis();
+        for (Document document : project.getConnection().getCollection("network", "messages").find()) {
+            String key = document.getString("key");
+            List<LanguageData> languageData = new ArrayList<>();
+            for (AbstractLanguage language : LANGUAGES) {
+                languageData.add(new LanguageData(language, document.getString(language.getName())));
+            }
+            MESSAGES.add(new MessageData(key, languageData));
+        }
+        System.out.println("Loading messages complete. (" + MESSAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
+    }
+
+    private static void loadLanguages(VeranyProject project) {
+        System.out.println("Loading languages...");
+        long current = System.currentTimeMillis();
+        MongoCollection<Document> collection = project.getConnection().getCollection("network", "languages");
+        for (AbstractLanguage language : LANGUAGES) {
+            if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled())
+                continue;
+            String json = GSON.toJson(language);
+            collection.insertOne(GSON.fromJson(json, Document.class));
+        }
+        for (Document document : collection.find()) {
+            if (AbstractLanguage.getLanguage(document.getString("name")).isPresent() || !document.getBoolean("enabled"))
+                continue;
+            AbstractLanguage language = getLanguage(document);
+            System.out.println("registered new language " + language.getName());
+        }
+        System.out.println("Loading languages complete. (" + LANGUAGES.size() + " - " + (System.currentTimeMillis() - current) + "ms)");
+    }
+
+    public static void reloadMessages(VeranyProject project) {
+        MESSAGES.clear();
+        loadLanguages(project);
+        loadMessages(project);
+    }
+
     public record SortData<T>(String key, T t) {
     }
 
