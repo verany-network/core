@@ -1,7 +1,5 @@
 package net.verany.api.prefix;
 
-import org.bukkit.ChatColor;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;

@@ -7,6 +7,7 @@ import net.verany.api.AbstractVerany;
 import net.verany.api.player.IVeranyPlayer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -34,5 +35,10 @@ public abstract class AbstractPermissionGroup {
 
     public List<IVeranyPlayer> getPlayersInGroup() {
         return AbstractVerany.PROFILE_OBJECT.getRegisteredPlayers(IVeranyPlayer.class).stream().filter(iVeranyPlayer -> iVeranyPlayer.getPermissionObject().getCurrentGroup().getGroup().getName().equals(name)).collect(Collectors.toList());
+    }
+
+    public AbstractPermissionGroup addPermission(String... permissions) {
+        Collections.addAll(this.permissions, permissions);
+        return this;
     }
 }

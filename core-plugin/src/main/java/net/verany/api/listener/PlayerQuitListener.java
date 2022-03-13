@@ -24,6 +24,7 @@ public record PlayerQuitListener (VeranyPlugin project) implements Listener {
 
         playerInfo.setBossBar((BossBar) null);
         playerInfo.setDefaultBossBar(null);
+        playerInfo.setPlayer(null);
 
         if (!VeranyServer.ROUNDS.isEmpty()) {
             playerInfo.getPlayer(IVolcanoPlayer.class).quitRound();

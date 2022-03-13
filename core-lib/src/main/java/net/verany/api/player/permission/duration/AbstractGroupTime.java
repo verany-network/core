@@ -28,8 +28,8 @@ public abstract class AbstractGroupTime {
     @AllArgsConstructor
     @Getter
     public static class GroupDuration {
-        private final int amount;
-        private final long millis;
+        private final Integer amount;
+        private final Long millis;
         private final String key;
     }
 

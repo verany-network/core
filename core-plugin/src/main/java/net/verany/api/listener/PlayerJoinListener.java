@@ -35,6 +35,7 @@ public record PlayerJoinListener(VeranyPlugin project) implements Listener {
             playerInfo = new PlayerInfo(project, player.getName());
             playerInfo.load(player.getUniqueId());
             Verany.PROFILE_OBJECT.setPlayer(IPlayerInfo.class, playerInfo);
+            Verany.setPlayer(IPlayerInfo.class, playerInfo);
         } else {
             playerInfo = playerInfoOptional.get();
             playerInfo.load(player.getUniqueId());
@@ -54,6 +55,8 @@ public record PlayerJoinListener(VeranyPlugin project) implements Listener {
         IPlayerInfo playerInfo = Verany.getPlayer(player);
         playerInfo.setPlayer(player);
         playerInfo.setSkinData();
+
+        player.sendMessage(playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName());
 
         player.sendMessage("moin " + playerInfo.getNameWithColor());
 

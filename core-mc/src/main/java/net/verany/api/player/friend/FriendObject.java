@@ -19,7 +19,7 @@ public class FriendObject extends DatabaseLoader implements IFriendObject {
     private UUID uniqueId;
 
     public FriendObject(VeranyProject project) {
-        super(project, "players", "friends");
+        super(project, "players_friends");
     }
 
     @Override

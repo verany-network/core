@@ -74,12 +74,15 @@ public class Verany extends AbstractVerany {
             Bukkit.getScheduler().runTaskAsynchronously(project, mainTask);
         }
 
+        // TODO: ONLY FOT TESTING PURPOSES
+        onSocketConnect.run();
+
     }
 
     public static void shutdown(VeranyProject project) {
-        project.getConnection().getCollection("socket", "sockets").deleteOne(Filters.eq("key", KEY));
         Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Shutdown")));
         LOADERS.forEach(Loader::save);
+        project.getConnection().getCollection("socket", "sockets").deleteOne(Filters.eq("key", KEY));
         project.getConnection().disconnect();
     }
 

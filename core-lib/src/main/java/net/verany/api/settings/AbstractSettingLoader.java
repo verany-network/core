@@ -15,9 +15,9 @@ public abstract class AbstractSettingLoader extends HashMap<String, Object> {
         return (T) get(setting.getKey());
     }
 
-    public void loadSettings(Map<String, Object> settingMap) {
+    public <T> void loadSettings(Map<String, T> settingMap) {
         settingMap.forEach((s, o) -> {
-            AbstractSetting settings = Settings.getSettingByKey(s);
+            AbstractSetting<T> settings = Settings.getSettingByKey(s);
             if (settings != null)
                 setSettingValue(settings, o);
         });

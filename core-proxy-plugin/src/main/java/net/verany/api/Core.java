@@ -22,14 +22,14 @@ import java.util.Collection;
 @Plugin(
         id = "corexeceutor",
         name = "CoreExecutor",
-        version = "2021.7.1",
+        version = "2022.4.1",
         description = "A plugin",
         authors = {"tylix", "Gamingcode"}
 )
 @VeranyModule(
         name = "Core",
-        version = "Core",
-        authors = {"tylix", "Gameingcode"}
+        version = "2022.4.1",
+        authors = {"tylix"}
 )
 public class Core extends VeranyPlugin {
 

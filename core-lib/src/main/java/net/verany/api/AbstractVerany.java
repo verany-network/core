@@ -21,6 +21,7 @@ import net.verany.api.message.MessageData;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IProfileObject;
 import net.verany.api.player.IVeranyPlayer;
+import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.task.AbstractTask;
@@ -146,14 +147,14 @@ public abstract class AbstractVerany {
     }
 
     public static void createMessage(VeranyProject project, String key) {
-        if (project.getConnection().getCollection("network", "messages").find(Filters.eq("key", key)).first() != null) {
+        if (project.getConnection().getCollection("messages").find(Filters.eq("key", key)).first() != null) {
             System.out.println("tried to create key " + key + " but already exist!");
             return;
         }
         Document document = new Document("key", key);
         for (AbstractLanguage value : LANGUAGES)
             document.append(value.getName(), key);
-        project.getConnection().getCollection("network", "messages").insertOne(document);
+        project.getConnection().getCollection("messages").insertOne(document);
     }
 
     public static String getMessage(String key, AbstractLanguage language) {
@@ -349,7 +350,7 @@ public abstract class AbstractVerany {
     private static void loadMessages(VeranyProject project) {
         System.out.println("Loading messages...");
         long current = System.currentTimeMillis();
-        for (Document document : project.getConnection().getCollection("network", "messages").find()) {
+        for (Document document : project.getConnection().getCollection("messages").find()) {
             String key = document.getString("key");
             List<LanguageData> languageData = new ArrayList<>();
             for (AbstractLanguage language : LANGUAGES) {
@@ -363,7 +364,7 @@ public abstract class AbstractVerany {
     private static void loadLanguages(VeranyProject project) {
         System.out.println("Loading languages...");
         long current = System.currentTimeMillis();
-        MongoCollection<Document> collection = project.getConnection().getCollection("network", "languages");
+        MongoCollection<Document> collection = project.getConnection().getCollection("languages");
         for (AbstractLanguage language : LANGUAGES) {
             if (collection.find(Filters.eq("name", language.getName())).first() != null || !language.isEnabled())
                 continue;

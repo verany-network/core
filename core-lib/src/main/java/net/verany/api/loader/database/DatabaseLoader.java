@@ -38,9 +38,8 @@ public abstract class DatabaseLoader extends Loader {
         Document first = project.getConnection().getCollection(database, collection).find(Filters.eq("uuid", key)).first();
         if (first == null)
             info = insert(loadInfo);
-        else {
+        else
             info = gson.fromJson(first.toJson(), loadInfo.getType());
-        }
         loadInfo.setObject(info);
         addInfo(loadInfo);
         onLoadComplete();

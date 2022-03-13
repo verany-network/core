@@ -7,7 +7,7 @@ public class PermissionGroup extends AbstractPermissionGroup {
 
     public static final List<AbstractPermissionGroup> VALUES = new CopyOnWriteArrayList<>();
 
-    public static final AbstractPermissionGroup ADMINISTRATOR = new PermissionGroup("Administrator", "DARK_RED", "a", "Admin");
+    public static final AbstractPermissionGroup ADMINISTRATOR = new PermissionGroup("Administrator", "DARK_RED", "a", "Admin").addPermission("*");
     public static final AbstractPermissionGroup PLAYER = new PermissionGroup("Player", "GRAY", "c", "");
 
     public PermissionGroup(String name, String color, String scoreboardId, String prefix) {
@@ -16,6 +16,6 @@ public class PermissionGroup extends AbstractPermissionGroup {
     }
 
     public static AbstractPermissionGroup getGroupByName(String name) {
-        return VALUES.stream().filter(abstractPermissionGroup -> abstractPermissionGroup.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return VALUES.stream().filter(abstractPermissionGroup -> abstractPermissionGroup.getName().equalsIgnoreCase(name)).findFirst().orElse(PLAYER);
     }
 }

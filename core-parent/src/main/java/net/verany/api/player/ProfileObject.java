@@ -1,11 +1,9 @@
 package net.verany.api.player;
 
 import lombok.Getter;
-import net.verany.api.Verany;
-import net.verany.api.interfaces.IDefault;
+import net.verany.api.AbstractVerany;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 public class ProfileObject implements IProfileObject {
@@ -42,7 +40,7 @@ public class ProfileObject implements IProfileObject {
 
     @Override
     public <T extends IVeranyPlayer> List<T> getRegisteredPlayers(Class<T> tClass) {
-        return Verany.getPlayers(tClass);
+        return AbstractVerany.getPlayers(tClass);
         /*if (!registeredPlayers.containsKey(tClass.getName()))
             registeredPlayers.put(tClass.getName(), new ArrayList<>());
         List<T> toReturn = new ArrayList<>();

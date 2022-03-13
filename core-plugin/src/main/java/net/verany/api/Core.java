@@ -1,21 +1,15 @@
 package net.verany.api;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import lombok.SneakyThrows;
 import net.verany.api.actionbar.ActionbarTask;
-import net.verany.api.event.EventManager;
-import net.verany.api.language.AbstractLanguage;
-import net.verany.api.language.LanguageData;
+import net.verany.api.config.IngameConfig;
 import net.verany.api.listener.ChatListener;
 import net.verany.api.listener.PlayerJoinListener;
 import net.verany.api.listener.PlayerQuitListener;
 import net.verany.api.listener.ProtectionListener;
-import net.verany.api.message.MessageData;
 import net.verany.api.module.VeranyModule;
 import net.verany.api.module.VeranyPlugin;
-import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IPlayerInfo;
 import net.verany.api.player.PlayerInfo;
 import net.verany.api.player.ProfileObject;
@@ -25,14 +19,11 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@VeranyModule(name = "Core", prefix = "Core", version = "2021.7.7", authors = {"tylix", "xLikeAlex", "Gamingcode"})
+@VeranyModule(name = "Core", prefix = "Core", version = "2022.4.1", authors = {"tylix"})
 public class Core extends VeranyPlugin {
 
     public static Core INSTANCE;
@@ -44,6 +35,7 @@ public class Core extends VeranyPlugin {
     static {
         try {
             Class.forName("net.verany.api.language.VeranyLanguage");
+            Class.forName("net.verany.api.player.permission.group.PermissionGroup");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -52,15 +44,17 @@ public class Core extends VeranyPlugin {
     @Override
     public void onEnable() {
         Verany.loadModule(this, this::init);
-        Verany.connectToWebsocket();
+        //Verany.connectToWebsocket();
     }
 
     @Override
     public void init() {
-        Verany.MESSENGER.auth(this);
+        //Verany.MESSENGER.auth(this);
 
         Verany.EVENT_REGISTRY.setPlugin(this);
         Verany.PROFILE_OBJECT = new ProfileObject();
+
+        IngameConfig.TAB_LIST_FORMAT.setValue("{0}{1} §8▏ §7");
 
         loadPermissionGroups();
         Verany.reloadMessages(this);
@@ -69,12 +63,13 @@ public class Core extends VeranyPlugin {
             IPlayerInfo playerInfo = new PlayerInfo(this, players.getString("name"));
             playerInfo.load(UUID.fromString(players.getString("uuid")));
             Verany.setPlayer(IPlayerInfo.class, playerInfo);
+            Verany.PROFILE_OBJECT.setPlayer(IPlayerInfo.class, playerInfo);
         }
 
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.OFF);
 
-        Verany.addTask(new ActionbarTask(100, this));
+        Verany.addTask(new ActionbarTask(400, this));
 
         initListeners();
 
@@ -94,8 +89,11 @@ public class Core extends VeranyPlugin {
     }
 
     private void loadPermissionGroups() {
-        PermissionGroup.VALUES.clear();
-        MongoCollection<Document> collection = getConnection().getCollection("rank", "groups");
+        MongoCollection<Document> collection = getConnection().getCollection("groups");
+        if(collection == null) {
+
+            return;
+        }
         for (AbstractPermissionGroup value : PermissionGroup.VALUES)
             if (collection.find(Filters.eq("name", value.getName())).first() == null)
                 collection.insertOne(Verany.GSON.fromJson(Verany.GSON.toJson(value), Document.class));

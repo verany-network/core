@@ -52,7 +52,6 @@ import net.verany.api.plugin.IVeranyPlugin;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.prefix.PrefixPattern;
 import net.verany.api.settings.AbstractSetting;
-import net.verany.api.settings.Settings;
 import net.verany.api.skin.AbstractSkinData;
 import net.verany.api.skin.SkinData;
 import org.bson.Document;
@@ -60,7 +59,6 @@ import org.bukkit.*;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -104,7 +102,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     private final List<AbstractActionbar> actionbarQueue = new ArrayList<>();
 
     public PlayerInfo(IVeranyPlugin plugin, String name) {
-        super(plugin, "players", "network");
+        super(plugin, "players");
         this.plugin = plugin;
         this.name = name;
         this.achievementQueue = new AchievementQueue(this, (VeranyPlugin) plugin);
@@ -114,7 +112,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     public void load(UUID key) {
         this.uniqueId = key;
 
-        permissionObject = new PermissionObject(this, getProject());
+        permissionObject = new PermissionObject(getProject());
         permissionObject.load(key);
 
         friendObject = new FriendObject(getProject());
@@ -149,13 +147,13 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user", PlayerEntry.class, new PlayerEntry(uniqueId)));
+        load(new LoadInfo<>("user", PlayerEntry.class, new PlayerEntry(uniqueId, name, VeranyLanguage.ENGLISH.getName(), PrefixPattern.BLUE.getKey(), 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
         getDataOptional(PlayerEntry.class).ifPresent(playerEntry -> loadSettings(playerEntry.getSettingValues()));
     }
 
     @Override
     public void update() {
-        save("user_info");
+        save("user");
 
         permissionObject.update();
         friendObject.update();
@@ -643,7 +641,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     @Override
     public void playSound(Location location, Sound sound, float volume, float pitch) {
         //if (getSettingValue(Settings.INVENTORY_SOUNDS))
-            player.playSound(location, sound, volume, pitch);
+        player.playSound(location, sound, volume, pitch);
     }
 
     @Override

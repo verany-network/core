@@ -26,7 +26,8 @@ public class DatabaseManager {
     }
 
     public void connect() {
-        MongoClientURI uri = new MongoClientURI("mongodb://" + this.user + ":" + this.password + "@" + server + "/?authSource=admin");
+        String uriString = server.equals("127.0.0.1") ||server.equals("localhost") ? "mongodb://localhost:27017/?authSource=admin" : "mongodb://" + this.user + ":" + this.password + "@" + server + "/?authSource=admin";
+        MongoClientURI uri = new MongoClientURI(uriString);
         client = new MongoClient(uri);
         this.mongoDatabase = this.client.getDatabase(this.databaseName);
     }

@@ -19,7 +19,7 @@ public class VerificationObject extends DatabaseLoader implements IVerificationO
     private UUID uniqueId;
 
     public VerificationObject(VeranyProject project) {
-        super(project, "players", "verification");
+        super(project, "players_verification");
     }
 
     @Override
