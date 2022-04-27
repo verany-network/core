@@ -21,7 +21,7 @@ public class Verany extends AbstractVerany {
         if (mainTask == null) {
             mainTask = new MainTask();
             //connectToWebsocket();
-            new Thread(mainTask, "core-main-thread").start();
+            //new Thread(mainTask, "core-main-thread").start();
         }
 
         // TODO: ONLY FOT TESTING PURPOSES

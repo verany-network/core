@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class Database {
-    private final String user,password,hostname;
+    private final String user,password,hostname, authSource;
     private final String[] databases;
 }

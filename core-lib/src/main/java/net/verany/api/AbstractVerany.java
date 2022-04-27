@@ -2,17 +2,14 @@ package net.verany.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import net.verany.api.adapter.InterfaceAdapter;
 import net.verany.api.enumhelper.EnumHelper;
-import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.gamemode.GameMode;
 import net.verany.api.interfaces.IDefault;
 import net.verany.api.language.AbstractLanguage;
 import net.verany.api.language.LanguageData;
@@ -20,14 +17,11 @@ import net.verany.api.loader.Loader;
 import net.verany.api.message.MessageData;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.player.IProfileObject;
-import net.verany.api.player.IVeranyPlayer;
-import net.verany.api.player.permission.IPermissionObject;
 import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.prefix.AbstractPrefixPattern;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
 import net.verany.api.websocket.VeranyMessenger;
-import net.verany.volcano.countdown.AbstractCountdown;
 import org.bson.Document;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -36,17 +30,15 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public abstract class AbstractVerany {
 
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractLanguage.class, new InterfaceAdapter<AbstractLanguage>()).registerTypeAdapter(AbstractGameMode.class, new InterfaceAdapter<AbstractGameMode>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(AbstractLanguage.class, new InterfaceAdapter<AbstractLanguage>()).registerTypeAdapter(GameMode.class, new InterfaceAdapter<GameMode>()).registerTypeAdapter(AbstractPermissionGroup.class, new InterfaceAdapter<AbstractPermissionGroup>()).setPrettyPrinting().create();
 
     public static final List<Loader> LOADERS = new ArrayList<>();
     public static final List<AbstractLanguage> LANGUAGES = new CopyOnWriteArrayList<>();
     public static final List<MessageData> MESSAGES = new CopyOnWriteArrayList<>();
-    public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
     public static final List<Runnable> SOCKET_OPEN = new ArrayList<>();
     public static final List<PlayerLoaderData<?>> PLAYER_LOADER_DATA = new ArrayList<>();
     @Deprecated
@@ -54,6 +46,7 @@ public abstract class AbstractVerany {
     public static MainTask mainTask;
 
     public static VeranyMessenger MESSENGER;
+    @Deprecated
     public static IProfileObject PROFILE_OBJECT;
 
     public static final String KEY = generateString(10);
@@ -142,7 +135,7 @@ public abstract class AbstractVerany {
         };
     }
 
-    public static void registerGameMode(VeranyProject project, AbstractGameMode gameMode) {
+    public static void registerGameMode(VeranyProject project, GameMode gameMode) {
         //VeranyServer.registerGameMode(project, gameMode);
     }
 
@@ -195,7 +188,7 @@ public abstract class AbstractVerany {
 
     public static <T> List<T> sortList(List<SortData<T>> list, boolean reverse) {
         List<T> toReturn = new ArrayList<>();
-        for (SortData<T> tSortData : list.stream().sorted(Comparator.comparing(SortData::key)).collect(Collectors.toList()))
+        for (SortData<T> tSortData : list.stream().sorted(Comparator.comparing(SortData::key)).toList())
             toReturn.add(tSortData.t());
         if (reverse)
             Collections.reverse(toReturn);
@@ -207,13 +200,21 @@ public abstract class AbstractVerany {
     }
 
     public static <T extends IDefault<UUID>> void setPlayer(Class<T> tClass, T player) {
-        PLAYER_LOADER_DATA.add(new PlayerLoaderData<>(player.getUniqueId(), tClass, player));
+        setPlayer(tClass, player, player.getUniqueId().toString());
     }
 
-    public static <T extends IDefault<UUID>> T getPlayer(UUID key, Class<T> tClass) {
+    public static <T extends IDefault<?>> void setPlayer(Class<T> tClass, T player, String key) {
+        PLAYER_LOADER_DATA.add(new PlayerLoaderData<>(key, tClass, player));
+    }
+
+    public static <T extends IDefault<?>> T getPlayer(String key, Class<T> tClass) {
         PlayerLoaderData<T> loaderData = getLoadData(key, tClass);
         if (loaderData == null) return null;
         return loaderData.player();
+    }
+
+    public static <T extends IDefault<?>> T getPlayer(UUID key, Class<T> tClass) {
+        return getPlayer(key.toString(), tClass);
     }
 
     public static <T extends IDefault<?>> List<T> getPlayers(Class<T> tClass) {
@@ -226,11 +227,15 @@ public abstract class AbstractVerany {
                 .collect(Collectors.toList());
     }
 
-    public static <T extends IDefault<?>> void removePlayer(UUID key, Class<T> tClass) {
+    public static <T extends IDefault<UUID>> void removePlayer(UUID key, Class<T> tClass) {
+        removePlayer(key.toString(), tClass);
+    }
+
+    public static <T extends IDefault<UUID>> void removePlayer(String key, Class<T> tClass) {
         PLAYER_LOADER_DATA.remove(getLoadData(key, tClass));
     }
 
-    private static <T extends IDefault<?>> PlayerLoaderData<T> getLoadData(UUID key, Class<T> tClass) {
+    private static <T extends IDefault<?>> PlayerLoaderData<T> getLoadData(String key, Class<T> tClass) {
         Optional<PlayerLoaderData<?>> loadData = PLAYER_LOADER_DATA
                 .stream()
                 .filter(playerLoaderData ->
@@ -320,17 +325,6 @@ public abstract class AbstractVerany {
         return String.valueOf(rounded);
     }
 
-    public static void addCountdown(AbstractCountdown countdown) {
-        COUNTDOWNS.add(countdown);
-    }
-
-    public static AbstractCountdown getCountdown(String key) {
-        for (AbstractCountdown countdown : COUNTDOWNS)
-            if (countdown.getKey().equalsIgnoreCase(key))
-                return countdown;
-        return null;
-    }
-
     public static <T> List<T> getPageList(int page, int slots, List<T> objects) {
         List<T> toReturn = new ArrayList<>();
         int from = (page == 1 ? 0 : (page - 1) * slots);
@@ -386,10 +380,19 @@ public abstract class AbstractVerany {
         loadMessages(project);
     }
 
+    public static String getNameOfEnum(String enumName, String color) {
+        String name;
+        StringBuilder nameBuilder = new StringBuilder();
+        for (String s : enumName.split("_"))
+            nameBuilder.append(color).append(s.split("")[0].toUpperCase()).append(s.substring(1).toLowerCase()).append(" ");
+        name = nameBuilder.toString();
+        return name;
+    }
+
     public record SortData<T>(String key, T t) {
     }
 
-    public record PlayerLoaderData<T extends IDefault<?>>(UUID key, Class<T> tClass, T player) {
+    public record PlayerLoaderData<T extends IDefault<?>>(String key, Class<T> tClass, T player) {
     }
 
 }

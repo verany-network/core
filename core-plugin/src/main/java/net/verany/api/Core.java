@@ -3,6 +3,7 @@ package net.verany.api;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import net.verany.api.actionbar.ActionbarTask;
+import net.verany.api.command.CommandEntry;
 import net.verany.api.config.IngameConfig;
 import net.verany.api.listener.ChatListener;
 import net.verany.api.listener.PlayerJoinListener;
@@ -17,6 +18,7 @@ import net.verany.api.player.permission.group.AbstractPermissionGroup;
 import net.verany.api.player.permission.group.PermissionGroup;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.UUID;
@@ -63,22 +65,34 @@ public class Core extends VeranyPlugin {
             IPlayerInfo playerInfo = new PlayerInfo(this, players.getString("name"));
             playerInfo.load(UUID.fromString(players.getString("uuid")));
             Verany.setPlayer(IPlayerInfo.class, playerInfo);
-            Verany.PROFILE_OBJECT.setPlayer(IPlayerInfo.class, playerInfo);
         }
 
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.OFF);
 
-        Verany.addTask(new ActionbarTask(400, this));
+        //Verany.addTask(new ActionbarTask(400, this));
 
         initListeners();
+        initCommands();
+    }
 
+    private void initCommands() {
+        Verany.registerCommand(this, new CommandEntry("reload"), (playerInfo, strings) -> {
+            Player player = playerInfo.getPlayer();
+
+            if(strings.length == 1) {
+                if (strings[0].equalsIgnoreCase("messages")) {
+                    Verany.reloadMessages(this);
+                    player.sendMessage("Reloaded " + Verany.MESSAGES.size() + " messages");
+                }
+            }
+        });
     }
 
     private void initListeners() {
         PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new PlayerJoinListener(this), this);
-        pluginManager.registerEvents(new PlayerQuitListener(this), this);
+        pluginManager.registerEvents(new PlayerJoinListener(), this);
+        pluginManager.registerEvents(new PlayerQuitListener(), this);
         pluginManager.registerEvents(new ProtectionListener(this), this);
         pluginManager.registerEvents(new ChatListener(this), this);
     }
@@ -90,16 +104,13 @@ public class Core extends VeranyPlugin {
 
     private void loadPermissionGroups() {
         MongoCollection<Document> collection = getConnection().getCollection("groups");
-        if(collection == null) {
-
-            return;
-        }
         for (AbstractPermissionGroup value : PermissionGroup.VALUES)
             if (collection.find(Filters.eq("name", value.getName())).first() == null)
                 collection.insertOne(Verany.GSON.fromJson(Verany.GSON.toJson(value), Document.class));
+
         for (Document document : collection.find()) {
             AbstractPermissionGroup permissionGroup = Verany.GSON.fromJson(document.toJson(), PermissionGroup.class);
-            if (PermissionGroup.getGroupByName(permissionGroup.getName()) == null)
+            if (!PermissionGroup.existGroup(permissionGroup.getName()))
                 PermissionGroup.VALUES.add(permissionGroup);
         }
         for (AbstractPermissionGroup value : PermissionGroup.VALUES)

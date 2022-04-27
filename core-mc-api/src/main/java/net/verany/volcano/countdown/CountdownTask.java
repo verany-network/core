@@ -1,7 +1,7 @@
-package net.verany.volcano.countdown.task;
+package net.verany.volcano.countdown;
 
 import net.verany.api.AbstractVerany;
-import net.verany.volcano.countdown.AbstractCountdown;
+import net.verany.api.Verany;
 
 import java.util.Arrays;
 
@@ -9,7 +9,7 @@ public class CountdownTask implements Runnable {
 
     @Override
     public void run() {
-        for (AbstractCountdown countdown : AbstractVerany.COUNTDOWNS) {
+        for (AbstractCountdown countdown : Verany.COUNTDOWNS) {
             if (!countdown.isRunning()) continue;
             countdown.setCount(countdown.getCount() - 1);
             if (Arrays.asList(countdown.getRun()).contains(countdown.getCount()))

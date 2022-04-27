@@ -18,9 +18,10 @@ public class SetupObject extends AbstractSetupObject {
     }
 
     @Override
-    public void registerNewLocation(String name, AbstractSetupCategory category) {
-        if (getDataObject().getSetupCategoryMap().containsKey(name)) return;
-        getDataObject().getSetupCategoryMap().put(name, category);
+    public void registerNewLocation(AbstractSetupCategory category) {
+        //if (getCategories().containsKey(name)) return;
+        getCategories().removeIf(abstractSetupCategory -> abstractSetupCategory.getName().equals(category.getName()));
+        getCategories().add(category);
     }
 
     @Override
@@ -31,18 +32,19 @@ public class SetupObject extends AbstractSetupObject {
 
     @Override
     public boolean existLocation(String category, String name) {
-        if (!getDataObject().getSetupCategoryMap().containsKey(category)) return false;
-        return getDataObject().getSetupCategoryMap().get(category).getLocation(name) != null;
+        if (getDataObject() == null || (getDataObject() != null && getDataObject().getCategory(category) == null))
+            return false;
+        return getDataObject().getCategory(category).getLocation(name) != null;
     }
 
     @Override
     public boolean isLocationSet(String category, String name) {
-        return existLocation(category, name) && !getDataObject().getSetupCategoryMap().get(category).getLocation(name).getLocation().getWorld().equals("-");
+        return existLocation(category, name) && !getDataObject().getCategory(category).getLocation(name).getLocation().getWorld().equals("-");
     }
 
     @Override
     public AbstractSetupCategory getCategory(String category) {
-        return getDataObject().getSetupCategoryMap().get(category);
+        return getDataObject().getCategory(category);
     }
 
     @Override

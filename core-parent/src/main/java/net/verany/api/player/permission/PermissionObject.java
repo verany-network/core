@@ -71,14 +71,14 @@ public class PermissionObject extends DatabaseLoader implements IPermissionObjec
     public void addPermission(String permission) {
         if (getDataOptional(PlayerRank.class).isEmpty()) return;
         getDataOptional(PlayerRank.class).get().getPermissions().add(permission);
-        update();
+        save("user_rank");
     }
 
     @Override
     public void removePermission(String permission) {
         if (getDataOptional(PlayerRank.class).isEmpty()) return;
         getDataOptional(PlayerRank.class).get().getPermissions().remove(permission);
-        update();
+        save("user_rank");
     }
 
     @Override

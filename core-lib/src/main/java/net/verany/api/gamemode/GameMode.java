@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public abstract class AbstractGameMode {
+public class GameMode {
 
     private final String name;
     private final String[] targetGroup;

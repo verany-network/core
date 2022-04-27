@@ -43,6 +43,8 @@ public class VolcanoPlayer implements IVolcanoPlayer {
         if (round == null) return;
 
         round.getPlayers().add(this);
+        if (round.getAllPlayers().stream().noneMatch(iVolcanoPlayer -> iVolcanoPlayer.getUniqueId().equals(uniqueId)))
+            round.getAllPlayers().add(this);
 
         Verany.sync(round.getProject(), () -> Bukkit.getPluginManager().callEvent(new VolcanoPlayerJoinEvent(player, round)));
     }

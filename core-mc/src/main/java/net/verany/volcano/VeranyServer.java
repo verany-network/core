@@ -5,27 +5,41 @@ import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.driver.service.ServiceTask;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import net.verany.api.AbstractVerany;
-import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.gamemode.GameMode;
 import net.verany.api.gamemode.GameState;
 import net.verany.api.module.VeranyPlugin;
-import net.verany.volcano.round.AbstractVolcanoRound;
-import net.verany.volcano.round.GameSetting;
-import net.verany.volcano.round.ServerRoundData;
-import net.verany.volcano.round.VolcanoRound;
+import net.verany.api.module.VeranyProject;
+import net.verany.volcano.round.*;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class VeranyServer {
 
     public static final List<AbstractVolcanoRound> ROUNDS = new ArrayList<>();
     private static final Map<String, Document> EXTRA = new HashMap<>();
 
-    public static void registerGameMode(VeranyPlugin project, AbstractGameMode gameMode) {
-        for (int i = 0; i < project.getModule().maxRounds(); i++)
-            ROUNDS.add(new VolcanoRound(project, gameMode));
+    public static IRoundLoader roundLoader;
+
+    public static void registerGameMode(VeranyPlugin project, GameMode gameMode) {
+        loadRounds(project);
+        for (int i = 0; i < project.getModule().maxRounds(); i++) {
+            AbstractVolcanoRound round = new VolcanoRound(project, gameMode);
+            ROUNDS.add(round);
+        }
+    }
+
+    public static void loadRounds(VeranyProject project) {
+        roundLoader = new RoundLoader(project);
+        roundLoader.load();
+    }
+
+    public static void shutdown() {
+        roundLoader.update();
     }
 
     public static void checkPlayers(VeranyPlugin plugin) {
@@ -75,7 +89,7 @@ public class VeranyServer {
             Document document = new Document("id", round.getId());
 
             List<UUID> players = new ArrayList<>();
-            round.getVeranyPlayers().forEach(iPlayerInfo -> players.add(iPlayerInfo.getUniqueId()));
+            round.getPlayers().forEach(iPlayerInfo -> players.add(iPlayerInfo.getUniqueId()));
 
             document.append("players", players);
             document.append("max_players", round.getSettingValue(GameSetting.MAX_PLAYERS));

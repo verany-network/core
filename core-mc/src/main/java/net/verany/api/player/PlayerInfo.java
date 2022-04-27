@@ -63,6 +63,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -99,6 +100,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     private final Map<String, Integer> pageMap = new HashMap<>();
     private final Map<AbstractSetting<?>, Object> tempSettingMap = new HashMap<>();
+    private final List<BossBar> activeBossBars = new ArrayList<>();
     private final List<AbstractActionbar> actionbarQueue = new ArrayList<>();
 
     public PlayerInfo(IVeranyPlugin plugin, String name) {
@@ -147,13 +149,15 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
     }
 
     private void load() {
-        load(new LoadInfo<>("user", PlayerEntry.class, new PlayerEntry(uniqueId, name, VeranyLanguage.ENGLISH.getName(), PrefixPattern.BLUE.getKey(), 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
+        load(new LoadInfo<>("user", PlayerEntry.class, new PlayerEntry(uniqueId, name, VeranyLanguage.ENGLISH.getName(), PrefixPattern.BLUE.getKey(), 0, 0, 0, 0L, 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
         getDataOptional(PlayerEntry.class).ifPresent(playerEntry -> loadSettings(playerEntry.getSettingValues()));
     }
 
     @Override
     public void update() {
         save("user");
+
+        Verany.HOTBAR_ITEMS.remove(uniqueId);
 
         permissionObject.update();
         friendObject.update();
@@ -213,7 +217,7 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public int getGlobalRank() {
-        List<IPlayerInfo> registered = Verany.PROFILE_OBJECT.getRegisteredPlayers(IPlayerInfo.class);
+        List<IPlayerInfo> registered = Verany.getPlayers(IPlayerInfo.class);
         int rank = 1;
         for (IPlayerInfo playerInfo : Verany.sortList(registered, Comparator.comparingInt(IPlayerInfo::getPoints).reversed())) {
             if (playerInfo.getName().equals(getName())) break;
@@ -464,9 +468,9 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void setSkinData() {
-        String[] skinTexture = getSkinTexture();
+        /*String[] skinTexture = getSkinTexture();
         if (skinTexture == null) return;
-        this.skinData = new SkinData(skinTexture[1], skinTexture[0]);
+        this.skinData = new SkinData(skinTexture[1], skinTexture[0]);*/
     }
 
     private String[] getSkinTexture() {
@@ -486,9 +490,16 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void setItem(int index, HotbarItem hotbarItem) {
-        Verany.HOTBAR_ITEMS.removeIf(item -> item.getItemStack().getType().equals(hotbarItem.getItemStack().getType()) && item.getPlayer().equals(hotbarItem.getPlayer()) && item.getItemStack().getItemMeta().getDisplayName().equals(hotbarItem.getItemStack().getItemMeta().getDisplayName()));
         getPlayer().getInventory().setItem(index, hotbarItem.getItemStack());
-        Verany.HOTBAR_ITEMS.add(hotbarItem);
+        Verany.HOTBAR_ITEMS.putIfAbsent(uniqueId, new CopyOnWriteArrayList<>());
+        Verany.HOTBAR_ITEMS.get(uniqueId).add(hotbarItem);
+    }
+
+    @Override
+    public void addItem(HotbarItem hotbarItem) {
+        getPlayer().getInventory().addItem(hotbarItem.getItemStack());
+        Verany.HOTBAR_ITEMS.putIfAbsent(uniqueId, new CopyOnWriteArrayList<>());
+        Verany.HOTBAR_ITEMS.get(uniqueId).add(hotbarItem);
     }
 
     @Override
@@ -507,27 +518,34 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public BossBar addBossBar(BossBar bossBar) {
-        return null;
+
+        activeBossBars.add(bossBar);
+        bossBar.addPlayer(getPlayer());
+        return bossBar;
     }
 
     @Override
     public BossBar removeBossBar(NamespacedKey key) {
-        return null;
+        BossBar bossBar = getBossBarByKey(key);
+        if (player != null)
+            bossBar.removePlayer(player);
+        activeBossBars.remove(bossBar);
+        return bossBar;
     }
 
     @Override
     public boolean hasBosBar(NamespacedKey key) {
-        return false;
+        return getBossBarByKey(key) != null;
     }
 
     @Override
     public List<BossBar> getBossBars() {
-        return null;
+        return activeBossBars;
     }
 
     @Override
     public BossBar getBossBarByKey(NamespacedKey key) {
-        return null;
+        return Bukkit.getBossBar(key);
     }
 
     @Override
@@ -657,6 +675,6 @@ public class PlayerInfo extends DatabaseLoader implements IPlayerInfo {
 
     @Override
     public void teleport(VeranyLocation location) {
-        player.teleport(location.toLocation());
+        player.teleport(location.toBukkit());
     }
 }

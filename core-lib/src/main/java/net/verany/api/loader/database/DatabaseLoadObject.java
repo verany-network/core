@@ -14,4 +14,15 @@ public abstract class DatabaseLoadObject implements LoadObject {
     public DatabaseLoadObject(UUID uuid) {
         this.uuid = uuid.toString();
     }
+
+    public abstract static class DatabaseLoadObjects extends DatabaseLoadObject {
+
+        public DatabaseLoadObjects(UUID uuid) {
+            super(uuid);
+        }
+
+        public DatabaseLoadObjects(String uuid) {
+            super(uuid);
+        }
+    }
 }

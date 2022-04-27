@@ -8,11 +8,11 @@ import java.util.function.Consumer;
 
 public interface IGameModeObject {
 
-    String getRatingStars(AbstractGameMode gameMode);
+    String getRatingStars(GameMode gameMode);
 
-    double getRating(AbstractGameMode gameMode);
+    double getRating(GameMode gameMode);
 
-    int getOnlinePlayers(AbstractGameMode gameMode);
+    int getOnlinePlayers(GameMode gameMode);
 
     int getOnlinePlayers(String... groups);
 
@@ -20,7 +20,7 @@ public interface IGameModeObject {
 
     void getOnlineServers(Consumer<List<SimplifiedServerInfo>> consumer);
 
-    void startService(AbstractGameMode gameMode,  Consumer<ServiceInfoSnapshot> consumer);
+    void startService(GameMode gameMode, Consumer<ServiceInfoSnapshot> consumer);
 
     void startService(String[] groups, Consumer<ServiceInfoSnapshot> consumer);
 

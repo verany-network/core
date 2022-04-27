@@ -6,39 +6,48 @@ import net.verany.api.AbstractVerany;
 import java.util.*;
 
 @Getter
+@Deprecated
 public class ProfileObject implements IProfileObject {
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> Optional<T> getPlayer(UUID uuid, Class<T> tClass) {
         return getRegisteredPlayers(tClass).stream().filter(iPlayerInfo -> iPlayerInfo.getUniqueId().equals(uuid)).findFirst();
     }
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> Optional<T> getPlayer(UUID uuid) {
         throw new UnsupportedOperationException("No longer supported!");
     }
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> Optional<T> getPlayer(String name, Class<T> tClass) {;
         return getRegisteredPlayers(tClass).stream().filter(iPlayerInfo -> iPlayerInfo.getName().equalsIgnoreCase(name)).findFirst();
     }
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> Optional<T> getPlayer(String name) {
         throw new UnsupportedOperationException("No longer supported!");
     }
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> List<T> getRegisteredPlayers() {
         throw new UnsupportedOperationException("No longer supported!");
     }
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> void setPlayer(Class<T> tClass, T player) {
+
         //registeredPlayers.get(tClass.getName()).add(player);
     }
 
     @Override
+    @Deprecated
     public <T extends IVeranyPlayer> List<T> getRegisteredPlayers(Class<T> tClass) {
         return AbstractVerany.getPlayers(tClass);
         /*if (!registeredPlayers.containsKey(tClass.getName()))

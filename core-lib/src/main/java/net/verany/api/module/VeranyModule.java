@@ -62,7 +62,7 @@ public @interface VeranyModule {
             Database databaseClass = loadJsonConfig();
 
             for (String database : databaseClass.getDatabases())
-                databaseManagers.add(new DatabaseManager(databaseClass.getUser(), databaseClass.getHostname(), databaseClass.getPassword(), database));
+                databaseManagers.add(new DatabaseManager(databaseClass.getUser(), databaseClass.getHostname(), databaseClass.getPassword(), database, databaseClass.getAuthSource()));
         }
 
         public MongoCollection<Document> getCollection(String collection) {
@@ -86,7 +86,7 @@ public @interface VeranyModule {
             if (file.exists()) return;
             Gson gson = new Gson();
 
-            Database database = new Database("user", "password", "127.0.0.1", new String[]{"database1", "database2"});
+            Database database = new Database("user", "password", "127.0.0.1", "admin", new String[]{"database1", "database2"});
 
             new File(module.parentConnectionPath().replace("%name%", module.name())).mkdirs();
             file.createNewFile();

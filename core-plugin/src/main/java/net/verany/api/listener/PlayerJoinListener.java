@@ -1,5 +1,7 @@
 package net.verany.api.listener;
 
+import de.dytanic.cloudnet.driver.event.EventListener;
+import de.dytanic.cloudnet.driver.event.EventPriority;
 import net.verany.api.Core;
 import net.verany.api.Verany;
 import net.verany.api.event.events.PlayerLoadCompleteEvent;
@@ -14,30 +16,31 @@ import net.verany.volcano.VeranyServer;
 import net.verany.volcano.player.IVolcanoPlayer;
 import net.verany.volcano.player.VolcanoPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.joor.Reflect;
 
 import java.util.Optional;
 
-public record PlayerJoinListener(VeranyPlugin project) implements Listener {
+public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void handleJoin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
 
         IPlayerInfo playerInfo;
-        Optional<IPlayerInfo> playerInfoOptional = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId(), IPlayerInfo.class);
-        if (playerInfoOptional.isEmpty()) {
-            playerInfo = new PlayerInfo(project, player.getName());
+        IPlayerInfo playerInfoOptional = Verany.getPlayer(player.getUniqueId(), IPlayerInfo.class);
+        if (playerInfoOptional == null) {
+            playerInfo = new PlayerInfo(Core.INSTANCE, player.getName());
             playerInfo.load(player.getUniqueId());
-            Verany.PROFILE_OBJECT.setPlayer(IPlayerInfo.class, playerInfo);
             Verany.setPlayer(IPlayerInfo.class, playerInfo);
         } else {
-            playerInfo = playerInfoOptional.get();
+            playerInfo = playerInfoOptional;
             playerInfo.load(player.getUniqueId());
         }
         Reflect.on(player).set("perm", new Permissible(player));
@@ -56,23 +59,19 @@ public record PlayerJoinListener(VeranyPlugin project) implements Listener {
         playerInfo.setPlayer(player);
         playerInfo.setSkinData();
 
-        player.sendMessage(playerInfo.getPermissionObject().getCurrentGroup().getGroup().getName());
-
-        player.sendMessage("moin " + playerInfo.getNameWithColor());
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(project, () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Core.INSTANCE, () -> {
             if (!VeranyServer.ROUNDS.isEmpty()) {
                 if (playerInfo.getCloudPlayer().getProperties().contains("round-id")) {
                     IVolcanoPlayer volcanoPlayer = new VolcanoPlayer();
                     volcanoPlayer.load(player.getUniqueId());
                     Verany.setPlayer(IVolcanoPlayer.class, volcanoPlayer);
 
-                    volcanoPlayer.joinRound(playerInfo.getCloudPlayer().getProperties().getString("round-id"), project);
+                    volcanoPlayer.joinRound(playerInfo.getCloudPlayer().getProperties().getString("round-id"), Core.INSTANCE);
 
                     for (IVolcanoPlayer otherPlayer : volcanoPlayer.getRound().getOtherPlayers()) {
                         Player otherBukkitPlayer = Bukkit.getPlayer(otherPlayer.getUniqueId());
-                        otherBukkitPlayer.hidePlayer(project, player);
-                        player.hidePlayer(project, otherBukkitPlayer);
+                        otherBukkitPlayer.hidePlayer(Core.INSTANCE, player);
+                        player.hidePlayer(Core.INSTANCE, otherBukkitPlayer);
                     }
                 }
 
@@ -89,6 +88,5 @@ public record PlayerJoinListener(VeranyPlugin project) implements Listener {
         player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> new TabListObject().setTabList(onlinePlayer));
     }
-
 
 }

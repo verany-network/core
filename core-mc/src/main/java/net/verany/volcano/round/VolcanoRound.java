@@ -1,11 +1,7 @@
 package net.verany.volcano.round;
 
-import net.verany.api.gamemode.AbstractGameMode;
+import net.verany.api.gamemode.GameMode;
 import net.verany.api.module.VeranyPlugin;
-import net.verany.api.module.VeranyProject;
-import net.verany.api.player.IVeranyPlayer;
-import net.verany.volcano.round.AbstractGameManager;
-import net.verany.volcano.round.AbstractVolcanoRound;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +10,7 @@ public class VolcanoRound extends AbstractVolcanoRound {
 
     private final Map<Class<? extends AbstractGameManager>, AbstractGameManager> gameManagerMap = new HashMap<>();
 
-    public VolcanoRound(VeranyPlugin project, AbstractGameMode gameMode) {
+    public VolcanoRound(VeranyPlugin project, GameMode gameMode) {
         super(project, gameMode);
     }
 

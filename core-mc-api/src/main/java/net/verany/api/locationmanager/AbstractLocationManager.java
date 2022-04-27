@@ -22,6 +22,8 @@ public abstract class AbstractLocationManager extends DatabaseLoader {
 
     public abstract Location getLocation(String name);
 
+    public abstract VeranyLocation getVeranyLocation(String name);
+
     public abstract boolean existLocation(String name);
 
     @Getter

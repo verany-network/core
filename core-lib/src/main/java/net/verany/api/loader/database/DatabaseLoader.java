@@ -10,6 +10,8 @@ import net.verany.api.loader.Loader;
 import net.verany.api.module.VeranyProject;
 import org.bson.Document;
 
+import java.util.ArrayList;
+
 @Getter
 public abstract class DatabaseLoader extends Loader {
 
@@ -31,6 +33,20 @@ public abstract class DatabaseLoader extends Loader {
 
     @Override
     public <T extends LoadObject> void load(LoadInfo<T> loadInfo) {
+        String collection = loadInfo.getCollection() == null ? this.collection : loadInfo.getCollection();
+
+        if(loadInfo.getObject() instanceof DatabaseLoadObject.DatabaseLoadObjects) {
+            getInfoMaps().putIfAbsent(loadInfo.getName(), new ArrayList<>());
+
+            for (Document document : project.getConnection().getCollection(database, collection).find()) {
+                T info = gson.fromJson(document.toJson(), loadInfo.getType());
+                loadInfo.setObject(info);
+                getInfoMaps().get(loadInfo.getName()).add(loadInfo);
+            }
+            onLoadComplete();
+            return;
+        }
+
         if (getInfo(loadInfo.getType()) != null)
             getInfoLists().remove(getInfo(loadInfo.getType()));
         T info;
@@ -48,12 +64,14 @@ public abstract class DatabaseLoader extends Loader {
     @Override
     public <T extends LoadObject> T save(LoadInfo<T> loadInfo) {
         T t = loadInfo.getObject();
+        String collection = loadInfo.getCollection() == null ? this.collection : loadInfo.getCollection();
         String key = toDatabaseInfo(loadInfo).getUuid();
         project.getConnection().getCollection(database, collection).replaceOne(new BasicDBObject("uuid", key), gson.fromJson(gson.toJson(t), Document.class));
         return t;
     }
 
     private <T extends LoadObject> T insert(LoadInfo<T> loadInfo) {
+        String collection = loadInfo.getCollection() == null ? this.collection : loadInfo.getCollection();
         project.getConnection().getCollection(database, collection).insertOne(gson.fromJson(gson.toJson(loadInfo.getObject()), Document.class));
         return loadInfo.getObject();
     }

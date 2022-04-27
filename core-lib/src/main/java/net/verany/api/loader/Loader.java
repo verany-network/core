@@ -7,17 +7,17 @@ import net.verany.api.AbstractVerany;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.settings.AbstractSettingLoader;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 public abstract class Loader extends AbstractSettingLoader {
 
     private final List<LoadInfo<?>> infoLists = new ArrayList<>();
+    private final Map<String, List<LoadInfo<?>>> infoMaps = new HashMap<>();
 
     public abstract <T extends LoadObject> void load(LoadInfo<T> loadInfo);
+
+    //public abstract <T extends LoadObject> void load(LoadInfo<T> loadInfo, String collection);
 
     public abstract <T extends LoadObject> T save(LoadInfo<T> loadInfo);
 
@@ -31,6 +31,9 @@ public abstract class Loader extends AbstractSettingLoader {
     }
 
     public void save(String loadName) {
+        List<LoadInfo<?>> infoLists = this.infoLists;
+        if (infoMaps.containsKey(loadName))
+            infoLists = infoMaps.get(loadName);
         for (LoadInfo<?> infoList : infoLists)
             if (infoList.getName().equalsIgnoreCase(loadName))
                 save(infoList);
@@ -62,7 +65,7 @@ public abstract class Loader extends AbstractSettingLoader {
 
     public <T extends LoadObject> Optional<T> getDataOptional(Class<T> tClass) {
         Optional<LoadInfo<?>> info = infoLists.stream().filter(loadInfo -> loadInfo.getType().getName().equals(tClass.getName())).findFirst();
-        if(info.isEmpty()) return Optional.empty();
+        if (info.isEmpty()) return Optional.empty();
         return (Optional<T>) Optional.ofNullable(info.get().getObject());
     }
 
@@ -84,6 +87,7 @@ public abstract class Loader extends AbstractSettingLoader {
         private final Class<T> type;
         private final T defaultObject;
         private T object;
+        private String collection = null;
 
         public LoadInfo(String name, Class<T> type, T defaultObject) {
             this.name = name;
@@ -100,6 +104,11 @@ public abstract class Loader extends AbstractSettingLoader {
                     ", defaultObject=" + defaultObject +
                     ", object=" + object +
                     '}';
+        }
+
+        public LoadInfo<T> setCollection(String collection) {
+            this.collection = collection;
+            return this;
         }
     }
 

@@ -44,6 +44,8 @@ public interface IPlayerInfo extends IVeranyPlayer {
 
     void setItem(int index, HotbarItem hotbarItem);
 
+    void addItem(HotbarItem hotbarItem);
+
     void passAchievement(VeranyAchievement achievement);
 
     boolean hasAchievement(VeranyAchievement achievement);

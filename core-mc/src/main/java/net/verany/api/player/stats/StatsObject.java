@@ -157,7 +157,7 @@ public class StatsObject extends DatabaseLoader implements IStatsObject {
     }
 
     public static List<IStatsObject> getStatsObjects(VeranyProject project, AbstractStatsType<Integer> statsType, long statsTime, Class<? extends IDefault<UUID>> playerClass) {
-        List<IPlayerInfo> players = Verany.PROFILE_OBJECT.getRegisteredPlayers(IPlayerInfo.class);
+        List<IPlayerInfo> players = Verany.getPlayers(IPlayerInfo.class);
         List<IStatsObject> sortData = new ArrayList<>();
         for (IPlayerInfo player : players) {
             if (player.getSkinData() == null) continue;

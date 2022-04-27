@@ -9,29 +9,29 @@ import net.verany.volcano.VeranyServer;
 import net.verany.volcano.player.IVolcanoPlayer;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public record PlayerQuitListener (VeranyPlugin project) implements Listener {
+public class PlayerQuitListener implements Listener {
 
-    @EventListener
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void handleQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
         event.quitMessage(null);
 
-        IPlayerInfo playerInfo = Verany.PROFILE_OBJECT.getPlayer(player.getUniqueId(), IPlayerInfo.class).get();
+        IPlayerInfo playerInfo = Verany.getPlayer(player.getUniqueId());
 
         playerInfo.setBossBar((BossBar) null);
         playerInfo.setDefaultBossBar(null);
-        playerInfo.setPlayer(null);
 
         if (!VeranyServer.ROUNDS.isEmpty()) {
             playerInfo.getPlayer(IVolcanoPlayer.class).quitRound();
             Verany.removePlayer(player.getUniqueId(), IVolcanoPlayer.class);
         }
 
-        Verany.getHotbarItem(player).forEach(Verany.HOTBAR_ITEMS::remove);
         playerInfo.update();
     }
 

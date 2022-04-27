@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.verany.volcano.countdown.AbstractCountdown;
+import net.verany.volcano.player.IVolcanoPlayer;
+import org.bukkit.entity.Player;
 
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -27,7 +30,10 @@ public abstract class AbstractGameManager {
 
     public abstract void setIngame();
 
-    public abstract void reset();
-
+    public void stop(IRoundLoader roundLoader) {
+        if (roundLoader == null) throw new IllegalArgumentException("RoundLoader cannot be null!");
+        RoundInfo info = RoundInfo.builder().roundId(round.getId()).players(round.getAllPlayers().stream().map(IVolcanoPlayer::getUniqueId).collect(Collectors.toList())).gameMode(round.getGameMode().getName()).end(System.currentTimeMillis()).build();
+        roundLoader.addRound(info);
+    }
 
 }

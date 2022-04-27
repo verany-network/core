@@ -17,7 +17,10 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public record ProtectionListener(VeranyPlugin plugin) implements Listener {
 
@@ -25,9 +28,9 @@ public record ProtectionListener(VeranyPlugin plugin) implements Listener {
     public void handlePlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
 
-        for (HotbarItem abstractHotbarItem : Verany.getHotbarItem(player))
-            if (abstractHotbarItem.getItemStack().getType().equals(player.getItemInHand().getType()) && abstractHotbarItem.getItemStack().getItemMeta().getDisplayName().equals(player.getItemInHand().getItemMeta().getDisplayName()))
-                abstractHotbarItem.onPlace(event);
+        for (HotbarItem hotbarItem : Verany.HOTBAR_ITEMS.getOrDefault(player.getUniqueId(), new ArrayList<>()))
+            if (hotbarItem.getItemStack().getType().equals(player.getItemInHand().getType()) && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(player.getItemInHand().getItemMeta().getDisplayName()))
+                hotbarItem.onPlace(event);
     }
 
     @EventHandler
@@ -49,7 +52,7 @@ public record ProtectionListener(VeranyPlugin plugin) implements Listener {
                 Verany.INVENTORY_MAP.get(player).onClick(event);
 
         try {
-            for (HotbarItem hotbarItem : Verany.getHotbarItem(player))
+            for (HotbarItem hotbarItem : Verany.HOTBAR_ITEMS.getOrDefault(player.getUniqueId(), new ArrayList<>()))
                 if (hotbarItem.getItemStack().getType().equals(event.getCurrentItem().getType()) && hotbarItem.getItemStack().getItemMeta() != null && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(event.getCurrentItem().getItemMeta().getDisplayName()))
                     hotbarItem.onClick(event);
         } catch (Exception ignore) {
@@ -71,9 +74,10 @@ public record ProtectionListener(VeranyPlugin plugin) implements Listener {
 
         if (event.getItem() == null) return;
 
-        for (HotbarItem hotbarItem : Verany.getHotbarItem(player))
-            if (hotbarItem.getItemStack().getType().equals(event.getItem().getType()) && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(event.getItem().getItemMeta().getDisplayName()))
-                hotbarItem.onInteract(event);
+        if (Verany.HOTBAR_ITEMS.containsKey(player.getUniqueId()))
+            for (HotbarItem hotbarItem : Verany.HOTBAR_ITEMS.get(player.getUniqueId()))
+                if (hotbarItem.getItemStack().getType().equals(event.getItem().getType()) && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(event.getItem().getItemMeta().getDisplayName()))
+                    hotbarItem.onInteract(event);
 
     }
 
@@ -81,7 +85,7 @@ public record ProtectionListener(VeranyPlugin plugin) implements Listener {
     public void handleInteractEntity(PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
 
-        for (HotbarItem hotbarItem : Verany.getHotbarItem(player))
+        for (HotbarItem hotbarItem : Verany.HOTBAR_ITEMS.getOrDefault(player.getUniqueId(), new ArrayList<>()))
             if (hotbarItem.getItemStack().getType().equals(player.getInventory().getItemInMainHand().getType()) && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()))
                 hotbarItem.onInteract(event);
 
@@ -91,7 +95,7 @@ public record ProtectionListener(VeranyPlugin plugin) implements Listener {
     public void handleDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
 
-        for (HotbarItem hotbarItem : Verany.getHotbarItem(player))
+        for (HotbarItem hotbarItem : Verany.HOTBAR_ITEMS.getOrDefault(player.getUniqueId(), new ArrayList<>()))
             if (hotbarItem.getItemStack().getType().equals(event.getItemDrop().getItemStack().getType()) && hotbarItem.getItemStack().getItemMeta().getDisplayName().equals(event.getItemDrop().getItemStack().getItemMeta().getDisplayName()))
                 hotbarItem.onDrop(event);
     }

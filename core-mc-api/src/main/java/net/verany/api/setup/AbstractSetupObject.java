@@ -1,25 +1,31 @@
 package net.verany.api.setup;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import net.verany.api.AbstractVerany;
 import net.verany.api.Verany;
 import net.verany.api.loader.database.DatabaseLoadObject;
 import net.verany.api.loader.database.DatabaseLoader;
+import net.verany.api.locationmanager.VeranyLocation;
+import net.verany.api.map.IMapObject;
 import net.verany.api.module.VeranyProject;
 import net.verany.api.setup.category.AbstractSetupCategory;
 import net.verany.api.setup.category.SetupCategoryWrapper;
+import net.verany.api.world.IWorldObject;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WorldCreator;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Getter
 public abstract class AbstractSetupObject extends DatabaseLoader {
+
+    @Setter
+    @Getter
+    private IMapObject mapObject = null;
 
     public AbstractSetupObject(VeranyProject project, String database) {
         super(project, "locations", database);
@@ -40,7 +46,7 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
     }
 
     public void loadWorlds() {
-        for (AbstractSetupCategory value : getDataObject().getSetupCategoryMap().values()) {
+        for (AbstractSetupCategory value : getDataObject().getCategories()) {
             for (AbstractSetupCategory.LocationData location : value.getLocations()) {
                 if (location.getLocation().getWorld().equals("-")) continue;
                 Bukkit.createWorld(new WorldCreator(location.getLocation().getWorld()));
@@ -53,7 +59,12 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
         load();
     }
 
-    public abstract void registerNewLocation(String name, AbstractSetupCategory category);
+    public void setLocation(String category, String name, Location location) {
+        if (getDataObject() == null) return;
+        getCategory(category).getLocation(name).setLocation(VeranyLocation.fromBukkit(location));
+    }
+
+    public abstract void registerNewLocation(AbstractSetupCategory category);
 
     public abstract Location getLocation(String category, String name);
 
@@ -65,8 +76,14 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
 
     public abstract List<AbstractSetupCategory.LocationData> getLocations(String category);
 
-    public AbstractSetupCategory getNewCategory(Material material) {
-        return new SetupCategoryWrapper(material);
+    public List<AbstractSetupCategory> getCategories() {
+        if (getDataObject() == null) return new ArrayList<>();
+        return getDataObject().getCategories();
+    }
+
+    public AbstractSetupCategory getNewCategory(String name, Material material) {
+        if (getCategory(name) != null) return getCategory(name);
+        return new SetupCategoryWrapper(name, material);
     }
 
     public LocationDataObject getDataObject() {
@@ -77,14 +94,19 @@ public abstract class AbstractSetupObject extends DatabaseLoader {
     @Setter
     public static class LocationDataObject extends DatabaseLoadObject {
 
-        private final Map<String, AbstractSetupCategory> setupCategoryMap = new HashMap<>();
+        private final List<AbstractSetupCategory> categories = new ArrayList<>();
 
         public LocationDataObject() {
             super("locations");
         }
 
         public Location getLocation(String category, String name) {
-            return setupCategoryMap.get(category).getLocation(name).getLocation().toLocation();
+            if (getCategory(category) == null) return null;
+            return getCategory(category).getLocation(name).getLocation().toBukkit();
+        }
+
+        public AbstractSetupCategory getCategory(String name) {
+            return categories.stream().filter(abstractSetupCategory -> abstractSetupCategory.getName().equals(name)).findFirst().orElse(null);
         }
     }
 

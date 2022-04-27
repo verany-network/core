@@ -30,6 +30,7 @@ import net.verany.api.region.GameRegion;
 import net.verany.api.setup.AbstractSetupObject;
 import net.verany.api.task.AbstractTask;
 import net.verany.api.task.MainTask;
+import net.verany.volcano.countdown.AbstractCountdown;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -52,11 +53,12 @@ public class Verany extends AbstractVerany {
     private static final BlockFace[] AXIS = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private static final BlockFace[] RADIAL = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
 
-    public static final List<HotbarItem> HOTBAR_ITEMS = new CopyOnWriteArrayList<>();
+    public static final Map<UUID, List<HotbarItem>> HOTBAR_ITEMS = new ConcurrentHashMap<>();
     public static final EventRegistry EVENT_REGISTRY = new EventRegistry();
     public static final Map<Player, IInventoryBuilder> INVENTORY_MAP = new ConcurrentHashMap<>();
     public static final List<AbstractSetupObject> SETUP_OBJECTS = new CopyOnWriteArrayList<>();
     public static final List<GameRegion> GAME_REGIONS = new ArrayList<>();
+    public static final List<AbstractCountdown> COUNTDOWNS = new CopyOnWriteArrayList<>();
 
     public static final LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().build();
 
@@ -71,7 +73,7 @@ public class Verany extends AbstractVerany {
 
         if (mainTask == null) {
             mainTask = new MainTask();
-            Bukkit.getScheduler().runTaskAsynchronously(project, mainTask);
+            //Bukkit.getScheduler().runTaskAsynchronously(project, mainTask);
         }
 
         // TODO: ONLY FOT TESTING PURPOSES
@@ -113,7 +115,7 @@ public class Verany extends AbstractVerany {
     }
 
     public static IPlayerInfo getPlayer(Player player) {
-        return PROFILE_OBJECT.getPlayer(player.getUniqueId(), IPlayerInfo.class).orElse(null);
+        return getPlayer(player.getUniqueId());
     }
 
     public static double distance(Location location1, Location location2) {
@@ -126,14 +128,6 @@ public class Verany extends AbstractVerany {
         int progressBars = (int) (totalBars * percent);
 
         return Strings.repeat("" + completedColor + symbol, progressBars) + Strings.repeat("" + notCompletedColor + symbol, totalBars - progressBars);
-    }
-
-    public static List<HotbarItem> getHotbarItem(Player player) {
-        List<HotbarItem> toReturn = new ArrayList<>();
-        for (HotbarItem hotbarItem : HOTBAR_ITEMS)
-            if (hotbarItem.getPlayer().equals(player))
-                toReturn.add(hotbarItem);
-        return toReturn;
     }
 
     public static void pushAway(Player player, Location loc) {
@@ -161,7 +155,7 @@ public class Verany extends AbstractVerany {
 
     public static List<IPlayerInfo> getOnlinePlayers() {
         List<IPlayerInfo> toReturn = new ArrayList<>();
-        for (IPlayerInfo registeredPlayer : PROFILE_OBJECT.getRegisteredPlayers(IPlayerInfo.class))
+        for (IPlayerInfo registeredPlayer : getPlayers(IPlayerInfo.class))
             if (registeredPlayer.getPlayer() != null && registeredPlayer.getPlayer().isOnline())
                 toReturn.add(registeredPlayer);
         return toReturn;
@@ -229,5 +223,18 @@ public class Verany extends AbstractVerany {
 
         return result;
     }
+
+
+    public static void addCountdown(AbstractCountdown countdown) {
+        COUNTDOWNS.add(countdown);
+    }
+
+    public static AbstractCountdown getCountdown(String key) {
+        for (AbstractCountdown countdown : COUNTDOWNS)
+            if (countdown.getKey().equalsIgnoreCase(key))
+                return countdown;
+        return null;
+    }
+
 
 }

@@ -19,7 +19,7 @@ public class PlayerEntry extends DatabaseLoadObject {
     private Long onlineTime, playTime, firstJoined, lastOnline;
     private List<String> logs;
 
-    public PlayerEntry(UUID key, String name, String language, String prefix, int credits, Integer exp, Integer points, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
+    public PlayerEntry(UUID key, String name, String language, String prefix, int credits, Integer exp, Integer points, Long onlineTime, long playTime, long firstJoined, long lastOnline, List<String> passedAchievements, Map<String, String> settingValues, List<String> logs) {
         super(key);
         this.name = name;
         this.language = language;
@@ -29,6 +29,9 @@ public class PlayerEntry extends DatabaseLoadObject {
         this.credits = credits;
         this.exp = exp;
         this.points = points;
+        this.onlineTime = onlineTime;
+        this.playTime = playTime;
+        this.lastOnline = lastOnline;
         this.firstJoined = System.currentTimeMillis();
         this.logs = logs;
     }

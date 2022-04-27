@@ -4,7 +4,7 @@ import org.bukkit.Material;
 
 public class SetupCategoryWrapper extends AbstractSetupCategory {
 
-    public SetupCategoryWrapper(Material material) {
-        super(material);
+    public SetupCategoryWrapper(String name, Material material) {
+        super(name, material);
     }
 }

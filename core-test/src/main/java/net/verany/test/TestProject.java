@@ -25,13 +25,11 @@ public class TestProject extends VeranyPlugin {
     }
 
     private void loadPlayers() {
-        Verany.PROFILE_OBJECT = new ProfileObject();
 
         for (Document players : getConnection().getCollection("players").find()) {
             IVeranyPlayer playerInfo = new TestPlayer(this, players.getString("name"));
             playerInfo.load(UUID.fromString(players.getString("uuid")));
             Verany.setPlayer(IVeranyPlayer.class, playerInfo);
-            Verany.PROFILE_OBJECT.setPlayer(IVeranyPlayer.class, playerInfo);
 
             System.out.println(playerInfo.getName());
         }

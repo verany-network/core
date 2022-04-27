@@ -30,7 +30,7 @@ public abstract class VeranyPlayer extends DatabaseLoader implements IVeranyPlay
     public void load(UUID key) {
         this.uniqueId = key;
 
-        load(new LoadInfo<>("user", PlayerEntry.class, new PlayerEntry(uniqueId, name, VeranyLanguage.ENGLISH.getName(), PrefixPattern.BLUE.getKey(), 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
+        load(new LoadInfo<>("user", PlayerEntry.class, new PlayerEntry(uniqueId, name, VeranyLanguage.ENGLISH.getName(), PrefixPattern.BLUE.getKey(), 0, 0, 0, 0L, 0, 0, 0, new ArrayList<>(), new HashMap<>(), new ArrayList<>())));
 
         permissionObject = new PermissionObject(getProject());
         permissionObject.load(key);

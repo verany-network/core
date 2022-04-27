@@ -68,7 +68,7 @@ public class Core extends VeranyPlugin {
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        for (IPlayerInfo registeredPlayer : Verany.PROFILE_OBJECT.getRegisteredPlayers(IPlayerInfo.class)) {
+        for (IPlayerInfo registeredPlayer : Verany.getPlayers(IPlayerInfo.class)) {
             registeredPlayer.getFriendObject().setStatus(IFriendObject.OFFLINE);
         }
     }

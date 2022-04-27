@@ -18,4 +18,12 @@ public class PermissionGroup extends AbstractPermissionGroup {
     public static AbstractPermissionGroup getGroupByName(String name) {
         return VALUES.stream().filter(abstractPermissionGroup -> abstractPermissionGroup.getName().equalsIgnoreCase(name)).findFirst().orElse(PLAYER);
     }
+
+    public static boolean existGroup(String name) {
+        return VALUES.stream().anyMatch(abstractPermissionGroup -> abstractPermissionGroup.getName().equals(name));
+    }
+
+    public static AbstractPermissionGroup getGroupByProperty(String key, Object value) {
+        return VALUES.stream().filter(abstractPermissionGroup -> abstractPermissionGroup.getProperty(key).equals(value)).findFirst().orElse(null);
+    }
 }
